@@ -140,6 +140,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
             serverInitiateHandshake();
             FMLLog.info("Connection received without FML marker, assuming vanilla.");
             this.completeServerSideConnection(ConnectionType.VANILLA);
+            insertIntoChannel();
         }
     }
 
@@ -165,6 +166,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     {
         if (this.state != null) {
             FMLLog.getLogger().log(Level.INFO, "Opening channel which already seems to have a state set. This is a vanilla connection. Handshake handler will stop now");
+            this.manager.channel().config().setAutoRead(true);
             return;
         }
         FMLLog.getLogger().log(Level.TRACE, "Handshake channel activating");
