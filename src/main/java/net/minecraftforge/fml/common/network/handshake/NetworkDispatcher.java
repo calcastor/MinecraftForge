@@ -306,8 +306,9 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         kickWithMessage("This is modded. No modded response received. Bye!");
     }
     @SuppressWarnings("unchecked")
-	private void kickWithMessage(String message)
+    private void kickWithMessage(String message)
     {
+        FMLLog.log(Level.ERROR, "Network Disconnect: %s", message);
         final ChatComponentText chatcomponenttext = new ChatComponentText(message);
         if (side == Side.CLIENT)
         {
