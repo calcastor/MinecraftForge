@@ -564,7 +564,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
         if (!(cause instanceof ClosedChannelException))
         {
             // Mute the reset by peer exception - it's disconnection noise
-            if (cause.getMessage().contains("Connection reset by peer"))
+            if (cause.getMessage() != null && cause.getMessage().contains("Connection reset by peer"))
             {
                 FMLLog.log(Level.DEBUG, cause, "Muted NetworkDispatcher exception");
             }
