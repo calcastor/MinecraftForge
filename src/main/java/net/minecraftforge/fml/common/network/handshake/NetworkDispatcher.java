@@ -92,7 +92,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet> imple
     private final EmbeddedChannel handshakeChannel;
     private NetHandlerPlayServer serverHandler;
     private INetHandler netHandler;
-    private Map<String,String> modList;
+    private Map<String,String> modList = Collections.emptyMap();
     private int overrideLoginDim;
 
     public NetworkDispatcher(NetworkManager manager)
