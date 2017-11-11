@@ -86,6 +86,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         ctx.attr(INBOUNDPACKETTRACKER).get().set(new WeakReference<FMLProxyPacket>(msg));
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
+        payload.release();
     }
 
     /**
