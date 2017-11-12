@@ -30,6 +30,7 @@ public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLPr
     protected void channelRead0(ChannelHandlerContext ctx, FMLProxyPacket msg) throws Exception
     {
         eventChannel.fireRead(msg,ctx);
+        msg.payload().release();
     }
 
     @Override
@@ -37,6 +38,7 @@ public class NetworkEventFiringHandler extends SimpleChannelInboundHandler<FMLPr
     {
         eventChannel.fireUserEvent(evt,ctx);
     }
+
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {

@@ -60,3 +60,11 @@
              potioneffect.func_100012_b(p_147260_1_.func_149429_c());
              ((EntityLivingBase)entity).func_70690_d(potioneffect);
          }
+@@ -1677,6 +1688,7 @@
+             }
+             finally
+             {
++                if (false) // Forge: let packet handle releasing buffer
+                 packetbuffer.release();
+             }
+         }
