@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/network/NetworkSystem.java
 +++ ../src-work/minecraft/net/minecraft/network/NetworkSystem.java
-@@ -115,7 +115,7 @@
+@@ -84,6 +84,7 @@
+ 
+     public void func_151265_a(InetAddress p_151265_1_, int p_151265_2_) throws IOException
+     {
++        if (p_151265_1_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+         synchronized (this.field_151274_e)
+         {
+             Class <? extends ServerSocketChannel > oclass;
+@@ -115,7 +116,7 @@
                          ;
                      }
  
