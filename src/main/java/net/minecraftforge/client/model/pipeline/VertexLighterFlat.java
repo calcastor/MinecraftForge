@@ -2,7 +2,7 @@ package net.minecraftforge.client.model.pipeline;
 
 import javax.vecmath.Vector3f;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.EntityRenderer;
@@ -24,13 +24,17 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     protected int colorIndex = -1;
     protected int lightmapIndex = -1;
 
+    protected VertexFormat baseFormat;
+
     @Override
     public void setParent(IVertexConsumer parent)
     {
         super.setParent(parent);
-        VertexFormat format = getVertexFormat(parent);
-        if(Objects.equal(format, getVertexFormat())) return;
-        setVertexFormat(format);
+        setVertexFormat(parent.getVertexFormat());
+    }
+
+    private void updateIndices()
+    {
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
             switch(getVertexFormat().getElement(i).getUsage())
@@ -67,13 +71,19 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         }
     }
 
-    private static VertexFormat getVertexFormat(IVertexConsumer parent)
+    @Override
+    public void setVertexFormat(VertexFormat format)
     {
-        VertexFormat format = parent.getVertexFormat();
-        if(format == null || format.hasNormal()) return format;
-        format = new VertexFormat(format);
-        format.addElement(NORMAL_4F);
-        return format;
+        if (Objects.equals(format, baseFormat)) return;
+        baseFormat = format;
+        super.setVertexFormat(withNormal(format));
+        updateIndices();
+    }
+
+    private static VertexFormat withNormal(VertexFormat format)
+    {
+        if (format == null || format.hasNormal()) return format;
+        return new VertexFormat(format).addElement(NORMAL_4F);
     }
 
     @Override
