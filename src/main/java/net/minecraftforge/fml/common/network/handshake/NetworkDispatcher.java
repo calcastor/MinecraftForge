@@ -586,8 +586,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         super.exceptionCaught(ctx, cause);
     }
 
-    // if we add any attributes, we should force removal of them here so that
-    //they do not hold references to the world and causes it to leak.
+    // If we add any attributes, we should force removal of them here so that
+    // they do not hold references to the world and cause it to leak.
     private void cleanAttributes(ChannelHandlerContext ctx)
     {
         ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).remove();
@@ -595,6 +595,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).remove();
         this.handshakeChannel.attr(FML_DISPATCHER).remove();
         this.manager.channel().attr(FML_DISPATCHER).remove();
+        NetworkRegistry.INSTANCE.cleanAttributes();
     }
 
     public void setOverrideDimension(int overrideDim) {
