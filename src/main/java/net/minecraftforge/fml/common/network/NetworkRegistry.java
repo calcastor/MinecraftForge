@@ -19,6 +19,7 @@ import io.netty.util.AttributeKey;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.Level;

@@ -109,7 +109,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
     WAITINGSERVERCOMPLETE
     {
         @Override
-        public void accept(final ChannelHandlerContext ctx, final FMLHandshakeMessage msg, final Consumer<? super FMLHandshakeClientState> cons)
+        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
             FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
             PersistentRegistryManager.GameDataSnapshot snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
@@ -136,21 +136,18 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             //Do the remapping on the Client's thread in case things are reset while the client is running. We stall the network thread until this is finished which can cause the IO thread to time out... Not sure if we can do anything about that.
             final PersistentRegistryManager.GameDataSnapshot snap_f = snap;
-            Futures.getUnchecked(Minecraft.getMinecraft().addScheduledTask(() ->
+            List<String> locallyMissing = Futures.getUnchecked(Minecraft.getMinecraft().addScheduledTask(() -> PersistentRegistryManager.injectSnapshot(snap_f, false, false)));
+            if (!locallyMissing.isEmpty())
             {
-                List<String> locallyMissing = PersistentRegistryManager.injectSnapshot(snap_f, false, false);
-                if (!locallyMissing.isEmpty())
-                {
-                    cons.accept(ERROR);
-                    NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                    dispatcher.rejectHandshake("Fatally missing registry entries");
-                    FMLLog.severe("Failed to connect to server: there are %d missing blocks and items", locallyMissing.size());
-                    FMLLog.fine("Missing list: %s", locallyMissing);
-                    return;
-                }
-                cons.accept(PENDINGCOMPLETE);
-                ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-            }));
+                cons.accept(ERROR);
+                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                dispatcher.rejectHandshake("Fatally missing registry entries");
+                FMLLog.severe("Failed to connect to server: there are %d missing blocks and items", locallyMissing.size());
+                FMLLog.fine("Missing list: %s", locallyMissing);
+                return;
+            }
+            cons.accept(PENDINGCOMPLETE);
+            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     },
     PENDINGCOMPLETE

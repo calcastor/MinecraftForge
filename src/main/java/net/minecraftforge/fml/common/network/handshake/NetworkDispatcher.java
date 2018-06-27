@@ -99,7 +99,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     public NetworkDispatcher(NetworkManager manager)
     {
-        super(Packet.class, false);
+        super(false);
         this.manager = manager;
         this.scm = null;
         this.side = Side.CLIENT;
@@ -114,7 +114,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
     public NetworkDispatcher(NetworkManager manager, ServerConfigurationManager scm)
     {
-        super(Packet.class, false);
+        super(false);
         this.manager = manager;
         this.scm = scm;
         this.side = Side.SERVER;
