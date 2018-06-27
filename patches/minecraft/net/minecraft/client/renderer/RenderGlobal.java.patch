@@ -119,6 +119,15 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
+@@ -1781,6 +1808,6 @@
+         GlStateManager.func_179120_a(774, 768, 1, 0);
+         GlStateManager.func_179147_l();
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 0.5F);
+-        GlStateManager.func_179136_a(-3.0F, -3.0F);
++        GlStateManager.func_179136_a(-1.0F, -10.0F); // FORGE: Fix MC-234
+         GlStateManager.func_179088_q();
+         GlStateManager.func_179092_a(516, 0.1F);
+         GlStateManager.func_179141_d();
 @@ -1793,8 +1820,11 @@
                  double d4 = (double)blockpos.func_177956_o() - d1;
                  double d5 = (double)blockpos.func_177952_p() - d2;
