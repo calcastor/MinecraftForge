@@ -118,13 +118,13 @@
              }
  
              if (this.field_71307_n.func_76468_d())
-         {
-             this.field_71307_n.func_76470_e();
-         }
+             {
+                 this.field_71307_n.func_76470_e();
+             }
 +
 +        CommandBase.func_71529_a(null); // Forge: fix MC-128561
      }
-
+ 
      public boolean func_71278_l()
 @@ -460,6 +442,7 @@
          {

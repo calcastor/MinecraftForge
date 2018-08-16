@@ -131,7 +131,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         this.player = player;
         Boolean fml = this.manager.channel().attr(NetworkRegistry.FML_MARKER).get();
-        if (fml != null && fml.booleanValue())
+        if (fml != null && fml)
         {
             //FML on client, send server hello
             //TODO: Make this cleaner as it uses netty magic 0.o
@@ -232,14 +232,13 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         this.connectionType = type;
         FMLLog.info("[%s] Server side %s connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
-        MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         if (DEBUG_HANDSHAKE)
             manager.closeChannel(new ChatComponentText("Handshake Complete review log file for details."));
         scm.initializeConnectionToPlayer(manager, player, serverHandler);
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Packet msg) throws Exception
+    protected void channelRead0(ChannelHandlerContext ctx, Packet<?> msg) throws Exception
     {
         boolean handled = false;
         if (msg instanceof C17PacketCustomPayload)
@@ -302,7 +301,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         kickWithMessage("This is modded. No modded response received. Bye!");
     }
-    @SuppressWarnings("unchecked")
+
     private void kickWithMessage(String message)
     {
         FMLLog.log(Level.ERROR, "Network Disconnect: %s", message);
@@ -320,7 +319,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
                 {
                     manager.closeChannel(chatcomponenttext);
                 }
-            }, new GenericFutureListener[0]);
+            }, (GenericFutureListener<? extends Future<? super Void>>[])null);
         }
         manager.channel().config().setAutoRead(false);
     }
@@ -632,7 +631,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
 
         public void processPart(PacketBuffer input) throws IOException
         {
-            int part = (int)(input.readByte() & 0xFF);
+            int part = input.readByte() & 0xFF;
             if (part != part_expected)
             {
                 throw new IOException("Received FML MultiPart packet out of order, Expected " + part_expected + " Got " + part);

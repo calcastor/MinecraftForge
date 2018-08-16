@@ -86,12 +86,12 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
-            String result = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
-            if (result != null)
+            String modRejections = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
+            if (modRejections != null)
             {
                 cons.accept(ERROR);
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                dispatcher.rejectHandshake(result);
+                dispatcher.rejectHandshake(modRejections);
                 return;
             }
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
@@ -121,8 +121,8 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             PersistentRegistryManager.GameDataSnapshot.Entry entry = new PersistentRegistryManager.GameDataSnapshot.Entry();
             entry.ids.putAll(pkt.getIdMap());
-            entry.substitutions.addAll(pkt.getSubstitutions());
             entry.dummied.addAll(pkt.getDummied());
+            entry.substitutions.addAll(pkt.getSubstitutions());
             snap.entries.put(pkt.getName(), entry);
 
             if (pkt.hasMore())
