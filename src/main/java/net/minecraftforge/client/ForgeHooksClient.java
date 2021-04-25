@@ -416,7 +416,7 @@ public class ForgeHooksClient
         VertexFormatElement attr = format.getElement(element);
         int count = attr.getElementCount();
         int constant = attr.getType().getGlConstant();
-        buffer.position(format.func_181720_d(element));
+        buffer.position(format.getOffset(element));
         switch(attrType)
         {
             case POSITION:
