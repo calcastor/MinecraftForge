@@ -255,14 +255,8 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
             if (!cache.containsKey(name))
             {
                 IModel model = parent.process(ImmutableMap.of("fluid", name));
-                Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-                textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
-                {
-                    public TextureAtlasSprite apply(ResourceLocation location)
-                    {
-                        return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-                    }
-                };
+                Function<ResourceLocation, TextureAtlasSprite> textureGetter = location ->
+                    Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 
                 IFlexibleBakedModel bakedModel = model.bake(new SimpleModelState(transforms), this.getFormat(), textureGetter);
                 cache.put(name, bakedModel);

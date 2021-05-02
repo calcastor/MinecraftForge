@@ -14,23 +14,9 @@ import net.minecraftforge.common.ForgeModContainer;
 
 public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
-    private final ThreadLocal<VertexLighterFlat> lighterFlat = new ThreadLocal<VertexLighterFlat>()
-    {
-        @Override
-        protected VertexLighterFlat initialValue()
-        {
-            return new VertexLighterFlat();
-        }
-    };
+    private final ThreadLocal<VertexLighterFlat> lighterFlat = ThreadLocal.withInitial(VertexLighterFlat::new);
 
-    private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth = new ThreadLocal<VertexLighterSmoothAo>()
-    {
-        @Override
-        protected VertexLighterSmoothAo initialValue()
-        {
-            return new VertexLighterSmoothAo();
-        }
-    };
+    private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth = ThreadLocal.withInitial(VertexLighterSmoothAo::new);
 
     private final ThreadLocal<WorldRendererConsumer> wrFlat = new ThreadLocal<WorldRendererConsumer>();
     private final ThreadLocal<WorldRendererConsumer> wrSmooth = new ThreadLocal<WorldRendererConsumer>();

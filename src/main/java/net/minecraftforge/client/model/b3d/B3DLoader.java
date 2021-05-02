@@ -516,13 +516,7 @@ public class B3DLoader implements ICustomModelLoader
 
         public Collection<ResourceLocation> getTextures()
         {
-            return Collections2.filter(textures.values(), new Predicate<ResourceLocation>()
-            {
-                public boolean apply(ResourceLocation loc)
-                {
-                    return !loc.getResourcePath().startsWith("#");
-                }
-            });
+            return Collections2.filter(textures.values(), loc -> !loc.getResourcePath().startsWith("#"));
         }
 
         public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
@@ -681,13 +675,7 @@ public class B3DLoader implements ICustomModelLoader
         @Override
         public Collection<ResourceLocation> getTextures()
         {
-            return Collections2.filter(textures.values(), new Predicate<ResourceLocation>()
-            {
-                public boolean apply(ResourceLocation loc)
-                {
-                    return !loc.getResourcePath().startsWith("#");
-                }
-            });
+            return Collections2.filter(textures.values(), loc -> !loc.getResourcePath().startsWith("#"));
         }
 
         @Override

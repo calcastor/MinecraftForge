@@ -9,8 +9,6 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 
-import java.util.concurrent.Callable;
-
 public class CapabilityItemHandler
 {
     @CapabilityInject(IItemHandler.class)
@@ -57,14 +55,7 @@ public class CapabilityItemHandler
                     }
                 }
             }
-        }, new Callable<ItemStackHandler>()
-        {
-            @Override
-            public ItemStackHandler call() throws Exception
-            {
-                return new ItemStackHandler();
-            }
-        });
+        }, ItemStackHandler::new);
     }
 
 }

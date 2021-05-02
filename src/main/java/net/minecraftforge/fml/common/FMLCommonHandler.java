@@ -117,7 +117,7 @@ public class FMLCommonHandler
                 Joiner joiner = Joiner.on("\n  ");
                 for(String coreMod : CoreModManager.getTransformers().keySet())
                 {
-                    builder.append("\n" + coreMod + "\n  ").append(joiner.join(CoreModManager.getTransformers().get(coreMod)));
+                    builder.append("\n").append(coreMod).append("\n  ").append(joiner.join(CoreModManager.getTransformers().get(coreMod)));
                 }
                 return builder.toString();
             }

@@ -37,13 +37,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
         }
         else
         {
-            thread.addScheduledTask(new Runnable()
-            {
-                public void run()
-                {
-                    EntitySpawnHandler.this.process(msg);
-                }
-            });
+            thread.addScheduledTask(() -> EntitySpawnHandler.this.process(msg));
         }
     }
 

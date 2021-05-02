@@ -36,20 +36,13 @@ public enum CapabilityManager
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, final Class<? extends T> implementation)
     {
         Preconditions.checkArgument(implementation != null, "Attempted to register a capability with no default implementation");
-        register(type, storage, new Callable<T>()
-        {
-            @Override
-            public T call() throws Exception
-            {
-                try {
-                    return (T)implementation.newInstance();
-                } catch (InstantiationException e) {
-                    Throwables.propagate(e);
-                } catch (IllegalAccessException e) {
-                    Throwables.propagate(e);
-                }
-                return null;
+        register(type, storage, () -> {
+            try {
+                return implementation.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                Throwables.propagate(e);
             }
+            return null;
         });
     }
 
@@ -108,61 +101,51 @@ public enum CapabilityManager
 
             if (entry.getObjectName().indexOf('(') > 0)
             {
-                list.add(new Function<Capability<?>, Object>()
-                {
-                    @Override
-                    public Object apply(Capability<?> input)
+                list.add(input -> {
+                    try
                     {
-                        try
+                        for (Method mtd : Class.forName(targetClass).getDeclaredMethods())
                         {
-                            for (Method mtd : Class.forName(targetClass).getDeclaredMethods())
+                            if (targetName.equals(mtd.getName() + Type.getMethodDescriptor(mtd)))
                             {
-                                if (targetName.equals(mtd.getName() + Type.getMethodDescriptor(mtd)))
+                                if ((mtd.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                                 {
-                                    if ((mtd.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
-                                    {
-                                        FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
-                                        return null;
-                                    }
-
-                                    mtd.setAccessible(true);
-                                    mtd.invoke(null, input);
+                                    FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
                                     return null;
                                 }
+
+                                mtd.setAccessible(true);
+                                mtd.invoke(null, input);
+                                return null;
                             }
-                            FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Method Not Found)", capabilityName, targetClass, targetName);
                         }
-                        catch (Exception e)
-                        {
-                            FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
-                        }
-                        return null;
+                        FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Method Not Found)", capabilityName, targetClass, targetName);
                     }
+                    catch (Exception e)
+                    {
+                        FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
+                    }
+                    return null;
                 });
             }
             else
             {
-                list.add(new Function<Capability<?>, Object>()
-                {
-                    @Override
-                    public Object apply(Capability<?> input)
+                list.add(input -> {
+                    try
                     {
-                        try
+                        Field field = Class.forName(targetClass).getDeclaredField(targetName);
+                        if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                         {
-                            Field field = Class.forName(targetClass).getDeclaredField(targetName);
-                            if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
-                            {
-                                FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
-                                return null;
-                            }
-                            EnumHelper.setFailsafeFieldValue(field, null, input);
+                            FMLLog.log(Level.WARN, "Unable to inject capability %s at %s.%s (Non-Static)", capabilityName, targetClass, targetName);
+                            return null;
                         }
-                        catch (Exception e)
-                        {
-                            FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
-                        }
-                        return null;
+                        EnumHelper.setFailsafeFieldValue(field, null, input);
                     }
+                    catch (Exception e)
+                    {
+                        FMLLog.log(Level.WARN, e, "Unable to inject capability %s at %s.%s", capabilityName, targetClass, targetName);
+                    }
+                    return null;
                 });
             }
         }

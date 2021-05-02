@@ -5,8 +5,6 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.base.Function;
-
 import jline.console.ConsoleReader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.EnumChatFormatting;
@@ -55,15 +53,7 @@ public final class TerminalHandler
         }
         else
         {
-            TerminalConsoleAppender.setFormatter(new Function<String, String>() {
-
-                @Override
-                public String apply(String text)
-                {
-                    return EnumChatFormatting.getTextWithoutFormattingCodes(text);
-                }
-
-            });
+            TerminalConsoleAppender.setFormatter(EnumChatFormatting::getTextWithoutFormattingCodes);
             return false;
         }
     }

@@ -133,13 +133,7 @@ class AnimationStateMachine implements IAnimationStateMachine
         {
             return pair;
         }
-        return Pair.of(pair.getLeft(), Iterables.filter(pair.getRight(), new Predicate<Event>()
-        {
-            public boolean apply(Event event)
-            {
-                return !event.event().startsWith("!");
-            }
-        }));
+        return Pair.of(pair.getLeft(), Iterables.filter(pair.getRight(), event -> !event.event().startsWith("!")));
     }
 
     public void transition(String newState)

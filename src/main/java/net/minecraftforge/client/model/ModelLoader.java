@@ -1089,14 +1089,7 @@ public class ModelLoader extends ModelBakery
     }
 
     public static void setBucketModelDefinition(Item item) {
-        ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
-        {
-            @Override
-            public ModelResourceLocation getModelLocation(ItemStack stack)
-            {
-                return ModelDynBucket.LOCATION;
-            }
-        });
+        ModelLoader.setCustomMeshDefinition(item, stack -> ModelDynBucket.LOCATION);
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
 
