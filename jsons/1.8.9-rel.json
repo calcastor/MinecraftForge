@@ -135,6 +135,24 @@
       "name": "net.sf.trove4j:trove4j:3.0.3",
       "clientreq":true,
       "serverreq":true
+    },
+    {
+      "name": "it.unimi.dsi:fastutil:8.5.4",
+      "url": "https://repo.maven.apache.org/maven2",
+      "clientreq":true,
+      "serverreq":true
+    },
+    {
+      "name": "it.unimi.dsi:fastutil-core:8.5.4",
+      "url": "https://repo.maven.apache.org/maven2",
+      "clientreq":true,
+      "serverreq":true
+    },
+    {
+      "name": "it.unimi.dsi:fastutil-extra:8.5.4",
+      "url": "https://repo.maven.apache.org/maven2",
+      "clientreq":true,
+      "serverreq":true
     }
   ]
 }

@@ -1,12 +1,11 @@
 package net.minecraftforge.client;
 
-import java.util.IdentityHashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-import gnu.trove.procedure.TIntObjectProcedure;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.client.resources.model.ModelManager;
@@ -18,8 +17,8 @@ import net.minecraft.item.Item;
  */
 public class ItemModelMesherForge extends ItemModelMesher
 {
-    IdentityHashMap<Item, TIntObjectHashMap<ModelResourceLocation>> locations = Maps.newIdentityHashMap();
-    IdentityHashMap<Item, TIntObjectHashMap<IBakedModel>> models = Maps.newIdentityHashMap();
+    final Map<Item, Int2ObjectMap<ModelResourceLocation>> locations = Maps.newIdentityHashMap();
+    final Map<Item, Int2ObjectMap<IBakedModel>> models = Maps.newIdentityHashMap();
 
     public ItemModelMesherForge(ModelManager manager)
     {
@@ -28,22 +27,22 @@ public class ItemModelMesherForge extends ItemModelMesher
 
     protected IBakedModel getItemModel(Item item, int meta)
     {
-        TIntObjectHashMap<IBakedModel> map = models.get(item);
+        Int2ObjectMap<IBakedModel> map = models.get(item);
         return map == null ? null : map.get(meta);
     }
 
     public void register(Item item, int meta, ModelResourceLocation location)
     {
-        TIntObjectHashMap<ModelResourceLocation> locs = locations.get(item);
-        TIntObjectHashMap<IBakedModel>           mods = models.get(item);
+        Int2ObjectMap<ModelResourceLocation> locs = locations.get(item);
+        Int2ObjectMap<IBakedModel>           mods = models.get(item);
         if (locs == null)
         {
-            locs = new TIntObjectHashMap<ModelResourceLocation>();
+            locs = new Int2ObjectOpenHashMap<>();
             locations.put(item, locs);
         }
         if (mods == null)
         {
-            mods = new TIntObjectHashMap<IBakedModel>();
+            mods = new Int2ObjectOpenHashMap<>();
             models.put(item, mods);
         }
         locs.put(meta, location);
@@ -53,28 +52,22 @@ public class ItemModelMesherForge extends ItemModelMesher
     public void rebuildCache()
     {
         final ModelManager manager = this.getModelManager();
-        for (Map.Entry<Item, TIntObjectHashMap<ModelResourceLocation>> e : locations.entrySet())
+        for (Map.Entry<Item, Int2ObjectMap<ModelResourceLocation>> e : locations.entrySet())
         {
-            TIntObjectHashMap<IBakedModel> mods = models.get(e.getKey());
+            Int2ObjectMap<IBakedModel> mods = models.get(e.getKey());
             if (mods != null)
             {
                 mods.clear();
             }
             else
             {
-                mods = new TIntObjectHashMap<IBakedModel>();
+                mods = new Int2ObjectOpenHashMap<>();
                 models.put(e.getKey(), mods);
             }
-            final TIntObjectHashMap<IBakedModel> map = mods;
-            e.getValue().forEachEntry(new TIntObjectProcedure<ModelResourceLocation>()
-            {
-                @Override
-                public boolean execute(int meta, ModelResourceLocation location)
-                {
-                    map.put(meta, manager.getModel(location));
-                    return true;
-                }
-            });
+            final Int2ObjectMap<IBakedModel> map = mods;
+            for (Int2ObjectMap.Entry<ModelResourceLocation> entry : e.getValue().int2ObjectEntrySet()) {
+                map.put(entry.getIntKey(), manager.getModel(entry.getValue()));
+            }
         }
     }
 }
