@@ -1,5 +1,7 @@
 package net.minecraftforge.fml.common.patcher;
 
+import io.pack200.Pack200;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -11,7 +13,6 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
 import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.Level;

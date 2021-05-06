@@ -3,6 +3,7 @@ package net.minecraftforge.common.util;
 import java.lang.reflect.*;
 import java.util.*;
 
+import com.google.common.base.Throwables;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
@@ -20,6 +21,7 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import sun.misc.Unsafe;
 
 public class EnumHelper
 {
@@ -29,6 +31,7 @@ public class EnumHelper
     private static Method newFieldAccessor       = null;
     private static Method fieldAccessorSet       = null;
     private static boolean isSetup               = false;
+    private static Unsafe unsafe;
 
     //Some enums are decompiled with extra arguments, so lets check for that
     @SuppressWarnings("rawtypes")
@@ -112,12 +115,7 @@ public class EnumHelper
 
         try
         {
-            Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
-            reflectionFactory      = getReflectionFactory.invoke(null);
-            newConstructorAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newConstructorAccessor", Constructor.class);
-            newInstance            = Class.forName("sun.reflect.ConstructorAccessor").getDeclaredMethod("newInstance", Object[].class);
-            newFieldAccessor       = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", Field.class, boolean.class);
-            fieldAccessorSet       = Class.forName("sun.reflect.FieldAccessor").getDeclaredMethod("set", Object.class, Object.class);
+
         }
         catch (Exception e)
         {
@@ -152,12 +150,9 @@ public class EnumHelper
 
     public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
     {
-        field.setAccessible(true);
-        Field modifiersField = Field.class.getDeclaredField("modifiers");
-        modifiersField.setAccessible(true);
-        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-        Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
-        fieldAccessorSet.invoke(fieldAccessor, target, value);
+        Object base = unsafe.staticFieldBase(field);
+        long offset = unsafe.staticFieldOffset(field);
+        unsafe.putObject(base, offset, value);
     }
 
     private static void blankField(Class<?> enumClass, String fieldName) throws Exception
@@ -276,6 +271,14 @@ public class EnumHelper
 
     static
     {
+        try {
+            Field unsafeField = Unsafe.class.getDeclaredField("theUnsafe");
+            unsafeField.setAccessible(true);
+            unsafe = (Unsafe) unsafeField.get(null);
+        } catch (Exception e) {
+            Throwables.propagate(e);
+        }
+
         if (!isSetup)
         {
             setup();
