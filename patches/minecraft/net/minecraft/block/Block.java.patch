@@ -188,7 +188,7 @@
      }
  
      protected ItemStack func_180643_i(IBlockState p_180643_1_)
-@@ -1010,6 +1030,1147 @@
+@@ -1010,6 +1030,1142 @@
          return "Block{" + field_149771_c.func_177774_c(this) + "}";
      }
  
@@ -198,7 +198,7 @@
 +    private ThreadLocal<IBlockState> silk_check_state = new ThreadLocal();
 +    protected static java.util.Random RANDOM = new java.util.Random(); // Useful for random things without a seed.
 +    /**
-+     * Get a light value for the block at the specified coordinates, normal ranges are between 0 and 15
++     * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
 +     *
 +     * @param world The current world
 +     * @param pos Block position in world
@@ -206,11 +206,6 @@
 +     */
 +    public int getLightValue(IBlockAccess world, BlockPos pos)
 +    {
-+        Block block = world.func_180495_p(pos).func_177230_c();
-+        if (block != this)
-+        {
-+            return block.getLightValue(world, pos);
-+        }
 +        return func_149750_m();
 +    }
 +
