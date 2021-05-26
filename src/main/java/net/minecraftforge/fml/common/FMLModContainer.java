@@ -14,6 +14,7 @@ package net.minecraftforge.fml.common;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -253,7 +254,9 @@ public class FMLModContainer implements ModContainer
                 if (versionFile != null)
                 {
                     version = new Properties();
-                    version.load(source.getInputStream(versionFile));
+                    try (InputStream sourceInputStream = source.getInputStream(versionFile)) {
+                        version.load(sourceInputStream);
+                    }
                 }
                 source.close();
             }
@@ -263,9 +266,9 @@ public class FMLModContainer implements ModContainer
                 if (propsFile.exists() && propsFile.isFile())
                 {
                     version = new Properties();
-                    FileInputStream fis = new FileInputStream(propsFile);
-                    version.load(fis);
-                    fis.close();
+                    try (FileInputStream fis = new FileInputStream(propsFile)) {
+                        version.load(fis);
+                    }
                 }
             }
             return version;

@@ -17,6 +17,7 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -448,11 +449,11 @@ public class CoreModManager {
             try
             {
                 Files.createParentDirs(target);
-                FileOutputStream targ = new FileOutputStream(target);
-                ByteStreams.copy(jar.getInputStream(jarEntry), targ);
-                targ.close();
-            } catch (IOException e)
-            {
+                try (FileOutputStream targetOutputStream = new FileOutputStream(target);
+                     InputStream jarInputStream = jar.getInputStream(jarEntry)) {
+                    ByteStreams.copy(jarInputStream, targetOutputStream);
+                }
+            } catch (IOException e) {
                 FMLRelaunchLog.log(Level.ERROR, e, "An error occurred extracting dependency");
                 continue;
             }

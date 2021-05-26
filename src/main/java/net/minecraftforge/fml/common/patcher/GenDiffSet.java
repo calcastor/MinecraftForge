@@ -2,6 +2,7 @@ package net.minecraftforge.fml.common.patcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -11,6 +12,7 @@ import java.util.jar.JarFile;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.repackage.com.nothome.delta.Delta;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
@@ -20,6 +22,8 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
+
+import javax.annotation.Nullable;
 
 public class GenDiffSet {
 
@@ -60,7 +64,7 @@ public class GenDiffSet {
                 String targetClassName = remapper.map(name).replace('/', '.');
                 JarEntry entry = sourceZip.getJarEntry(jarName);
 
-                byte[] vanillaBytes = entry != null ? ByteStreams.toByteArray(sourceZip.getInputStream(entry)) : new byte[0];
+                byte[] vanillaBytes = toByteArray(sourceZip, entry);
                 byte[] patchedBytes = Files.toByteArray(targetFile);
 
                 byte[] diff = delta.compute(vanillaBytes, patchedBytes);
@@ -96,6 +100,18 @@ public class GenDiffSet {
             }
         }
         sourceZip.close();
+    }
+
+    private static byte[] toByteArray(JarFile sourceZip, @Nullable JarEntry entry) throws IOException {
+        if (entry == null) {
+            return new byte[0];
+        }
+        InputStream sourceZipInputStream = sourceZip.getInputStream(entry);
+        try {
+            return ByteStreams.toByteArray(sourceZipInputStream);
+        } finally {
+            IOUtils.closeQuietly(sourceZipInputStream);
+        }
     }
 
 }

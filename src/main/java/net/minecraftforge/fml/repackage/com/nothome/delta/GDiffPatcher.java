@@ -75,10 +75,9 @@ public class GDiffPatcher {
     public void patch(File sourceFile, File patchFile, File outputFile)
 		throws IOException
 	{
-        RandomAccessFileSeekableSource source =new RandomAccessFileSeekableSource(new RandomAccessFile(sourceFile, "r"));
-        InputStream patch = new FileInputStream(patchFile);
-        OutputStream output = new FileOutputStream(outputFile);
-        try {
+        RandomAccessFileSeekableSource source = new RandomAccessFileSeekableSource(new RandomAccessFile(sourceFile, "r"));
+        try (InputStream patch = new FileInputStream(patchFile);
+                OutputStream output = new FileOutputStream(outputFile)) {
             patch(source, patch, output);
         } catch (IOException e) {
             throw e;
@@ -87,6 +86,7 @@ public class GDiffPatcher {
             patch.close();
             output.close();
         }
+        source.close();
     }
 
     /**

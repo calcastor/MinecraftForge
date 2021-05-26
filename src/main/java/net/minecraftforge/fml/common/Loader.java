@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,6 +51,7 @@ import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 
 import com.google.common.base.CharMatcher;
@@ -195,7 +197,12 @@ public class Loader
         }
 
         minecraft = new MinecraftDummyContainer(MC_VERSION);
-        mcp = new MCPDummyContainer(MetadataCollection.from(getClass().getResourceAsStream("/mcpmod.info"), "MCP").getMetadataForId("mcp", null));
+        InputStream mcpModInputStream = getClass().getResourceAsStream("/mcpmod.info");
+        try {
+            mcp = new MCPDummyContainer(MetadataCollection.from(mcpModInputStream, "MCP").getMetadataForId("mcp", null));
+        } finally {
+            IOUtils.closeQuietly(mcpModInputStream);
+        }
     }
 
     /**

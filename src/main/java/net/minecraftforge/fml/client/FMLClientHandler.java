@@ -119,6 +119,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import org.apache.commons.io.IOUtils;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -275,10 +276,15 @@ public class FMLClientHandler implements IFMLSidedHandler
         {
             Class<?> optifineConfig = Class.forName("Config", false, Loader.instance().getModClassLoader());
             String optifineVersion = (String) optifineConfig.getField("VERSION").get(null);
-            Map<String,Object> dummyOptifineMeta = ImmutableMap.<String,Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
-            ModMetadata optifineMetadata = MetadataCollection.from(getClass().getResourceAsStream("optifinemod.info"),"optifine").getMetadataForId("optifine", dummyOptifineMeta);
-            optifineContainer = new DummyModContainer(optifineMetadata);
-            FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features",optifineContainer.getVersion());
+            Map<String, Object> dummyOptifineMeta = ImmutableMap.<String, Object>builder().put("name", "Optifine").put("version", optifineVersion).build();
+            InputStream optifineModInfoInputStream = getClass().getResourceAsStream("optifinemod.info");
+            try {
+                ModMetadata optifineMetadata = MetadataCollection.from(optifineModInfoInputStream, "optifine").getMetadataForId("optifine", dummyOptifineMeta);
+                optifineContainer = new DummyModContainer(optifineMetadata);
+                FMLLog.info("Forge Mod Loader has detected optifine %s, enabling compatibility features", optifineContainer.getVersion());
+            } finally {
+                IOUtils.closeQuietly(optifineModInfoInputStream);
+            }
         }
         catch (Exception e)
         {

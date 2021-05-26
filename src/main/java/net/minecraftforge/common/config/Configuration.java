@@ -41,6 +41,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
 
+import org.apache.commons.io.IOUtils;
+
 /**
  * This class offers advanced configurations capabilities, allowing to provide
  * various categories for configuration variables.
@@ -1032,20 +1034,8 @@ public class Configuration
         }
         finally
         {
-            if (buffer != null)
-            {
-                try
-                {
-                    buffer.close();
-                } catch (IOException e){}
-            }
-            if (input != null)
-            {
-                try
-                {
-                    input.close();
-                } catch (IOException e){}
-            }
+            IOUtils.closeQuietly(buffer);
+            IOUtils.closeQuietly(input);
         }
 
         resetChangedState();
