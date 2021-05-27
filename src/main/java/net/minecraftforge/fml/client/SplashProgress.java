@@ -265,8 +265,7 @@ public class SplashProgress {
                     glDisable(GL_TEXTURE_2D);
 
                     // memory usage
-                    if (showMemory)
-                    {
+                    if (showMemory) {
                         glPushMatrix();
                         glTranslatef(320 - (float) barWidth / 2, 20, 0);
                         drawMemoryBar();
@@ -386,7 +385,6 @@ public class SplashProgress {
                 int freeMemory = bytesToMb(Runtime.getRuntime().freeMemory());
                 int usedMemory = totalMemory - freeMemory;
                 float usedMemoryPercent = usedMemory / (float) maxMemory;
-
                 glPushMatrix();
                 // title - message
                 setColor(fontColor);
@@ -405,7 +403,6 @@ public class SplashProgress {
                 glTranslatef(1, 1, 0);
                 drawBox(barWidth - 2, barHeight - 2);
                 // slidy part
-
                 long time = System.currentTimeMillis();
                 if (usedMemoryPercent > memoryColorPercent || (time - memoryColorChangeTime > 1000)) {
                     memoryColorChangeTime = time;
@@ -436,8 +433,7 @@ public class SplashProgress {
                 glPopMatrix();
             }
 
-            private String getMemoryString(int memory)
-            {
+            private String getMemoryString(int memory) {
                 return StringUtils.leftPad(Integer.toString(memory), 4, ' ') + " MB";
             }
 

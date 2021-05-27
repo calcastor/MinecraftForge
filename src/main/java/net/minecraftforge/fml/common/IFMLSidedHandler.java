@@ -43,6 +43,8 @@ public interface IFMLSidedHandler
 
     MinecraftServer getServer();
 
+    boolean isDisplayCloseRequested();
+
     boolean shouldServerShouldBeKilledQuietly();
 
     void addModAsResource(ModContainer container);

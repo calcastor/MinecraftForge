@@ -430,10 +430,13 @@ public class FMLCommonHandler
         if (!confirmed) StartupQuery.abort();
     }
 
-    public boolean shouldServerBeKilledQuietly()
+    public boolean isDisplayCloseRequested()
     {
-        if (sidedDelegate == null)
-        {
+        return sidedDelegate != null && sidedDelegate.isDisplayCloseRequested();
+    }
+
+    public boolean shouldServerBeKilledQuietly() {
+        if (sidedDelegate == null) {
             return false;
         }
         return sidedDelegate.shouldServerShouldBeKilledQuietly();
