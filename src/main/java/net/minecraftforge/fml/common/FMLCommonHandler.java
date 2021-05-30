@@ -430,8 +430,7 @@ public class FMLCommonHandler
         if (!confirmed) StartupQuery.abort();
     }
 
-    public boolean isDisplayCloseRequested()
-    {
+    public boolean isDisplayCloseRequested() {
         return sidedDelegate != null && sidedDelegate.isDisplayCloseRequested();
     }
 
