@@ -66,6 +66,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
@@ -105,8 +106,11 @@ public class ModelLoader extends ModelBakery
     }
 
     @Override
-    public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
-    {
+    public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry() {
+
+        if (FMLClientHandler.instance().hasError()) // skip loading models if we're just going to show a fatal error screen
+            return bakedRegistry;
+
         isLoading = true;
         loadBlocks();
         loadItems();

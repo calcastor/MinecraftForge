@@ -1395,14 +1395,13 @@ public class Configuration
      * @param newPropName the new property name
      * @return true if the category and property exist, false otherwise
      */
-    public boolean renameProperty(String category, String oldPropName, String newPropName)
-    {
-        if (hasCategory(category))
-        {
-            if (getCategory(category).containsKey(oldPropName) && !oldPropName.equalsIgnoreCase(newPropName))
-            {
-                get(category, newPropName, getCategory(category).get(oldPropName).getString(), "");
-                getCategory(category).remove(oldPropName);
+    public boolean renameProperty(String category, String oldPropName, String newPropName) {
+        if (hasCategory(category)) {
+            ConfigCategory cat = getCategory(category);
+            if (cat.containsKey(oldPropName) && !oldPropName.equalsIgnoreCase(newPropName)) {
+                Property prop = cat.remove(oldPropName);
+                prop.setName(newPropName);
+                cat.put(newPropName, prop);
                 return true;
             }
         }
