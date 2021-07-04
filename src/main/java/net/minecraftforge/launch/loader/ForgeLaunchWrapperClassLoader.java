@@ -1,10 +1,7 @@
 package net.minecraftforge.launch.loader;
 
-import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.launchwrapper.utils.Classpath;
 import net.minecraftforge.launch.loader.transformer.ForgeTransformer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -14,10 +11,8 @@ import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 public class ForgeLaunchWrapperClassLoader extends URLClassLoader {
     private final ClassLoader parent = getClass().getClassLoader();
@@ -194,8 +189,8 @@ public class ForgeLaunchWrapperClassLoader extends URLClassLoader {
         Class<?> mixinServiceLaunchWrapperTransformer = Class.forName("net.minecraftforge.patching.MixinServiceLaunchWrapperTransformer", true, this);
         Class<?> invokeDynamicTransformer = Class.forName("net.minecraftforge.patching.InvokeDynamicTransformer", true, this);
         Class<?> classReaderTransformer = Class.forName("net.minecraftforge.patching.ClassReaderTransformer", true, this);
-        Class<?> mixinConstantTransformer = Class.forName("net.minecraftforge.patching.MixinConstantUtilNPE", true, this);
-        Class<?> mixinDoubleTransformer = Class.forName("net.minecraftforge.patching.MixinDoubleMadness", true, this);
+        Class<?> mixinConstantTransformer = Class.forName("net.minecraftforge.patching.MixinConstantTransformer", true, this);
+        Class<?> mixinDoubleTransformer = Class.forName("net.minecraftforge.patching.MixinJavaVersionTransformer", true, this);
         addTransformer((ForgeTransformer) mixinServiceLaunchWrapperTransformer.newInstance());
         addTransformer((ForgeTransformer) invokeDynamicTransformer.newInstance());
         addTransformer((ForgeTransformer) classReaderTransformer.newInstance());

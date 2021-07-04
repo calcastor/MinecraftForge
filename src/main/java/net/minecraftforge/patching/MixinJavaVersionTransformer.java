@@ -12,30 +12,25 @@ import org.objectweb.asm.util.*;
 
 import java.util.ListIterator;
 
-public class MixinConstantUtilNPE implements ForgeTransformer {
+public class MixinJavaVersionTransformer implements ForgeTransformer {
     @Override
     public byte[] transform(String name, byte[] bytes) {
-        if (name.equals("org.spongepowered.asm.util.Constants")) {
+        if (name.equals("org.spongepowered.asm.util.JavaVersion")) {
             ClassReader reader = new ClassReader(bytes);
             ClassNode classNode = new ClassNode();
 
             reader.accept(classNode, ClassReader.EXPAND_FRAMES);
 
             for (MethodNode methodNode : classNode.methods) {
-                if (methodNode.name.equals("<clinit>")) {
+                if (methodNode.name.equals("resolveCurrentVersion")) {
                     InsnList list = methodNode.instructions;
                     ListIterator<AbstractInsnNode> nodeIterator = list.iterator();
                     while (nodeIterator.hasNext()) {
                         AbstractInsnNode insnNode = nodeIterator.next();
 
-                        if (insnNode instanceof LdcInsnNode && ((LdcInsnNode) insnNode).cst instanceof Type) {
-                            if (((Type)((LdcInsnNode) insnNode).cst).getInternalName().equals("org/spongepowered/asm/mixin/Mixin")) {
-                                AbstractInsnNode invokePackage = insnNode.getNext();
-                                AbstractInsnNode invokeName = invokePackage.getNext();
-
-                                list.set(insnNode, new LdcInsnNode("org.spongepowered.asm.mixin.Mixin"));
-                                list.remove(invokePackage);
-                                list.remove(invokeName);
+                        if (insnNode instanceof LdcInsnNode && ((LdcInsnNode) insnNode).cst instanceof String) {
+                            if (((LdcInsnNode) insnNode).cst.equals("[0-9]+\\.[0-9]+")) {
+                                list.set(insnNode, new LdcInsnNode("^.?.?(?<=\\.|^)([0-9]+)"));
                                 break;
                             }
                         }
@@ -45,7 +40,6 @@ public class MixinConstantUtilNPE implements ForgeTransformer {
 
             ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
             classNode.accept(writer);
-
             return writer.toByteArray();
         }
 
