@@ -16,6 +16,9 @@ import java.io.*;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.util.*;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
