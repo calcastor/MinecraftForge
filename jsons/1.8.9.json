@@ -15,10 +15,10 @@
       "name": "net.java.dev.jna:platform:3.4.0"
     },
     {
-      "name": "com.ibm.icu:icu4j-core-mojang:51.2"
+      "name": "com.ibm.icu:icu4j:69.1"
     },
     {
-      "name": "net.sf.jopt-simple:jopt-simple:4.6"
+      "name": "net.sf.jopt-simple:jopt-simple:5.0.4"
     },
     {
       "name": "com.paulscode:codecjorbis:20101023"
@@ -36,19 +36,20 @@
       "name": "com.paulscode:soundsystem:20120107"
     },
     {
-      "name": "io.netty:netty-all:4.0.23.Final"
+      "name": "io.netty:netty-all:4.0.56.Final",
+      "url" : "https://repo.maven.apache.org/maven2"
     },
     {
       "name": "com.google.guava:guava:17.0"
     },
     {
-      "name": "org.apache.commons:commons-lang3:3.3.2"
+      "name": "org.apache.commons:commons-lang3:3.5"
     },
     {
-      "name": "commons-io:commons-io:2.4"
+      "name": "commons-io:commons-io:2.5"
     },
     {
-      "name": "commons-codec:commons-codec:1.9"
+      "name": "commons-codec:commons-codec:1.10"
     },
     {
       "name": "net.java.jinput:jinput:2.0.5"
@@ -57,7 +58,7 @@
       "name": "net.java.jutils:jutils:1.0.0"
     },
     {
-      "name": "com.google.code.gson:gson:2.2.4"
+      "name": "com.google.code.gson:gson:2.8.0"
     },
     {
       "name": "com.mojang:authlib:1.5.21"
@@ -78,10 +79,10 @@
       "name": "org.apache.httpcomponents:httpcore:4.3.2"
     },
     {
-      "name": "org.apache.logging.log4j:log4j-api:2.8.1"
+      "name": "org.apache.logging.log4j:log4j-api:2.15.0"
     },
     {
-      "name": "org.apache.logging.log4j:log4j-core:2.8.1"
+      "name": "org.apache.logging.log4j:log4j-core:2.15.0"
     },
     {
       "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
