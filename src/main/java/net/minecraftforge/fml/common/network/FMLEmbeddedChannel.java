@@ -70,8 +70,8 @@ public class FMLEmbeddedChannel extends EmbeddedChannel {
 
     public void cleanAttributes()
     {
-        this.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(null);
-        this.attr(NetworkRegistry.NET_HANDLER).set(null);
-        this.attr(NetworkDispatcher.FML_DISPATCHER).set(null);
+        this.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).remove();
+        this.attr(NetworkRegistry.NET_HANDLER).remove();
+        this.attr(NetworkDispatcher.FML_DISPATCHER).remove();
     }
 }
