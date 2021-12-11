@@ -81,8 +81,8 @@
              }
              catch (IOException ioexception1)
              {
--                field_147635_d.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
-+                //logger.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
+-                field_147635_d.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                //logger.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation1);
                  continue;
              }
