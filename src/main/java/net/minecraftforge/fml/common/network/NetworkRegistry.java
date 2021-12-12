@@ -132,7 +132,7 @@ public enum NetworkRegistry
      * a utility codec, {@link FMLIndexedMessageToMessageCodec} that transforms from {@link FMLProxyPacket} to a mod
      * message using a message discriminator byte. This is optional, but highly recommended for use.
      *
-     * Note also that the handlers supplied need to be {@link ChannelHandler.Shareable} - they are injected into two
+     * Note also that the handlers supplied need to be {@link ChannelHandler.Sharable} - they are injected into two
      * channels.
      *
      * @param name
@@ -300,6 +300,7 @@ public enum NetworkRegistry
         }
         return result;
     }
+
     public Map<ModContainer,NetworkModHolder> registry()
     {
         return ImmutableMap.copyOf(registry);

@@ -188,6 +188,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
                 {
                     completeServerSideConnection(ConnectionType.MODDED);
                 }
+                // FORGE: sometimes the netqueue will tick while login is occurring, causing an NPE. We shouldn't tick until the connection is complete
+                if (this.playerEntity.playerNetServerHandler != this) return;
                 super.update();
             }
         };
@@ -205,7 +207,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             int dimension = playerNBT.getInteger("Dimension");
             if (DimensionManager.isDimensionRegistered(dimension))
             {
-        	    return dimension;
+                return dimension;
             }
         }
         return 0;
@@ -466,11 +468,11 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     {
         if (side == Side.CLIENT)
         {
-        	MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ClientDisconnectionFromServerEvent(manager));
+            MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ClientDisconnectionFromServerEvent(manager));
         }
         else
         {
-        	MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
+            MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
         }
         cleanAttributes(ctx);
         ctx.disconnect(promise);
@@ -485,7 +487,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         }
         else
         {
-        	MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
+            MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerDisconnectionFromClientEvent(manager));
         }
         cleanAttributes(ctx);
         ctx.close(promise);
@@ -636,7 +638,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
             {
                 throw new IOException("Received FML MultiPart packet out of order, Expected " + part_expected + " Got " + part);
             }
-            int len = input.readableBytes() - 1;
+            int len = input.readableBytes();
             input.readBytes(data, offset, len);
             part_expected++;
             offset += len;
