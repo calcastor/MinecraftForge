@@ -55,6 +55,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
@@ -597,6 +598,11 @@ public class FMLCommonHandler
     public boolean shouldAllowPlayerLogins()
     {
         return sidedDelegate.shouldAllowPlayerLogins();
+    }
+
+    public void fireServerConnectionEvent(NetworkManager manager)
+    {
+        bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
     }
 
     /**

@@ -280,8 +280,10 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
         }
         for (NetworkDispatcher targetDispatcher : dispatchers)
         {
-            targetDispatcher.sendProxy((FMLProxyPacket) msg);
+            pkt.payload().retain();
+            targetDispatcher.sendProxy(pkt);
         }
+        pkt.payload().release();
     }
 
 }

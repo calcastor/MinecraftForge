@@ -132,7 +132,7 @@ public enum NetworkRegistry
      * a utility codec, {@link FMLIndexedMessageToMessageCodec} that transforms from {@link FMLProxyPacket} to a mod
      * message using a message discriminator byte. This is optional, but highly recommended for use.
      *
-     * Note also that the handlers supplied need to be {@link ChannelHandler.Shareable} - they are injected into two
+     * Note also that the handlers supplied need to be {@link ChannelHandler.Sharable} - they are injected into two
      * channels.
      *
      * @param name
@@ -300,6 +300,7 @@ public enum NetworkRegistry
         }
         return result;
     }
+
     public Map<ModContainer,NetworkModHolder> registry()
     {
         return ImmutableMap.copyOf(registry);
@@ -323,11 +324,16 @@ public enum NetworkRegistry
     public void fireNetworkHandshake(NetworkDispatcher networkDispatcher, Side origin)
     {
         NetworkHandshakeEstablished handshake = new NetworkHandshakeEstablished(networkDispatcher, networkDispatcher.getNetHandler(), origin);
-        for (Entry<String, FMLEmbeddedChannel> channel : channels.get(origin).entrySet())
+        for (FMLEmbeddedChannel channel : channels.get(origin).values())
         {
-            channel.getValue().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.DISPATCHER);
-            channel.getValue().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(networkDispatcher);
-            channel.getValue().pipeline().fireUserEventTriggered(handshake);
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.DISPATCHER);
+            channel.attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(networkDispatcher);
+            channel.pipeline().fireUserEventTriggered(handshake);
         }
+    }
+
+    public void cleanAttributes()
+    {
+        channels.values().forEach(map -> map.values().forEach(FMLEmbeddedChannel::cleanAttributes));
     }
 }

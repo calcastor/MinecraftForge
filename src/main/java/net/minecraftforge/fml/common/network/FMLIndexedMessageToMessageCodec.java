@@ -14,6 +14,7 @@ import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
 import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteMap;
 import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
@@ -21,7 +22,8 @@ import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import org.apache.logging.log4j.Level;
 
 @Sharable
-public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessageCodec<FMLProxyPacket, A> {
+public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessageCodec<FMLProxyPacket, A>
+{
     private final Byte2ObjectMap<Class<? extends A>> discriminators = new Byte2ObjectOpenHashMap<>();
     private final Object2ByteMap<Class<? extends A>> types = new Object2ByteOpenHashMap<>();
 
@@ -46,16 +48,21 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     }
 
     public abstract void encodeInto(ChannelHandlerContext ctx, A msg, ByteBuf target) throws Exception;
+
     @Override
     protected final void encode(ChannelHandlerContext ctx, A msg, List<Object> out) throws Exception
     {
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        @SuppressWarnings("unchecked") // Stupid unnecessary cast I can't seem to kill
-        Class<? extends A> clazz = (Class<? extends A>) msg.getClass();
+        String channel = ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get();
+        Class<?> clazz = msg.getClass();
+        if (!types.containsKey(clazz))
+        {
+            throw new RuntimeException("Undefined discriminator for message type " + clazz.getName() + " in channel " + channel);
+        }
         byte discriminator = types.getByte(clazz);
+        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
-        FMLProxyPacket proxy = new FMLProxyPacket(buffer, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
+        FMLProxyPacket proxy = new FMLProxyPacket(buffer, channel);
         WeakReference<FMLProxyPacket> ref = ctx.attr(INBOUNDPACKETTRACKER).get().get();
         FMLProxyPacket old = ref == null ? null : ref.get();
         if (old != null)
@@ -86,6 +93,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         ctx.attr(INBOUNDPACKETTRACKER).get().set(new WeakReference<FMLProxyPacket>(msg));
         decodeInto(ctx, payload.slice(), newMsg);
         out.add(newMsg);
+        payload.release();
     }
 
     /**
