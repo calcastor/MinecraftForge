@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 import java.util.Iterator;
 
 public class InvokeDynamicTransformer implements ForgeTransformer {
-    private final String[] exclusions = new String[]{"jdk.internal.", "org.objectweb.", "org.apache.logging.", "com.google.", "net.minecraftforge."};
+    private final String[] exclusions = new String[]{"jdk.internal.", "org.objectweb.", "org.apache.logging.", "com.google.", "net.minecraftforge.", "org.apache.http.", "gg.essential.lib.guava21.base.", "gg.essential.lib.guava21.collect."};
 
     @Override
     public byte[] transform(String name, byte[] bytes) {
