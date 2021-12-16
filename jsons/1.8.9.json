@@ -36,8 +36,7 @@
       "name": "com.paulscode:soundsystem:20120107"
     },
     {
-      "name": "io.netty:netty-all:4.0.56.Final",
-      "url" : "https://repo.maven.apache.org/maven2"
+      "name": "io.netty:netty-all:4.0.23.Final"
     },
     {
       "name": "com.google.guava:guava:17.0"
@@ -79,10 +78,12 @@
       "name": "org.apache.httpcomponents:httpcore:4.3.2"
     },
     {
-      "name": "org.apache.logging.log4j:log4j-api:2.15.0"
+      "name": "org.apache.logging.log4j:log4j-api:2.16.0",
+      "url" : "https://repo.maven.apache.org/maven2"
     },
     {
-      "name": "org.apache.logging.log4j:log4j-core:2.15.0"
+      "name": "org.apache.logging.log4j:log4j-core:2.16.0",
+      "url" : "https://repo.maven.apache.org/maven2"
     },
     {
       "name": "org.lwjgl.lwjgl:lwjgl:2.9.4-nightly-20150209",
