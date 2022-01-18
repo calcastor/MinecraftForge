@@ -26,9 +26,8 @@
       "url": "https://maven.minecraftforge.net/"
     },
     {
-      "name": "com.github.calcastor:LegacyLauncher:f30fde7449",
-      "url": "https://jitpack.io/",
-      "serverreq": true
+      "name": "net.minecraft:launchwrapper:1.12",
+      "serverreq":true
     },
     {
       "name": "org.ow2.asm:asm-all:5.2",

@@ -49,7 +49,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
-            boolean isVanilla = msg == null;
+            boolean isVanilla = true;
             if (isVanilla)
             {
                 cons.accept(DONE);
