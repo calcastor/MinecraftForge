@@ -74,15 +74,15 @@
              }
              catch (RuntimeException runtimeexception)
              {
--                field_147635_d.error((String)("Unable to parse metadata from " + resourcelocation1), (Throwable)runtimeexception);
-+                //logger.error((String)("Unable to parse metadata from " + resourcelocation1), (Throwable)runtimeexception);
+-                field_147635_d.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
++                //logger.error("Unable to parse metadata from " + resourcelocation1, runtimeexception);
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation1, runtimeexception.getMessage());
                  continue;
              }
              catch (IOException ioexception1)
              {
--                field_147635_d.error((String)("Using missing texture, unable to load " + resourcelocation1), (Throwable)ioexception1);
-+                //logger.error((String)("Using missing texture, unable to load " + resourcelocation1), (Throwable)ioexception1);
+-                field_147635_d.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
++                //logger.error("Using missing texture, unable to load " + resourcelocation1, ioexception1);
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().trackMissingTexture(resourcelocation1);
                  continue;
              }
