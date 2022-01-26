@@ -2,6 +2,7 @@ package net.minecraftforge.server.console;
 
 import static jline.TerminalFactory.OFF;
 import static jline.console.ConsoleReader.RESET_LINE;
+import static org.apache.logging.log4j.core.helpers.Booleans.parseBoolean;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -66,10 +67,10 @@ public class TerminalConsoleAppender extends AbstractAppender
         }
         if (layout == null)
         {
-            layout = PatternLayout.newBuilder().build();
+            layout = PatternLayout.createLayout(null, null, null, null, null);
         }
 
-        boolean ignoreExceptions = Boolean.parseBoolean(ignore);
+        boolean ignoreExceptions = parseBoolean(ignore, true);
 
         // This is handled by jline
         System.setProperty("log4j.skipJansi", "true");
