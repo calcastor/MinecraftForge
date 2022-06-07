@@ -60,7 +60,7 @@
              potioneffect.func_100012_b(p_147260_1_.func_149429_c());
              ((EntityLivingBase)entity).func_70690_d(potioneffect);
          }
-@@ -1677,6 +1688,7 @@
+@@ -1666,6 +1677,7 @@
              }
              finally
              {
