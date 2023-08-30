@@ -517,7 +517,7 @@ public class ModelLoader extends ModelBakery
                 newTransforms.add(animation.getPartTransform(state, part, i));
             }
 
-            ItemCameraTransforms transforms = model.func_181682_g();
+            ItemCameraTransforms transforms = model.getAllTransforms();
             boolean uvlock = false;
             if(state instanceof UVLock)
             {
@@ -607,7 +607,7 @@ public class ModelLoader extends ModelBakery
 
             ModelBlock newModel = new ModelBlock(this.model.getParentLocation(), elements,
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
-                model.func_181682_g());
+                model.getAllTransforms());
             newModel.name = this.model.name;
             newModel.parent = this.model.parent;
 
@@ -676,7 +676,7 @@ public class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.func_181682_g());
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.getAllTransforms());
             newModel.parent = model.parent;
             newModel.name = model.name;
             return new VanillaModelWrapper(location, newModel, animation);
@@ -689,7 +689,7 @@ public class ModelLoader extends ModelBakery
             {
                 return this;
             }
-            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.func_181682_g());
+            ModelBlock newModel = new ModelBlock(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.getAllTransforms());
             newModel.parent = model.parent;
             newModel.name = model.name;
             return new VanillaModelWrapper(location, newModel, animation);

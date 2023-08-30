@@ -487,7 +487,7 @@ public class GuiModList extends GuiScreen
                 }
 
                 IChatComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                ret.addAll(GuiUtilRenderComponents.func_178908_a(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
+                ret.addAll(GuiUtilRenderComponents.splitText(chat, this.listWidth-8, GuiModList.this.fontRendererObj, false, true));
             }
             return ret;
         }
