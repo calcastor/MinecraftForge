@@ -14,30 +14,24 @@ import org.apache.logging.log4j.Logger;
 import jline.console.completer.Completer;
 import net.minecraft.server.dedicated.DedicatedServer;
 
-public final class ConsoleCommandCompleter implements Completer
-{
+public final class ConsoleCommandCompleter implements Completer {
 
     private static final Logger logger = LogManager.getLogger();
     private final DedicatedServer server;
 
-    public ConsoleCommandCompleter(DedicatedServer server)
-    {
+    public ConsoleCommandCompleter(DedicatedServer server) {
         this.server = checkNotNull(server, "server");
     }
 
     @Override
-    public int complete(String buffer, int cursor, List<CharSequence> candidates)
-    {
+    public int complete(String buffer, int cursor, List<CharSequence> candidates) {
         int len = buffer.length();
 
         boolean prefix;
-        if (buffer.isEmpty() || buffer.charAt(0) != '/')
-        {
+        if (buffer.isEmpty() || buffer.charAt(0) != '/') {
             buffer = '/' + buffer;
             prefix = false;
-        }
-        else
-        {
+        } else {
             prefix = true;
         }
 
@@ -45,48 +39,33 @@ public final class ConsoleCommandCompleter implements Completer
         Future<List<String>> tabComplete = this.server.callFromMainThread(new Callable<List<String>>() {
 
             @Override
-            public List<String> call() throws Exception
-            {
+            public List<String> call() throws Exception {
                 return ConsoleCommandCompleter.this.server.getTabCompletions(ConsoleCommandCompleter.this.server, input,
                         ConsoleCommandCompleter.this.server.getPosition());
             }
         });
-        try
-        {
+        try {
             List<String> completions = tabComplete.get();
             Collections.sort(completions);
-            if (prefix)
-            {
+            if (prefix) {
                 candidates.addAll(completions);
-            }
-            else
-            {
-                for (String completion : completions)
-                {
+            } else {
+                for (String completion : completions) {
                     candidates.add(completion.charAt(0) == '/' ? completion.substring(1) : completion);
                 }
             }
 
             int pos = buffer.lastIndexOf(' ');
-            if (pos == -1)
-            {
+            if (pos == -1) {
                 return cursor - len;
-            }
-            else if (prefix)
-            {
+            } else if (prefix) {
                 return cursor - len + pos + 1;
-            }
-            else
-            {
+            } else {
                 return cursor - len + pos;
             }
-        }
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-        }
-        catch (ExecutionException e)
-        {
+        } catch (ExecutionException e) {
             logger.error("Failed to tab complete", e);
         }
 

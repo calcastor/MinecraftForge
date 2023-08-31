@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.PACKAGE)
 public @interface API {
     String owner();
+
     String provides();
+
     String apiVersion();
 }

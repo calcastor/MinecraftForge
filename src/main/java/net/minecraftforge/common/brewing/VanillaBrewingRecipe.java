@@ -10,7 +10,7 @@ import net.minecraft.potion.PotionHelper;
 
 /**
  * Used in BrewingRecipeRegistry to maintain the vanilla behaviour.
- *
+ * <p>
  * Most of the code was simply adapted from net.minecraft.tileentity.TileEntityBrewingStand
  */
 public class VanillaBrewingRecipe implements IBrewingRecipe {
@@ -19,8 +19,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isInput(ItemStack stack)
-    {
+    public boolean isInput(ItemStack stack) {
         return stack.getItem() instanceof ItemPotion || stack.getItem() == Items.glass_bottle;
     }
 
@@ -28,8 +27,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isIngredient(ItemStack stack)
-    {
+    public boolean isIngredient(ItemStack stack) {
         return stack.getItem().isPotionIngredient(stack);
     }
 
@@ -39,14 +37,11 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * or if the new potion is a splash potion when the old one wasn't.
      */
     @Override
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient)
-    {
-        if (ingredient != null && input != null && input.getItem() instanceof ItemPotion && isIngredient(ingredient))
-        {
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient) {
+        if (ingredient != null && input != null && input.getItem() instanceof ItemPotion && isIngredient(ingredient)) {
             int inputMeta = input.getMetadata();
             int outputMeta = PotionHelper.applyIngredient(inputMeta, ingredient.getItem().getPotionEffect(ingredient));
-            if (inputMeta == outputMeta)
-            {
+            if (inputMeta == outputMeta) {
                 return null;
             }
 
@@ -54,17 +49,13 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
             List<PotionEffect> newEffects = Items.potionitem.getEffects(outputMeta);
 
             boolean hasResult = false;
-            if ((inputMeta <= 0 || oldEffects != newEffects) && (oldEffects == null || !oldEffects.equals(newEffects) && newEffects != null))
-            {
+            if ((inputMeta <= 0 || oldEffects != newEffects) && (oldEffects == null || !oldEffects.equals(newEffects) && newEffects != null)) {
                 hasResult = true;
-            }
-            else if (!ItemPotion.isSplash(inputMeta) && ItemPotion.isSplash(outputMeta))
-            {
+            } else if (!ItemPotion.isSplash(inputMeta) && ItemPotion.isSplash(outputMeta)) {
                 hasResult = true;
             }
 
-            if (hasResult)
-            {
+            if (hasResult) {
                 ItemStack output = input.copy();
                 output.setItemDamage(outputMeta);
                 return output;

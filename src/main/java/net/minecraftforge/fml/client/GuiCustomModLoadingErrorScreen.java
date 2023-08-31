@@ -14,24 +14,23 @@ package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiErrorScreen;
 
-public class GuiCustomModLoadingErrorScreen extends GuiErrorScreen
-{
+public class GuiCustomModLoadingErrorScreen extends GuiErrorScreen {
     private CustomModLoadingErrorDisplayException customException;
-    public GuiCustomModLoadingErrorScreen(CustomModLoadingErrorDisplayException customException)
-    {
-        super(null,null);
+
+    public GuiCustomModLoadingErrorScreen(CustomModLoadingErrorDisplayException customException) {
+        super(null, null);
         this.customException = customException;
     }
+
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         super.initGui();
         this.buttonList.clear();
         this.customException.initGui(this, fontRendererObj);
     }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         this.customException.drawScreen(this, fontRendererObj, mouseX, mouseY, partialTicks);
     }

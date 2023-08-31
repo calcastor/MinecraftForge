@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -18,28 +18,27 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
 /**
  * Called before the server begins loading anything. Called after {@link FMLPostInitializationEvent} on the dedicated
  * server, and after the player has hit "Play Selected World" in the client. Called before {@link FMLServerStartingEvent}.
- *
+ * <p>
  * You can obtain a reference to the server with this event.
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
+ *
  * @author cpw
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
 public class FMLServerAboutToStartEvent extends FMLStateEvent {
 
     private MinecraftServer server;
 
-    public FMLServerAboutToStartEvent(Object... data)
-    {
+    public FMLServerAboutToStartEvent(Object... data) {
         super(data);
         this.server = (MinecraftServer) data[0];
     }
+
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.AVAILABLE;
     }
 
-    public MinecraftServer getServer()
-    {
+    public MinecraftServer getServer() {
         return server;
     }
 }

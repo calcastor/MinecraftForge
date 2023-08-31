@@ -3,23 +3,19 @@ package net.minecraftforge.client.model.pipeline;
 import net.minecraft.util.MathHelper;
 
 
-public class VertexLighterSmoothAo extends VertexLighterFlat
-{
+public class VertexLighterSmoothAo extends VertexLighterFlat {
     @Override
-    protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
-    {
+    protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z) {
         lightmap[0] = calcLightmap(blockInfo.getBlockLight(), x, y, z);
         lightmap[1] = calcLightmap(blockInfo.getSkyLight(), x, y, z);
     }
 
     @Override
-    protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier)
-    {
-        if(tint != -1)
-        {
-            color[0] *= (float)(multiplier >> 0x10 & 0xFF) / 0xFF;
-            color[1] *= (float)(multiplier >> 0x8 & 0xFF) / 0xFF;
-            color[2] *= (float)(multiplier & 0xFF) / 0xFF;
+    protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier) {
+        if (tint != -1) {
+            color[0] *= (float) (multiplier >> 0x10 & 0xFF) / 0xFF;
+            color[1] *= (float) (multiplier >> 0x8 & 0xFF) / 0xFF;
+            color[2] *= (float) (multiplier & 0xFF) / 0xFF;
         }
         float a = getAo(x, y, z);
         color[0] *= a;
@@ -27,15 +23,13 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         color[2] *= a;
     }
 
-    protected float calcLightmap(float[][][][] light, float x, float y, float z)
-    {
+    protected float calcLightmap(float[][][][] light, float x, float y, float z) {
         x *= 2;
         y *= 2;
         z *= 2;
         float l2 = x * x + y * y + z * z;
-        if(l2 > 6 - 2e-2f)
-        {
-            float s = (float)Math.sqrt((6 - 2e-2f) / l2);
+        if (l2 > 6 - 2e-2f) {
+            float s = (float) Math.sqrt((6 - 2e-2f) / l2);
             x *= s;
             y *= s;
             z *= s;
@@ -44,44 +38,32 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         float ay = y > 0 ? y : -y;
         float az = z > 0 ? z : -z;
         float e1 = 1 + 1e-4f;
-        if(ax > 2 - 1e-4f && ay <= e1 && az <= e1)
-        {
-            if(x > -2 + 1e-4f) x = -2 + 1e-4f;
-            if(x <  2 - 1e-4f) x =  2 - 1e-4f;
-        }
-        else if(ay > 2 - 1e-4f && az <= e1 && ax <= e1)
-        {
-            if(y > -2 + 1e-4f) y = -2 + 1e-4f;
-            if(y <  2 - 1e-4f) y =  2 - 1e-4f;
-        }
-        else if(az > 2 - 1e-4f && ax <= e1 && ay <= e1)
-        {
-            if(z > -2 + 1e-4f) z = -2 + 1e-4f;
-            if(z <  2 - 1e-4f) z =  2 - 1e-4f;
+        if (ax > 2 - 1e-4f && ay <= e1 && az <= e1) {
+            if (x > -2 + 1e-4f) x = -2 + 1e-4f;
+            if (x < 2 - 1e-4f) x = 2 - 1e-4f;
+        } else if (ay > 2 - 1e-4f && az <= e1 && ax <= e1) {
+            if (y > -2 + 1e-4f) y = -2 + 1e-4f;
+            if (y < 2 - 1e-4f) y = 2 - 1e-4f;
+        } else if (az > 2 - 1e-4f && ax <= e1 && ay <= e1) {
+            if (z > -2 + 1e-4f) z = -2 + 1e-4f;
+            if (z < 2 - 1e-4f) z = 2 - 1e-4f;
         }
         ax = x > 0 ? x : -x;
         ay = y > 0 ? y : -y;
         az = z > 0 ? z : -z;
-        if(ax <= e1 && ay + az > 3f - 1e-4f)
-        {
+        if (ax <= e1 && ay + az > 3f - 1e-4f) {
             float s = (3f - 1e-4f) / (ay + az);
             y *= s;
             z *= s;
-        }
-        else if(ay <= e1 && az + ax > 3f - 1e-4f)
-        {
+        } else if (ay <= e1 && az + ax > 3f - 1e-4f) {
             float s = (3f - 1e-4f) / (az + ax);
             z *= s;
             x *= s;
-        }
-        else if(az <= e1 && ax + ay > 3f - 1e-4f)
-        {
+        } else if (az <= e1 && ax + ay > 3f - 1e-4f) {
             float s = (3f - 1e-4f) / (ax + ay);
             x *= s;
             y *= s;
-        }
-        else if(ax + ay + az > 4 - 1e-4f)
-        {
+        } else if (ax + ay + az > 4 - 1e-4f) {
             float s = (4 - 1e-4f) / (ax + ay + az);
             x *= s;
             y *= s;
@@ -91,12 +73,9 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         float l = 0;
         float s = 0;
 
-        for(int ix = 0; ix <= 1; ix++)
-        {
-            for(int iy = 0; iy <= 1; iy++)
-            {
-                for(int iz = 0; iz <= 1; iz++)
-                {
+        for (int ix = 0; ix <= 1; ix++) {
+            for (int iy = 0; iy <= 1; iy++) {
+                for (int iz = 0; iz <= 1; iz++) {
                     float vx = x * (1 - ix * 2);
                     float vy = y * (1 - iy * 2);
                     float vz = z * (1 - iz * 2);
@@ -123,21 +102,20 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
 
         l /= s;
 
-        if(l > 15f * 0x20 / 0xFFFF) l = 15f * 0x20 / 0xFFFF;
-        if(l < 0) l = 0;
+        if (l > 15f * 0x20 / 0xFFFF) l = 15f * 0x20 / 0xFFFF;
+        if (l < 0) l = 0;
 
         return l;
     }
 
-    protected float getAo(float x, float y, float z)
-    {
+    protected float getAo(float x, float y, float z) {
         int sx = x < 0 ? 1 : 2;
         int sy = y < 0 ? 1 : 2;
         int sz = z < 0 ? 1 : 2;
 
-        if(x < 0) x++;
-        if(y < 0) y++;
-        if(z < 0) z++;
+        if (x < 0) x++;
+        if (y < 0) y++;
+        if (z < 0) z++;
 
         float a = 0;
         float[][][] ao = blockInfo.getAo();
@@ -155,8 +133,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
     }
 
     @Override
-    public void updateBlockInfo()
-    {
+    public void updateBlockInfo() {
         blockInfo.updateShift(false);
         blockInfo.updateLightMatrix();
     }

@@ -14,37 +14,32 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
  * If this event is canceled, the entity does not mount/dismount the other entity.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
- *<br>
+ * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
- * 
  */
 
 @Cancelable
-public class EntityMountEvent extends EntityEvent
-{
-    
+public class EntityMountEvent extends EntityEvent {
+
     public final Entity entityMounting;
     public final Entity entityBeingMounted;
     public final World worldObj;
-    
+
     private final boolean isMounting;
 
-    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, World entityWorld, boolean isMounting)
-    {
+    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, World entityWorld, boolean isMounting) {
         super(entityMounting);
         this.entityMounting = entityMounting;
         this.entityBeingMounted = entityBeingMounted;
         this.worldObj = entityWorld;
         this.isMounting = isMounting;
     }
-    
-    public boolean isMounting()
-    {
+
+    public boolean isMounting() {
         return isMounting;
     }
-    
-    public boolean isDismounting()
-    {
+
+    public boolean isDismounting() {
         return !isMounting;
     }
 

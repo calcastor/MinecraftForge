@@ -10,15 +10,13 @@ import net.minecraft.client.audio.SoundManager;
  * If you return null from this function it will prevent the sound from being played,
  * you can return a different entry if you want to change the sound being played.
  */
-public class PlaySoundEvent extends SoundEvent
-{
+public class PlaySoundEvent extends SoundEvent {
     public final String name;
     public final ISound sound;
     public final SoundCategory category;
     public ISound result;
 
-    public PlaySoundEvent(SoundManager manager, ISound sound, SoundCategory category)
-    {
+    public PlaySoundEvent(SoundManager manager, ISound sound, SoundCategory category) {
         super(manager);
         this.sound = sound;
         this.category = category;

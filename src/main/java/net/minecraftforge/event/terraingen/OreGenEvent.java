@@ -1,6 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
+
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.util.BlockPos;
@@ -18,14 +19,12 @@ import net.minecraft.world.gen.feature.WorldGenerator;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
  **/
-public class OreGenEvent extends Event
-{
+public class OreGenEvent extends Event {
     public final World world;
     public final Random rand;
     public final BlockPos pos;
 
-    public OreGenEvent(World world, Random rand, BlockPos pos)
-    {
+    public OreGenEvent(World world, Random rand, BlockPos pos) {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
@@ -42,10 +41,8 @@ public class OreGenEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
      **/
-    public static class Pre extends OreGenEvent
-    {
-        public Pre(World world, Random rand, BlockPos pos)
-        {
+    public static class Pre extends OreGenEvent {
+        public Pre(World world, Random rand, BlockPos pos) {
             super(world, rand, pos);
         }
     }
@@ -61,10 +58,8 @@ public class OreGenEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
      **/
-    public static class Post extends OreGenEvent
-    {
-        public Post(World world, Random rand, BlockPos pos)
-        {
+    public static class Post extends OreGenEvent {
+        public Post(World world, Random rand, BlockPos pos) {
             super(world, rand, pos);
         }
     }
@@ -85,15 +80,13 @@ public class OreGenEvent extends Event
      * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
      **/
     @HasResult
-    public static class GenerateMinable extends OreGenEvent
-    {
-        public static enum EventType { COAL, DIAMOND, DIRT, GOLD, GRAVEL, IRON, LAPIS, REDSTONE, QUARTZ, DIORITE, GRANITE, ANDESITE, EMERALD, SILVERFISH, CUSTOM }
+    public static class GenerateMinable extends OreGenEvent {
+        public static enum EventType {COAL, DIAMOND, DIRT, GOLD, GRAVEL, IRON, LAPIS, REDSTONE, QUARTZ, DIORITE, GRANITE, ANDESITE, EMERALD, SILVERFISH, CUSTOM}
 
         public final EventType type;
         public final WorldGenerator generator;
 
-        public GenerateMinable(World world, Random rand, WorldGenerator generator, BlockPos pos, EventType type)
-        {
+        public GenerateMinable(World world, Random rand, WorldGenerator generator, BlockPos pos, EventType type) {
             super(world, rand, pos);
             this.generator = generator;
             this.type = type;

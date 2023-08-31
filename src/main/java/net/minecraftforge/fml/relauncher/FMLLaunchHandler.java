@@ -21,36 +21,30 @@ import net.minecraftforge.fml.common.launcher.FMLTweaker;
 
 import com.google.common.base.Throwables;
 
-public class FMLLaunchHandler
-{
+public class FMLLaunchHandler {
     private static FMLLaunchHandler INSTANCE;
     static Side side;
     private LaunchClassLoader classLoader;
     private FMLTweaker tweaker;
     private File minecraftHome;
 
-    public static void configureForClientLaunch(LaunchClassLoader loader, FMLTweaker tweaker)
-    {
+    public static void configureForClientLaunch(LaunchClassLoader loader, FMLTweaker tweaker) {
         instance(loader, tweaker).setupClient();
     }
 
-    public static void configureForServerLaunch(LaunchClassLoader loader, FMLTweaker tweaker)
-    {
+    public static void configureForServerLaunch(LaunchClassLoader loader, FMLTweaker tweaker) {
         instance(loader, tweaker).setupServer();
     }
 
-    private static FMLLaunchHandler instance(LaunchClassLoader launchLoader, FMLTweaker tweaker)
-    {
-        if (INSTANCE == null)
-        {
+    private static FMLLaunchHandler instance(LaunchClassLoader launchLoader, FMLTweaker tweaker) {
+        if (INSTANCE == null) {
             INSTANCE = new FMLLaunchHandler(launchLoader, tweaker);
         }
         return INSTANCE;
 
     }
 
-    private FMLLaunchHandler(LaunchClassLoader launchLoader, FMLTweaker tweaker)
-    {
+    private FMLLaunchHandler(LaunchClassLoader launchLoader, FMLTweaker tweaker) {
         this.classLoader = launchLoader;
         this.tweaker = tweaker;
         this.minecraftHome = tweaker.getGameDir();
@@ -65,23 +59,20 @@ public class FMLLaunchHandler
         this.classLoader.addClassLoaderExclusion("LZMA.");
     }
 
-    private void setupClient()
-    {
+    private void setupClient() {
         FMLRelaunchLog.side = Side.CLIENT;
         side = Side.CLIENT;
         setupHome();
     }
 
-    private void setupServer()
-    {
+    private void setupServer() {
         FMLRelaunchLog.side = Side.SERVER;
         side = Side.SERVER;
         setupHome();
 
     }
 
-    private void setupHome()
-    {
+    private void setupHome() {
         FMLInjectionData.build(minecraftHome, classLoader);
         FMLRelaunchLog.minecraftHome = minecraftHome;
         FMLRelaunchLog.info("Forge Mod Loader version %s.%s.%s.%s for Minecraft %s loading", FMLInjectionData.major, FMLInjectionData.minor,
@@ -90,31 +81,25 @@ public class FMLLaunchHandler
         FMLRelaunchLog.fine("Java classpath at launch is %s", System.getProperty("java.class.path"));
         FMLRelaunchLog.fine("Java library path at launch is %s", System.getProperty("java.library.path"));
 
-        try
-        {
+        try {
             CoreModManager.handleLaunch(minecraftHome, classLoader, tweaker);
-        }
-        catch (Throwable t)
-        {
+        } catch (Throwable t) {
             t.printStackTrace();
             FMLRelaunchLog.log(Level.ERROR, t, "An error occurred trying to configure the minecraft home at %s for Forge Mod Loader", minecraftHome.getAbsolutePath());
             throw Throwables.propagate(t);
         }
     }
 
-    public static Side side()
-    {
+    public static Side side() {
         return side;
     }
 
 
-    private void injectPostfixTransformers()
-    {
+    private void injectPostfixTransformers() {
         CoreModManager.injectTransformers(classLoader);
     }
 
-    public static void appendCoreMods()
-    {
+    public static void appendCoreMods() {
         INSTANCE.injectPostfixTransformers();
     }
 }

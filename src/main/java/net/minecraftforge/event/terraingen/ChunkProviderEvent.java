@@ -5,32 +5,28 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.IChunkProvider;
 
-public class ChunkProviderEvent extends Event
-{
+public class ChunkProviderEvent extends Event {
 
     public final IChunkProvider chunkProvider;
 
-    public ChunkProviderEvent(IChunkProvider chunkProvider)
-    {
+    public ChunkProviderEvent(IChunkProvider chunkProvider) {
         this.chunkProvider = chunkProvider;
     }
 
     /**
      * This event is fired when a chunks blocks are replaced by a biomes top and
      * filler blocks.
-     *
+     * <p>
      * You can set the result to DENY to prevent the default replacement.
      */
     @HasResult
-    public static class ReplaceBiomeBlocks extends ChunkProviderEvent
-    {
+    public static class ReplaceBiomeBlocks extends ChunkProviderEvent {
         public final int x;
         public final int z;
         public final ChunkPrimer primer;
         public final World world; // CAN BE NULL
 
-        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int x, int z, ChunkPrimer primer, World world)
-        {
+        public ReplaceBiomeBlocks(IChunkProvider chunkProvider, int x, int z, ChunkPrimer primer, World world) {
             super(chunkProvider);
             this.x = x;
             this.z = z;
@@ -42,12 +38,11 @@ public class ChunkProviderEvent extends Event
 
     /**
      * This event is fired before a chunks terrain noise field is initialized.
-     *
+     * <p>
      * You can set the result to DENY to substitute your own noise field.
      */
     @HasResult
-    public static class InitNoiseField extends ChunkProviderEvent
-    {
+    public static class InitNoiseField extends ChunkProviderEvent {
         public double[] noisefield;
         public final int posX;
         public final int posY;
@@ -56,8 +51,7 @@ public class ChunkProviderEvent extends Event
         public final int sizeY;
         public final int sizeZ;
 
-        public InitNoiseField(IChunkProvider chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
-        {
+        public InitNoiseField(IChunkProvider chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ) {
             super(chunkProvider);
             this.noisefield = noisefield;
             this.posX = posX;

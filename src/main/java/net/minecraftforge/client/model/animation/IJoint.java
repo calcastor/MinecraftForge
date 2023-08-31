@@ -8,8 +8,7 @@ import net.minecraftforge.client.model.TRSRTransformation;
 /**
  * Model part that's a part of the hierarchical skeleton.
  */
-public interface IJoint extends IModelPart
-{
+public interface IJoint extends IModelPart {
     TRSRTransformation getInvBindPose();
 
     Optional<? extends IJoint> getParent();

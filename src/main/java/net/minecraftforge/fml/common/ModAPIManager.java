@@ -25,7 +25,7 @@ public class ModAPIManager {
     @SuppressWarnings("unused")
     private ModAPITransformer transformer;
     private ASMDataTable dataTable;
-    private Map<String,APIContainer> apiContainers;
+    private Map<String, APIContainer> apiContainers;
 
     private static class APIContainer extends DummyModContainer {
         private List<ArtifactVersion> referredMods;
@@ -38,8 +38,7 @@ public class ModAPIManager {
         private Set<String> packages;
         private boolean selfReferenced;
 
-        public APIContainer(String providedAPI, String apiVersion, File source, ArtifactVersion ownerMod)
-        {
+        public APIContainer(String providedAPI, String apiVersion, File source, ArtifactVersion ownerMod) {
             this.providedAPI = providedAPI;
             this.version = apiVersion;
             this.ownerMod = ownerMod;
@@ -51,45 +50,41 @@ public class ModAPIManager {
         }
 
         @Override
-        public File getSource()
-        {
+        public File getSource() {
             return source;
         }
+
         @Override
-        public String getVersion()
-        {
+        public String getVersion() {
             return version;
         }
+
         @Override
-        public String getName()
-        {
-            return "API: "+providedAPI;
+        public String getName() {
+            return "API: " + providedAPI;
         }
+
         @Override
-        public String getModId()
-        {
+        public String getModId() {
             return providedAPI;
         }
+
         @Override
-        public List<ArtifactVersion> getDependants()
-        {
+        public List<ArtifactVersion> getDependants() {
             return referredMods;
         }
 
         @Override
-        public List<ArtifactVersion> getDependencies()
-        {
+        public List<ArtifactVersion> getDependencies() {
             return selfReferenced ? ImmutableList.<ArtifactVersion>of() : ImmutableList.of(ownerMod);
         }
 
         @Override
-        public ArtifactVersion getProcessedVersion()
-        {
+        public ArtifactVersion getProcessedVersion() {
             return ourVersion;
         }
 
-        public void validate(String providedAPI, String apiOwner, String apiVersion)
-        {
+        public void validate(String providedAPI, String apiOwner, String apiVersion) {
             if (Loader.instance().getModClassLoader().containsSource(this.getSource())) {
                 FMLLog.bigWarning("The API %s from source %s is loaded from an incompatible classloader. THIS WILL NOT WORK!", providedAPI, this.getSource().getAbsolutePath());
             }
@@ -97,101 +92,80 @@ public class ModAPIManager {
         }
 
         @Override
-        public String toString()
-        {
-            return "APIContainer{"+providedAPI+":"+version+"}";
+        public String toString() {
+            return "APIContainer{" + providedAPI + ":" + version + "}";
         }
 
-        public void addAPIReference(String embedded)
-        {
-            if (currentReferents.add(embedded))
-            {
+        public void addAPIReference(String embedded) {
+            if (currentReferents.add(embedded)) {
                 referredMods.add(VersionParser.parseVersionReference(embedded));
             }
         }
 
-        public void addOwnedPackage(String apiPackage)
-        {
+        public void addOwnedPackage(String apiPackage) {
             packages.add(apiPackage);
         }
 
-        public void addAPIReferences(List<String> candidateIds)
-        {
-            for (String modId : candidateIds)
-            {
+        public void addAPIReferences(List<String> candidateIds) {
+            for (String modId : candidateIds) {
                 addAPIReference(modId);
             }
         }
 
-        void markSelfReferenced()
-        {
+        void markSelfReferenced() {
             selfReferenced = true;
         }
     }
-    public void registerDataTableAndParseAPI(ASMDataTable dataTable)
-    {
+
+    public void registerDataTableAndParseAPI(ASMDataTable dataTable) {
         this.dataTable = dataTable;
 
         Set<ASMData> apiList = dataTable.getAll("net.minecraftforge.fml.common.API");
 
         apiContainers = Maps.newHashMap();
 
-        for (ASMData data : apiList)
-        {
+        for (ASMData data : apiList) {
             Map<String, Object> annotationInfo = data.getAnnotationInfo();
-            String apiPackage = data.getClassName().substring(0,data.getClassName().indexOf(".package-info"));
+            String apiPackage = data.getClassName().substring(0, data.getClassName().indexOf(".package-info"));
             String providedAPI = (String) annotationInfo.get("provides");
             String apiOwner = (String) annotationInfo.get("owner");
             String apiVersion = (String) annotationInfo.get("apiVersion");
             APIContainer container = apiContainers.get(providedAPI);
-            if (container == null)
-            {
+            if (container == null) {
                 container = new APIContainer(providedAPI, apiVersion, data.getCandidate().getModContainer(), VersionParser.parseVersionReference(apiOwner));
                 apiContainers.put(providedAPI, container);
-            }
-            else
-            {
+            } else {
                 container.validate(providedAPI, apiOwner, apiVersion);
             }
             container.addOwnedPackage(apiPackage);
-            for (ModContainer mc : data.getCandidate().getContainedMods())
-            {
+            for (ModContainer mc : data.getCandidate().getContainedMods()) {
                 String embeddedIn = mc.getModId();
-                if (container.currentReferents.contains(embeddedIn))
-                {
+                if (container.currentReferents.contains(embeddedIn)) {
                     continue;
                 }
-                FMLLog.fine("Found API %s (owned by %s providing %s) embedded in %s",apiPackage, apiOwner, providedAPI, embeddedIn);
-                if (!embeddedIn.equals(apiOwner))
-                {
+                FMLLog.fine("Found API %s (owned by %s providing %s) embedded in %s", apiPackage, apiOwner, providedAPI, embeddedIn);
+                if (!embeddedIn.equals(apiOwner)) {
                     container.addAPIReference(embeddedIn);
                 }
             }
         }
 
-        for (APIContainer container : apiContainers.values())
-        {
-            for (String pkg : container.packages)
-            {
+        for (APIContainer container : apiContainers.values()) {
+            for (String pkg : container.packages) {
                 Set<ModCandidate> candidates = dataTable.getCandidatesFor(pkg);
-                for (ModCandidate candidate : candidates)
-                {
+                for (ModCandidate candidate : candidates) {
                     List<String> candidateIds = Lists.transform(candidate.getContainedMods(), new ModIdFunction());
-                    if (!candidateIds.contains(container.ownerMod.getLabel()) && !container.currentReferents.containsAll(candidateIds))
-                    {
-                        FMLLog.info("Found mod(s) %s containing declared API package %s (owned by %s) without associated API reference",candidateIds, pkg, container.ownerMod);
+                    if (!candidateIds.contains(container.ownerMod.getLabel()) && !container.currentReferents.containsAll(candidateIds)) {
+                        FMLLog.info("Found mod(s) %s containing declared API package %s (owned by %s) without associated API reference", candidateIds, pkg, container.ownerMod);
                         container.addAPIReferences(candidateIds);
                     }
                 }
             }
-            if (apiContainers.containsKey(container.ownerMod.getLabel()))
-            {
+            if (apiContainers.containsKey(container.ownerMod.getLabel())) {
                 ArtifactVersion owner = container.ownerMod;
-                do
-                {
+                do {
                     APIContainer parent = apiContainers.get(owner.getLabel());
-                    if (parent == container)
-                    {
+                    if (parent == container) {
                         FMLLog.finer("APIContainer %s is it's own parent. skipping", owner);
                         container.markSelfReferenced();
                         break;
@@ -207,30 +181,25 @@ public class ModAPIManager {
         }
     }
 
-    public void manageAPI(ModClassLoader modClassLoader, ModDiscoverer discoverer)
-    {
+    public void manageAPI(ModClassLoader modClassLoader, ModDiscoverer discoverer) {
         registerDataTableAndParseAPI(discoverer.getASMTable());
         transformer = modClassLoader.addModAPITransformer(dataTable);
     }
 
-    public void injectAPIModContainers(List<ModContainer> mods, Map<String, ModContainer> nameLookup)
-    {
+    public void injectAPIModContainers(List<ModContainer> mods, Map<String, ModContainer> nameLookup) {
         mods.addAll(apiContainers.values());
         nameLookup.putAll(apiContainers);
     }
 
-    public void cleanupAPIContainers(List<ModContainer> mods)
-    {
+    public void cleanupAPIContainers(List<ModContainer> mods) {
         mods.removeAll(apiContainers.values());
     }
 
-    public boolean hasAPI(String modId)
-    {
+    public boolean hasAPI(String modId) {
         return apiContainers.containsKey(modId);
     }
 
-    public Iterable<? extends ModContainer> getAPIList()
-    {
+    public Iterable<? extends ModContainer> getAPIList() {
         return apiContainers.values();
     }
 }

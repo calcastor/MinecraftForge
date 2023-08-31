@@ -23,8 +23,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
-public interface IFMLSidedHandler
-{
+public interface IFMLSidedHandler {
     List<String> getAdditionalBrandingInformation();
 
     Side getSide();

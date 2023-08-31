@@ -9,8 +9,8 @@ import net.minecraft.client.audio.SoundPoolEntry;
  * you can return a different entry if you want to change the sound being played.
  */
 @Deprecated // Remove in 1.8
-public class PlayBackgroundMusicEvent extends SoundResultEvent
-{
-    public PlayBackgroundMusicEvent(SoundManager manager, SoundPoolEntry entry)
-    { super(manager, entry, null, 0.0f, 0.0f); }
+public class PlayBackgroundMusicEvent extends SoundResultEvent {
+    public PlayBackgroundMusicEvent(SoundManager manager, SoundPoolEntry entry) {
+        super(manager, entry, null, 0.0f, 0.0f);
+    }
 }

@@ -51,8 +51,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  * @author cpw
  */
-public class VillagerRegistry
-{
+public class VillagerRegistry {
     public static final ResourceLocation PROFESSIONS = new ResourceLocation("minecraft:villagerprofessions");
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
@@ -61,8 +60,7 @@ public class VillagerRegistry
     @SideOnly(Side.CLIENT)
     private Map<Integer, ResourceLocation> newVillagers;
 
-    private VillagerRegistry()
-    {
+    private VillagerRegistry() {
         init();
     }
 
@@ -72,8 +70,7 @@ public class VillagerRegistry
      *
      * @author cpw
      */
-    public interface IVillageCreationHandler
-    {
+    public interface IVillageCreationHandler {
         /**
          * Called when {@link net.minecraft.world.gen.structure.MapGenVillage} is creating a new village
          *
@@ -105,8 +102,7 @@ public class VillagerRegistry
                                int p2, int p3, EnumFacing facing, int p5);
     }
 
-    public static VillagerRegistry instance()
-    {
+    public static VillagerRegistry instance() {
         return INSTANCE;
     }
 
@@ -116,10 +112,8 @@ public class VillagerRegistry
      * @param id
      */
     @Deprecated // Doesn't work at all.
-    public void registerVillagerId(int id)
-    {
-        if (newVillagerIds.contains(id))
-        {
+    public void registerVillagerId(int id) {
+        if (newVillagerIds.contains(id)) {
             FMLLog.severe("Attempt to register duplicate villager id %d", id);
             throw new RuntimeException();
         }
@@ -134,10 +128,8 @@ public class VillagerRegistry
      */
     @SideOnly(Side.CLIENT)
     @Deprecated // Doesn't work at all.
-    public void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin)
-    {
-        if (newVillagers == null)
-        {
+    public void registerVillagerSkin(int villagerId, ResourceLocation villagerSkin) {
+        if (newVillagers == null) {
             newVillagers = Maps.newHashMap();
         }
         newVillagers.put(villagerId, villagerSkin);
@@ -148,8 +140,7 @@ public class VillagerRegistry
      *
      * @param handler
      */
-    public void registerVillageCreationHandler(IVillageCreationHandler handler)
-    {
+    public void registerVillageCreationHandler(IVillageCreationHandler handler) {
         villageCreationHandlers.put(handler.getComponentClass(), handler);
     }
 
@@ -161,10 +152,8 @@ public class VillagerRegistry
      */
     @SideOnly(Side.CLIENT)
     @Deprecated // Doesn't work at all.
-    public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin)
-    {
-        if (instance().newVillagers != null && instance().newVillagers.containsKey(villagerType))
-        {
+    public static ResourceLocation getVillagerSkin(int villagerType, ResourceLocation defaultSkin) {
+        if (instance().newVillagers != null && instance().newVillagers.containsKey(villagerType)) {
             return instance().newVillagers.get(villagerType);
         }
         return defaultSkin;
@@ -176,33 +165,27 @@ public class VillagerRegistry
      * @return newVillagerIds
      */
     @Deprecated // Doesn't work at all.
-    public static Collection<Integer> getRegisteredVillagers()
-    {
+    public static Collection<Integer> getRegisteredVillagers() {
         return Collections.unmodifiableCollection(instance().newVillagerIds);
     }
 
-    public static void addExtraVillageComponents(List<PieceWeight> list, Random random, int i)
-    {
+    public static void addExtraVillageComponents(List<PieceWeight> list, Random random, int i) {
         List<StructureVillagePieces.PieceWeight> parts = list;
-        for (IVillageCreationHandler handler : instance().villageCreationHandlers.values())
-        {
+        for (IVillageCreationHandler handler : instance().villageCreationHandlers.values()) {
             parts.add(handler.getVillagePieceWeight(random, i));
         }
     }
 
     public static Village getVillageComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random,
-                                              int p1, int p2, int p3, EnumFacing facing, int p5)
-    {
+                                              int p1, int p2, int p3, EnumFacing facing, int p5) {
         return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, facing, p5);
     }
 
-    public void register(VillagerProfession prof)
-    {
+    public void register(VillagerProfession prof) {
         register(prof, -1);
     }
 
-    private void register(VillagerProfession prof, int id)
-    {
+    private void register(VillagerProfession prof, int id) {
         professions.register(id, prof.name, prof);
     }
 
@@ -210,10 +193,8 @@ public class VillagerRegistry
     private FMLControlledNamespacedRegistry<VillagerProfession> professions = PersistentRegistryManager.createRegistry(PROFESSIONS, VillagerProfession.class, null, 1024, 0, true, null);
 
 
-    private void init()
-    {
-        if (hasInit)
-        {
+    private void init() {
+        if (hasInit) {
             return;
         }
 
@@ -250,22 +231,19 @@ public class VillagerRegistry
         }
     }
 
-    public static class VillagerProfession
-    {
+    public static class VillagerProfession {
         private ResourceLocation name;
         private ResourceLocation texture;
         private List<VillagerCareer> careers = Lists.newArrayList();
         public final RegistryDelegate<VillagerProfession> delegate = PersistentRegistryManager.makeDelegate(this, VillagerProfession.class);
 
-        public VillagerProfession(String name, String texture)
-        {
+        public VillagerProfession(String name, String texture) {
             this.name = new ResourceLocation(name);
             this.texture = new ResourceLocation(texture);
-            ((RegistryDelegate.Delegate<VillagerProfession>)delegate).setResourceName(this.name);
+            ((RegistryDelegate.Delegate<VillagerProfession>) delegate).setResourceName(this.name);
         }
 
-        private void register(VillagerCareer career)
-        {
+        private void register(VillagerCareer career) {
             Validate.isTrue(!careers.contains(career), "Attempted to register career that is already registered.");
             Validate.isTrue(career.profession == this, "Attempted to register career for the wrong profession.");
             career.id = careers.size();
@@ -273,36 +251,30 @@ public class VillagerRegistry
         }
     }
 
-    public static class VillagerCareer
-    {
+    public static class VillagerCareer {
         private VillagerProfession profession;
         private String name;
         private int id;
 
-        public VillagerCareer(VillagerProfession parent, String name)
-        {
+        public VillagerCareer(VillagerProfession parent, String name) {
             this.profession = parent;
             this.name = name;
             parent.register(this);
         }
 
-        private VillagerCareer init(EntityVillager.ITradeList[][] traids)
-        {
+        private VillagerCareer init(EntityVillager.ITradeList[][] traids) {
             return this;
         }
 
         @Override
-        public boolean equals(Object o)
-        {
-            if (o == this)
-            {
+        public boolean equals(Object o) {
+            if (o == this) {
                 return true;
             }
-            if (!(o instanceof VillagerCareer))
-            {
+            if (!(o instanceof VillagerCareer)) {
                 return false;
             }
-            VillagerCareer oc = (VillagerCareer)o;
+            VillagerCareer oc = (VillagerCareer) o;
             return name.equals(oc.name) && profession == oc.profession;
         }
     }
@@ -313,8 +285,7 @@ public class VillagerRegistry
      * @param entity The new entity
      * @param rand   The world's RNG
      */
-    public static void setRandomProfession(EntityVillager entity, Random rand)
-    {
+    public static void setRandomProfession(EntityVillager entity, Random rand) {
         Set<ResourceLocation> entries = INSTANCE.professions.getKeys();
         int prof = rand.nextInt(entries.size());
         //TODO: Grab id range from internal registry
@@ -323,8 +294,7 @@ public class VillagerRegistry
 
     //TODO: Figure out a good generic system for this. Put on hold for Patches.
 
-    private static class VanillaTrades
-    {
+    private static class VanillaTrades {
         //This field is moved from EntityVillager over to here.
         //Moved to inner class to stop static initializer issues.
         //It is nasty I know but it's vanilla.

@@ -18,32 +18,27 @@ import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-public class GuiModsMissingForServer extends GuiScreen
-{
+public class GuiModsMissingForServer extends GuiScreen {
     private MissingModsException modsMissing;
 
-    public GuiModsMissingForServer(MissingModsException modsMissing)
-    {
+    public GuiModsMissingForServer(MissingModsException modsMissing) {
         this.modsMissing = modsMissing;
     }
 
     @Override
-    public void initGui()
-    {
+    public void initGui() {
         this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done")));
     }
 
     @Override
-    protected void actionPerformed(GuiButton p_73875_1_)
-    {
-        if (p_73875_1_.enabled && p_73875_1_.id == 1)
-        {
+    protected void actionPerformed(GuiButton p_73875_1_) {
+        if (p_73875_1_.enabled && p_73875_1_.id == 1) {
             FMLClientHandler.instance().showGuiScreen(null);
         }
     }
+
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
-    {
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
         int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
         this.drawCenteredString(this.fontRendererObj, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
@@ -52,8 +47,7 @@ public class GuiModsMissingForServer extends GuiScreen
         offset += 10;
         this.drawCenteredString(this.fontRendererObj, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
         offset += 5;
-        for (ArtifactVersion v : modsMissing.missingMods)
-        {
+        for (ArtifactVersion v : modsMissing.missingMods) {
             offset += 10;
             this.drawCenteredString(this.fontRendererObj, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }

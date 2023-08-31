@@ -20,13 +20,11 @@ import net.minecraft.item.ItemStack;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ArrowLooseEvent extends PlayerEvent
-{
+public class ArrowLooseEvent extends PlayerEvent {
     public final ItemStack bow;
     public int charge;
-    
-    public ArrowLooseEvent(EntityPlayer player, ItemStack bow, int charge)
-    {
+
+    public ArrowLooseEvent(EntityPlayer player, ItemStack bow, int charge) {
         super(player);
         this.bow = bow;
         this.charge = charge;

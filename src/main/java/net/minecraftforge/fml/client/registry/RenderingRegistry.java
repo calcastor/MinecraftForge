@@ -19,8 +19,7 @@ import net.minecraft.entity.Entity;
 
 import com.google.common.collect.Maps;
 
-public class RenderingRegistry
-{
+public class RenderingRegistry {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
     private Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = Maps.newHashMap();
@@ -35,13 +34,11 @@ public class RenderingRegistry
      * Will be removed in 1.9.
      */
     @Deprecated
-    public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> renderer)
-    {
+    public static void registerEntityRenderingHandler(Class<? extends Entity> entityClass, Render<? extends Entity> renderer) {
         INSTANCE.entityRenderersOld.put(entityClass, renderer);
     }
 
-    public static void loadEntityRenderers(Map<Class<? extends Entity>, Render<? extends Entity>> entityRenderMap)
-    {
+    public static void loadEntityRenderers(Map<Class<? extends Entity>, Render<? extends Entity>> entityRenderMap) {
         entityRenderMap.putAll(INSTANCE.entityRenderersOld);
     }
 
@@ -53,22 +50,18 @@ public class RenderingRegistry
      * @param entityClass
      * @param renderer
      */
-    public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory)
-    {
+    public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory) {
         INSTANCE.entityRenderers.put(entityClass, renderFactory);
     }
 
-    public static void loadEntityRenderers(RenderManager manager, Map<Class<? extends Entity> , Render<? extends Entity>> renderMap)
-    {
-        for (Map.Entry<Class<? extends Entity>, IRenderFactory<? extends Entity>> entry : INSTANCE.entityRenderers.entrySet())
-        {
+    public static void loadEntityRenderers(RenderManager manager, Map<Class<? extends Entity>, Render<? extends Entity>> renderMap) {
+        for (Map.Entry<Class<? extends Entity>, IRenderFactory<? extends Entity>> entry : INSTANCE.entityRenderers.entrySet()) {
             register(manager, renderMap, entry.getKey(), entry.getValue());
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Entity> void register(RenderManager manager, Map<Class<? extends Entity> , Render<? extends Entity>> renderMap, Class<T> entityClass, IRenderFactory<?> renderFactory)
-    {
-        renderMap.put(entityClass, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
+    private static <T extends Entity> void register(RenderManager manager, Map<Class<? extends Entity>, Render<? extends Entity>> renderMap, Class<T> entityClass, IRenderFactory<?> renderFactory) {
+        renderMap.put(entityClass, ((IRenderFactory<T>) renderFactory).createRenderFor(manager));
     }
 }

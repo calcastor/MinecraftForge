@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -29,46 +29,36 @@ import com.google.common.collect.Lists;
  * and allows for comparison of versions based on that document.
  * Bounded version specifications are defined as
  * http://maven.apache.org/plugins/maven-enforcer-plugin/rules/versionRanges.html
- *
+ * <p>
  * Borrows heavily from maven version range management code
  *
  * @author cpw
- *
  */
-public class VersionParser
-{
+public class VersionParser {
     private static final Splitter SEPARATOR = Splitter.on('@').omitEmptyStrings().trimResults();
-    public static ArtifactVersion parseVersionReference(String labelledRef)
-    {
-        if (Strings.isNullOrEmpty(labelledRef))
-        {
+
+    public static ArtifactVersion parseVersionReference(String labelledRef) {
+        if (Strings.isNullOrEmpty(labelledRef)) {
             throw new RuntimeException(String.format("Empty reference %s", labelledRef));
         }
         List<String> parts = Lists.newArrayList(SEPARATOR.split(labelledRef));
-        if (parts.size()>2)
-        {
+        if (parts.size() > 2) {
             throw new RuntimeException(String.format("Invalid versioned reference %s", labelledRef));
         }
-        if (parts.size()==1)
-        {
+        if (parts.size() == 1) {
             return new DefaultArtifactVersion(parts.get(0), true);
         }
-        return new DefaultArtifactVersion(parts.get(0),parseRange(parts.get(1)));
+        return new DefaultArtifactVersion(parts.get(0), parseRange(parts.get(1)));
     }
 
-    public static boolean satisfies(ArtifactVersion target, ArtifactVersion source)
-    {
+    public static boolean satisfies(ArtifactVersion target, ArtifactVersion source) {
         return target.containsVersion(source);
     }
 
-    public static VersionRange parseRange(String range)
-    {
-        try
-        {
+    public static VersionRange parseRange(String range) {
+        try {
             return VersionRange.createFromVersionSpec(range);
-        }
-        catch (InvalidVersionSpecificationException e)
-        {
+        } catch (InvalidVersionSpecificationException e) {
             FMLLog.log(Level.ERROR, e, "Unable to parse a version range specification successfully %s", range);
             throw new LoaderException(e);
         }

@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -19,15 +19,14 @@ import net.minecraftforge.fml.relauncher.Side;
 /**
  * The parent of all mod-state changing events
  */
-public abstract class FMLStateEvent extends FMLEvent
-{
-    public FMLStateEvent(Object... data)
-    {
+public abstract class FMLStateEvent extends FMLEvent {
+    public FMLStateEvent(Object... data) {
 
     }
 
     /**
      * The current state of the mod
+     *
      * @return The current state of the mod
      */
     public abstract ModState getModState();
@@ -35,10 +34,10 @@ public abstract class FMLStateEvent extends FMLEvent
     /**
      * The side we're loading on. {@link Side#CLIENT} means we're loading in the client, {@link Side#SERVER} means
      * we're loading in the dedicated server.
+     *
      * @return Return which side we're loading on.
      */
-    public Side getSide()
-    {
+    public Side getSide() {
         return FMLCommonHandler.instance().getSide();
     }
 }

@@ -18,10 +18,9 @@ import com.google.common.collect.ListMultimap;
  * These can be remapped to other existing objects, or simply discarded.
  * Use get() and getAll() to process this event.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  * @author Player
- *
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
 public class FMLMissingMappingsEvent extends FMLEvent {
     /**
@@ -31,8 +30,8 @@ public class FMLMissingMappingsEvent extends FMLEvent {
      * <li>{@link #WARN} means this missing mapping will generate a warning.
      * <li>{@link #FAIL} means this missing mapping will prevent the world from loading.
      * </ul>
-     * @author cpw
      *
+     * @author cpw
      */
     public enum Action {
         /**
@@ -60,6 +59,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
          */
         BLOCKONLY
     }
+
     public static class MissingMapping {
         public final GameRegistry.Type type;
         public final String name;
@@ -68,8 +68,7 @@ public class FMLMissingMappingsEvent extends FMLEvent {
         private Action action = Action.DEFAULT;
         private Object target;
 
-        public MissingMapping(GameRegistry.Type type, ResourceLocation name, int id)
-        {
+        public MissingMapping(GameRegistry.Type type, ResourceLocation name, int id) {
             this.type = type;
             this.name = name.toString();
             this.id = id;
@@ -79,40 +78,37 @@ public class FMLMissingMappingsEvent extends FMLEvent {
         /**
          * Ignore the missing item.
          */
-        public void ignore()
-        {
+        public void ignore() {
             action = Action.IGNORE;
         }
 
         /**
          * Warn the user about the missing item.
          */
-        public void warn()
-        {
+        public void warn() {
             action = Action.WARN;
         }
 
         /**
          * Prevent the world from loading due to the missing item.
          */
-        public void fail()
-        {
+        public void fail() {
             action = Action.FAIL;
         }
 
         /**
          * Remap the missing item to the specified Block.
-         *
+         * <p>
          * Use this if you have renamed a Block, don't forget to handle the ItemBlock.
          * Existing references using the old name will point to the new one.
          *
          * @param target Block to remap to.
          */
-        public void remap(Block target)
-        {
+        public void remap(Block target) {
             if (type != GameRegistry.Type.BLOCK) throw new IllegalArgumentException("Can't remap an item to a block.");
             if (target == null) throw new NullPointerException("remap target is null");
-            if (GameData.getBlockRegistry().getId(target) < 0) throw new IllegalArgumentException(String.format("The specified block %s hasn't been registered at startup.", target));
+            if (GameData.getBlockRegistry().getId(target) < 0)
+                throw new IllegalArgumentException(String.format("The specified block %s hasn't been registered at startup.", target));
 
             action = Action.REMAP;
             this.target = target;
@@ -120,80 +116,76 @@ public class FMLMissingMappingsEvent extends FMLEvent {
 
         /**
          * Remap the missing item to the specified Item.
-         *
+         * <p>
          * Use this if you have renamed an Item.
          * Existing references using the old name will point to the new one.
          *
          * @param target Item to remap to.
          */
-        public void remap(Item target)
-        {
+        public void remap(Item target) {
             if (type != GameRegistry.Type.ITEM) throw new IllegalArgumentException("Can't remap a block to an item.");
             if (target == null) throw new NullPointerException("remap target is null");
-            if (GameData.getItemRegistry().getId(target) < 0) throw new IllegalArgumentException(String.format("The specified item %s hasn't been registered at startup.", target));
+            if (GameData.getItemRegistry().getId(target) < 0)
+                throw new IllegalArgumentException(String.format("The specified item %s hasn't been registered at startup.", target));
 
             action = Action.REMAP;
             this.target = target;
         }
 
-        public void skipItemBlock()
-        {
-            if (type != GameRegistry.Type.ITEM) throw new IllegalArgumentException("Cannot skip an item that is a block");
-            if (GameData.getBlockRegistry().getRaw(id) == null) throw new IllegalArgumentException("Cannot skip an ItemBlock that doesn't have a Block");
+        public void skipItemBlock() {
+            if (type != GameRegistry.Type.ITEM)
+                throw new IllegalArgumentException("Cannot skip an item that is a block");
+            if (GameData.getBlockRegistry().getRaw(id) == null)
+                throw new IllegalArgumentException("Cannot skip an ItemBlock that doesn't have a Block");
             action = Action.BLOCKONLY;
         }
         // internal
 
-        public Action getAction()
-        {
+        public Action getAction() {
             return this.action;
         }
 
-        public Object getTarget()
-        {
+        public Object getTarget() {
             return target;
         }
     }
-    private ListMultimap<String,MissingMapping> missing;
+
+    private ListMultimap<String, MissingMapping> missing;
     private ModContainer activeContainer;
 
-    public FMLMissingMappingsEvent(ListMultimap<String,MissingMapping> missingMappings)
-    {
+    public FMLMissingMappingsEvent(ListMultimap<String, MissingMapping> missingMappings) {
         this.missing = missingMappings;
     }
 
     @Override
-    public void applyModContainer(ModContainer activeContainer)
-    {
+    public void applyModContainer(ModContainer activeContainer) {
         super.applyModContainer(activeContainer);
         this.activeContainer = activeContainer;
     }
 
     /**
      * Get the list of missing mappings for the active mod.
-     *
+     * <p>
      * Process the list entries by calling ignore(), warn(), fail() or remap() on each entry.
      *
      * @return list of missing mappings
      */
-    public List<MissingMapping> get()
-    {
+    public List<MissingMapping> get() {
         return ImmutableList.copyOf(missing.get(activeContainer.getModId()));
     }
 
     /**
      * Get the list of missing mappings for all mods.
-     *
+     * <p>
      * Only use this if you need to handle mod id changes, e.g. if you renamed your mod or
      * split/merge into/from multiple mods.
-     *
+     * <p>
      * Process the list entries by calling ignore(), warn(), fail() or remap() on each entry you
      * want to handle.
      *
      * @return list of missing mappings
      */
-    public List<MissingMapping> getAll()
-    {
+    public List<MissingMapping> getAll() {
         return ImmutableList.copyOf(missing.values());
     }
 }

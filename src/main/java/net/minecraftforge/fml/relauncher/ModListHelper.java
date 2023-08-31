@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import net.minecraft.launchwrapper.Launch;
 import org.apache.logging.log4j.Level;
 import com.google.common.base.Charsets;
@@ -20,47 +21,42 @@ public class ModListHelper {
         public List<String> modRef;
         public String parentList;
     }
+
     private static File mcDirectory;
     private static Set<File> visitedFiles = Sets.newHashSet();
-    public static final Map<String,File> additionalMods = Maps.newLinkedHashMap();
-    static void parseModList(File minecraftDirectory)
-    {
+    public static final Map<String, File> additionalMods = Maps.newLinkedHashMap();
+
+    static void parseModList(File minecraftDirectory) {
         FMLRelaunchLog.fine("Attempting to load commandline specified mods, relative to %s", minecraftDirectory.getAbsolutePath());
         mcDirectory = minecraftDirectory;
         @SuppressWarnings("unchecked")
-        Map<String,String> args = (Map<String, String>) Launch.blackboard.get("launchArgs");
+        Map<String, String> args = (Map<String, String>) Launch.blackboard.get("launchArgs");
         String listFile = args.get("--modListFile");
-        if (listFile != null)
-        {
+        if (listFile != null) {
             parseListFile(listFile);
         }
         String extraMods = args.get("--mods");
-        if (extraMods != null)
-        {
+        if (extraMods != null) {
             String[] split = extraMods.split(",");
-            for (String modFile : split)
-            {
+            for (String modFile : split) {
                 tryAddFile(modFile, null, modFile);
             }
         }
     }
+
     private static void parseListFile(String listFile) {
         File f;
-        try
-        {
+        try {
             f = new File(mcDirectory, listFile).getCanonicalFile();
-        } catch (IOException e2)
-        {
+        } catch (IOException e2) {
             FMLRelaunchLog.log(Level.INFO, e2, "Unable to canonicalize path %s relative to %s", listFile, mcDirectory.getAbsolutePath());
             return;
         }
-        if (!f.exists())
-        {
+        if (!f.exists()) {
             FMLRelaunchLog.info("Failed to find modList file %s", f.getAbsolutePath());
             return;
         }
-        if (visitedFiles.contains(f))
-        {
+        if (visitedFiles.contains(f)) {
             FMLRelaunchLog.severe("There appears to be a loop in the modListFile hierarchy. You shouldn't do this!");
             throw new RuntimeException("Loop detected, impossible to load modlistfile");
         }
@@ -81,19 +77,16 @@ public class ModListHelper {
         }
         visitedFiles.add(f);
         // We visit parents before children, so the additionalMods list is sorted from parent to child
-        if (modList.parentList != null)
-        {
+        if (modList.parentList != null) {
             parseListFile(modList.parentList);
         }
         File repoRoot = new File(modList.repositoryRoot);
-        if (!repoRoot.exists())
-        {
+        if (!repoRoot.exists()) {
             FMLRelaunchLog.info("Failed to find the specified repository root %s", modList.repositoryRoot);
             return;
         }
 
-        for (String s : modList.modRef)
-        {
+        for (String s : modList.modRef) {
             StringBuilder fileName = new StringBuilder();
             StringBuilder genericName = new StringBuilder();
             String[] parts = s.split(":");
@@ -104,8 +97,7 @@ public class ModListHelper {
             genericName.append(":").append(parts[1]);
             fileName.append(parts[2]).append(File.separatorChar);
             fileName.append(parts[1]).append('-').append(parts[2]);
-            if (parts.length == 4)
-            {
+            if (parts.length == 4) {
                 fileName.append('-').append(parts[3]);
                 genericName.append(":").append(parts[3]);
             }
@@ -113,14 +105,12 @@ public class ModListHelper {
             tryAddFile(fileName.toString(), repoRoot, genericName.toString());
         }
     }
+
     private static void tryAddFile(String modFileName, File repoRoot, String descriptor) {
-        File modFile = repoRoot != null ? new File(repoRoot,modFileName) : new File(mcDirectory, modFileName);
-        if (!modFile.exists())
-        {
+        File modFile = repoRoot != null ? new File(repoRoot, modFileName) : new File(mcDirectory, modFileName);
+        if (!modFile.exists()) {
             FMLRelaunchLog.info("Failed to find mod file %s (%s)", descriptor, modFile.getAbsolutePath());
-        }
-        else
-        {
+        } else {
             FMLRelaunchLog.fine("Adding %s (%s) to the mod list", descriptor, modFile.getAbsolutePath());
             additionalMods.put(descriptor, modFile);
         }

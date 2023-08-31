@@ -20,11 +20,10 @@ import net.minecraft.entity.player.EntityPlayer;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class EntityInteractEvent extends PlayerEvent
-{
+public class EntityInteractEvent extends PlayerEvent {
     public final Entity target;
-    public EntityInteractEvent(EntityPlayer player, Entity target)
-    {
+
+    public EntityInteractEvent(EntityPlayer player, Entity target) {
         super(player);
         this.target = target;
     }

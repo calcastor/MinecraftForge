@@ -8,18 +8,16 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * This event is called when an item is rendered in an item frame.
- * 
+ * <p>
  * You can set canceled to do no further vanilla processing.
  */
 @Cancelable
-public class RenderItemInFrameEvent extends Event
-{
+public class RenderItemInFrameEvent extends Event {
     public final ItemStack item;
     public final EntityItemFrame entityItemFrame;
     public final RenderItemFrame renderer;
-    
-    public RenderItemInFrameEvent(EntityItemFrame itemFrame, RenderItemFrame renderItemFrame)
-    {
+
+    public RenderItemInFrameEvent(EntityItemFrame itemFrame, RenderItemFrame renderItemFrame) {
         item = itemFrame.getDisplayedItem();
         entityItemFrame = itemFrame;
         renderer = renderItemFrame;

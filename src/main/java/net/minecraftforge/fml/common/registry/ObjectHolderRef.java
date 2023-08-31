@@ -23,7 +23,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
  * Internal class used in tracking {@link ObjectHolder} references
  *
  * @author cpw
- *
  */
 class ObjectHolderRef {
     private Field field;
@@ -32,43 +31,33 @@ class ObjectHolderRef {
     private boolean isItem;
 
 
-    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
-    {
+    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues) {
         this.field = field;
         this.isBlock = Block.class.isAssignableFrom(field.getType());
         this.isItem = Item.class.isAssignableFrom(field.getType());
-        if (extractFromExistingValues)
-        {
-            try
-            {
+        if (extractFromExistingValues) {
+            try {
                 Object existing = field.get(null);
                 // nothing is ever allowed to replace AIR
-                if (existing == null || existing == GameData.getBlockRegistry().getDefaultValue())
-                {
+                if (existing == null || existing == GameData.getBlockRegistry().getDefaultValue()) {
                     this.injectedObject = null;
                     this.field = null;
                     this.isBlock = false;
                     this.isItem = false;
                     return;
-                }
-                else
-                {
-                    ResourceLocation tmp = isBlock ? GameData.getBlockRegistry().getNameForObject((Block)existing) :
-                        isItem ? GameData.getItemRegistry().getNameForObject((Item)existing) : null;
+                } else {
+                    ResourceLocation tmp = isBlock ? GameData.getBlockRegistry().getNameForObject((Block) existing) :
+                            isItem ? GameData.getItemRegistry().getNameForObject((Item) existing) : null;
                     this.injectedObject = tmp;
                 }
-            } catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw Throwables.propagate(e);
             }
-        }
-        else
-        {
+        } else {
             this.injectedObject = injectedObject;
         }
 
-        if (this.injectedObject == null || !isValid())
-        {
+        if (this.injectedObject == null || !isValid()) {
             throw new IllegalStateException(String.format("The ObjectHolder annotation cannot apply to a field that is not an Item or Block (found : %s at %s.%s)", field.getType().getName(), field.getClass().getName(), field.getName()));
         }
         makeWritable(field);
@@ -79,8 +68,8 @@ class ObjectHolderRef {
     private static Method newFieldAccessor;
     private static Method fieldAccessorSet;
     private MethodHandle fieldSetter = null;
-    private static void makeWritable(Field f)
-    {
+
+    private static void makeWritable(Field f) {
         try {
             f.setAccessible(true);
         } catch (Exception e) {
@@ -88,12 +77,11 @@ class ObjectHolderRef {
         }
     }
 
-    public boolean isValid()
-    {
+    public boolean isValid() {
         return isBlock || isItem;
     }
-    public void apply()
-    {
+
+    public void apply() {
         if (fieldSetter == null) {
             try {
                 fieldSetter = MethodHandles.lookup().unreflectSetter(this.field);

@@ -9,9 +9,8 @@ import net.minecraft.util.ResourceLocation;
  * These should be safe to use in things like lists though aliased items and blocks will not
  * have object identity with respect to their delegate.
  *
- * @author cpw
- *
  * @param <T> the type of thing we're holding onto
+ * @author cpw
  */
 public interface RegistryDelegate<T> {
     /**
@@ -25,11 +24,11 @@ public interface RegistryDelegate<T> {
 
     /**
      * Get the name of this delegate. This is completely static after registration has completed and will never change.
-     *
+     * <p>
      * Deprecated in favour of the resource location.
      *
-     * @see #getResourceName()
      * @return The name
+     * @see #getResourceName()
      */
     @Deprecated
     String name();
@@ -37,12 +36,14 @@ public interface RegistryDelegate<T> {
     /**
      * Get the unique resource location for this delegate. Completely static after registration has completed, and
      * will never change.
+     *
      * @return The name
      */
     ResourceLocation getResourceName();
 
     /**
      * Get the delegate type. It will be dependent on the registry this delegate is sourced from.
+     *
      * @return The type of delegate
      */
     Class<T> type();
@@ -50,8 +51,7 @@ public interface RegistryDelegate<T> {
     /*
      * This is the internal implementation class of the delegate.
      */
-    final class Delegate<T> implements RegistryDelegate<T>
-    {
+    final class Delegate<T> implements RegistryDelegate<T> {
         private T referant;
         private ResourceLocation name;
         private final Class<T> type;
@@ -72,26 +72,26 @@ public interface RegistryDelegate<T> {
         }
 
         @Override
-        public ResourceLocation getResourceName() { return name; }
+        public ResourceLocation getResourceName() {
+            return name;
+        }
 
         @Override
-        public Class<T> type()
-        {
+        public Class<T> type() {
             return this.type;
         }
 
-        void changeReference(T newTarget)
-        {
+        void changeReference(T newTarget) {
             this.referant = newTarget;
         }
 
-        void setResourceName(ResourceLocation name) { this.name = name; }
+        void setResourceName(ResourceLocation name) {
+            this.name = name;
+        }
 
         @Override
-        public boolean equals(Object obj)
-        {
-            if (obj instanceof Delegate)
-            {
+        public boolean equals(Object obj) {
+            if (obj instanceof Delegate) {
                 Delegate<?> other = (Delegate<?>) obj;
                 return Objects.equal(other.name, name);
             }
@@ -99,8 +99,7 @@ public interface RegistryDelegate<T> {
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(name);
         }
     }

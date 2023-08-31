@@ -6,7 +6,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
 /**
- * CommandEvent is fired whenever a command is scheduled to be executed. 
+ * CommandEvent is fired whenever a command is scheduled to be executed.
  * This event is fired during the invocation of CommandHandler#executeCommand(ICommandSender, String)
  * and ClientCommandHandler#executeCommand(ICommandSender, String). <br>
  * <br>
@@ -23,16 +23,14 @@ import net.minecraft.command.ICommandSender;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class CommandEvent extends Event
-{
+public class CommandEvent extends Event {
 
     public final ICommand command;
     public final ICommandSender sender;
     public String[] parameters;
     public Throwable exception;
 
-    public CommandEvent(ICommand command, ICommandSender sender, String[] parameters)
-    {
+    public CommandEvent(ICommand command, ICommandSender sender, String[] parameters) {
         this.command = command;
         this.sender = sender;
         this.parameters = parameters;

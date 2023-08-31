@@ -37,79 +37,65 @@ public class FMLRelaunchLog {
 
     static Side side;
 
-    private FMLRelaunchLog()
-    {
+    private FMLRelaunchLog() {
     }
 
     /**
      * Configure the FML logger and inject tracing printstreams.
      */
-    private static void configureLogging()
-    {
+    private static void configureLogging() {
         log.myLog = LogManager.getLogger("FML");
         ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
         configured = true;
-        
+
         FMLRelaunchLog.fine("Injecting tracing printstreams for STDOUT/STDERR.");
         System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
         System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
     }
 
-    public static void log(String targetLog, Level level, String format, Object... data)
-    {
+    public static void log(String targetLog, Level level, String format, Object... data) {
         LogManager.getLogger(targetLog).log(level, String.format(format, data));
     }
 
-    public static void log(Level level, String format, Object... data)
-    {
-        if (!configured)
-        {
+    public static void log(Level level, String format, Object... data) {
+        if (!configured) {
             configureLogging();
         }
         log.myLog.log(level, String.format(format, data));
     }
 
-    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data)
-    {
+    public static void log(String targetLog, Level level, Throwable ex, String format, Object... data) {
         LogManager.getLogger(targetLog).log(level, String.format(format, data), ex);
     }
 
-    public static void log(Level level, Throwable ex, String format, Object... data)
-    {
-        if (!configured)
-        {
+    public static void log(Level level, Throwable ex, String format, Object... data) {
+        if (!configured) {
             configureLogging();
         }
         log.myLog.log(level, String.format(format, data), ex);
     }
 
-    public static void severe(String format, Object... data)
-    {
+    public static void severe(String format, Object... data) {
         log(Level.ERROR, format, data);
     }
 
-    public static void warning(String format, Object... data)
-    {
+    public static void warning(String format, Object... data) {
         log(Level.WARN, format, data);
     }
 
-    public static void info(String format, Object... data)
-    {
+    public static void info(String format, Object... data) {
         log(Level.INFO, format, data);
     }
 
-    public static void fine(String format, Object... data)
-    {
+    public static void fine(String format, Object... data) {
         log(Level.DEBUG, format, data);
     }
 
-    public static void finer(String format, Object... data)
-    {
+    public static void finer(String format, Object... data) {
         log(Level.TRACE, format, data);
     }
 
-    public Logger getLogger()
-    {
+    public Logger getLogger() {
         return myLog;
     }
 }

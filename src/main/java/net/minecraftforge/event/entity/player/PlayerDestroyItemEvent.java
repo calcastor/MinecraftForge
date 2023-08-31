@@ -22,11 +22,10 @@ import net.minecraft.item.ItemStack;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerDestroyItemEvent extends PlayerEvent
-{
+public class PlayerDestroyItemEvent extends PlayerEvent {
     public final ItemStack original;
-    public PlayerDestroyItemEvent(EntityPlayer player, ItemStack original)
-    {
+
+    public PlayerDestroyItemEvent(EntityPlayer player, ItemStack original) {
         super(player);
         this.original = original;
     }

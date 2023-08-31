@@ -6,31 +6,25 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 
 
-public class PotionBrewEvent extends Event
-{
+public class PotionBrewEvent extends Event {
     private ItemStack[] stacks;
 
-    protected PotionBrewEvent(ItemStack[] stacks)
-    {
+    protected PotionBrewEvent(ItemStack[] stacks) {
         this.stacks = stacks;
     }
 
-    public ItemStack getItem(int index)
-    {
+    public ItemStack getItem(int index) {
         if (index >= stacks.length) return null;
         return stacks[index];
     }
 
-    public void setItem(int index, ItemStack stack)
-    {
-        if (index < stacks.length)
-        {
+    public void setItem(int index, ItemStack stack) {
+        if (index < stacks.length) {
             stacks[index] = stack;
         }
     }
 
-    public int getLength()
-    {
+    public int getLength() {
         return stacks.length;
     }
 
@@ -52,10 +46,8 @@ public class PotionBrewEvent extends Event
      * If this event is canceled, and items have been modified, PotionBrewEvent.Post will automatically be fired.
      **/
     @Cancelable
-    public static class Pre extends PotionBrewEvent
-    {
-        public Pre(ItemStack[] stacks)
-        {
+    public static class Pre extends PotionBrewEvent {
+        public Pre(ItemStack[] stacks) {
             super(stacks);
         }
     }
@@ -74,10 +66,8 @@ public class PotionBrewEvent extends Event
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
     @SuppressWarnings("deprecation")
-    public static class Post extends PotionBrewedEvent
-    {
-        public Post(ItemStack[] stacks)
-        {
+    public static class Post extends PotionBrewedEvent {
+        public Post(ItemStack[] stacks) {
             super(stacks);
         }
     }

@@ -15,12 +15,10 @@ import org.apache.logging.log4j.Level;
 import com.google.common.base.Throwables;
 
 
-
 /**
  * Internal class used in tracking {@link ItemStackHolder} references
  *
  * @author cpw
- *
  */
 class ItemStackHolderRef {
     private Field field;
@@ -29,8 +27,7 @@ class ItemStackHolderRef {
     private String serializednbt;
 
 
-    ItemStackHolderRef(Field field, String itemName, int meta, String serializednbt)
-    {
+    ItemStackHolderRef(Field field, String itemName, int meta, String serializednbt) {
         this.field = field;
         this.itemName = itemName;
         this.meta = meta;
@@ -43,8 +40,8 @@ class ItemStackHolderRef {
     private static Method newFieldAccessor;
     private static Method fieldAccessorSet;
     private static MethodHandle fieldSetter;
-    private static void makeWritable(Field f)
-    {
+
+    private static void makeWritable(Field f) {
         try {
             f.setAccessible(true);
             fieldSetter = MethodHandles.lookup().unreflectSetter(f);
@@ -53,8 +50,7 @@ class ItemStackHolderRef {
         }
     }
 
-    public void apply()
-    {
+    public void apply() {
         ItemStack is;
         try {
             is = GameRegistry.makeItemStack(itemName, meta, 1, serializednbt);

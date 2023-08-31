@@ -10,16 +10,14 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.util.EnumChatFormatting;
 
-public final class ConsoleFormatter implements Function<String, String>
-{
+public final class ConsoleFormatter implements Function<String, String> {
 
-    public ConsoleFormatter()
-    {
+    public ConsoleFormatter() {
     }
 
     private static final String RESET = Ansi.ansi().reset().toString();
 
-    private static final ImmutableMap<Pattern, String> REPLACEMENTS = ImmutableMap.<Pattern, String> builder()
+    private static final ImmutableMap<Pattern, String> REPLACEMENTS = ImmutableMap.<Pattern, String>builder()
             .put(compile(EnumChatFormatting.BLACK), Ansi.ansi().reset().fg(Ansi.Color.BLACK).boldOff().toString())
             .put(compile(EnumChatFormatting.DARK_BLUE), Ansi.ansi().reset().fg(Ansi.Color.BLUE).boldOff().toString())
             .put(compile(EnumChatFormatting.DARK_GREEN), Ansi.ansi().reset().fg(Ansi.Color.GREEN).boldOff().toString())
@@ -44,16 +42,13 @@ public final class ConsoleFormatter implements Function<String, String>
             .put(compile(EnumChatFormatting.RESET), RESET)
             .build();
 
-    private static Pattern compile(EnumChatFormatting formatting)
-    {
+    private static Pattern compile(EnumChatFormatting formatting) {
         return Pattern.compile(formatting.toString(), Pattern.LITERAL | Pattern.CASE_INSENSITIVE);
     }
 
     @Override
-    public String apply(String text)
-    {
-        for (Map.Entry<Pattern, String> entry : REPLACEMENTS.entrySet())
-        {
+    public String apply(String text) {
+        for (Map.Entry<Pattern, String> entry : REPLACEMENTS.entrySet()) {
             text = entry.getKey().matcher(text).replaceAll(entry.getValue());
         }
 

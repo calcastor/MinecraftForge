@@ -6,8 +6,8 @@ import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingHurtEvent is fired when an Entity is set to be hurt. <br>
- * This event is fired whenever an Entity is hurt in 
- * EntityLivingBase#damageEntity(DamageSource, float) and 
+ * This event is fired whenever an Entity is hurt in
+ * EntityLivingBase#damageEntity(DamageSource, float) and
  * EntityPlayer#damageEntity(DamageSource, float).<br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingHurt(EntityLivingBase, DamageSource, float)}.<br>
@@ -23,12 +23,11 @@ import net.minecraft.entity.EntityLivingBase;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingHurtEvent extends LivingEvent
-{
+public class LivingHurtEvent extends LivingEvent {
     public final DamageSource source;
     public float ammount;
-    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float ammount)
-    {
+
+    public LivingHurtEvent(EntityLivingBase entity, DamageSource source, float ammount) {
         super(entity);
         this.source = source;
         this.ammount = ammount;

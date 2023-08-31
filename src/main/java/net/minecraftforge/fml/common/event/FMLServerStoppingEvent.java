@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -17,20 +17,17 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
 /**
  * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
+ * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  */
-public class FMLServerStoppingEvent extends FMLStateEvent
-{
+public class FMLServerStoppingEvent extends FMLStateEvent {
 
-    public FMLServerStoppingEvent(Object... data)
-    {
+    public FMLServerStoppingEvent(Object... data) {
         super(data);
     }
-    
+
     @Override
-    public ModState getModState()
-    {
+    public ModState getModState() {
         return ModState.AVAILABLE;
     }
 

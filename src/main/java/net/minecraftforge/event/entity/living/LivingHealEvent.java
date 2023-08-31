@@ -19,11 +19,10 @@ import net.minecraft.entity.EntityLivingBase;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingHealEvent extends LivingEvent
-{
+public class LivingHealEvent extends LivingEvent {
     public float amount;
-    public LivingHealEvent(EntityLivingBase entity, float amount)
-    {
+
+    public LivingHealEvent(EntityLivingBase entity, float amount) {
         super(entity);
         this.amount = amount;
     }

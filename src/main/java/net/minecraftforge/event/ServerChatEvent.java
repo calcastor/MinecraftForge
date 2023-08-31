@@ -24,14 +24,13 @@ import net.minecraft.util.IChatComponent;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ServerChatEvent extends Event
-{
+public class ServerChatEvent extends Event {
     public final String message, username;
     public final EntityPlayerMP player;
     @Deprecated //Use methods below
     public ChatComponentTranslation component;
-    public ServerChatEvent(EntityPlayerMP player, String message, ChatComponentTranslation component)
-    {
+
+    public ServerChatEvent(EntityPlayerMP player, String message, ChatComponentTranslation component) {
         super();
         this.message = message;
         this.player = player;
@@ -39,16 +38,14 @@ public class ServerChatEvent extends Event
         this.component = component;
     }
 
-    public void setComponent(IChatComponent e)
-    {
+    public void setComponent(IChatComponent e) {
         if (e instanceof ChatComponentTranslation)
-            this.component = (ChatComponentTranslation)e;
+            this.component = (ChatComponentTranslation) e;
         else
             this.component = new ChatComponentTranslation("%s", e);
     }
 
-    public IChatComponent getComponent()
-    {
+    public IChatComponent getComponent() {
         return this.component;
     }
 }

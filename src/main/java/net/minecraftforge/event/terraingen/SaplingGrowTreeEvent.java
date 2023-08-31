@@ -1,6 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
+
 import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -22,13 +23,11 @@ import net.minecraftforge.event.world.WorldEvent;
  * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
 @HasResult
-public class SaplingGrowTreeEvent extends WorldEvent
-{
+public class SaplingGrowTreeEvent extends WorldEvent {
     public final BlockPos pos;
     public final Random rand;
 
-    public SaplingGrowTreeEvent(World world, Random rand, BlockPos pos)
-    {
+    public SaplingGrowTreeEvent(World world, Random rand, BlockPos pos) {
         super(world);
         this.rand = rand;
         this.pos = pos;

@@ -12,8 +12,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Fired when the ModelManager is notified of the resource manager reloading.
  * Called after model registry is setup, but before it's passed to BlockModelShapes.
  */
-public class ModelBakeEvent extends Event
-{
+public class ModelBakeEvent extends Event {
     public final ModelManager modelManager;
     public final IRegistry<ModelResourceLocation, IBakedModel> modelRegistry;
     @Deprecated
@@ -21,13 +20,11 @@ public class ModelBakeEvent extends Event
     public final ModelLoader modelLoader;
 
     @Deprecated
-    public ModelBakeEvent(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelBakery modelBakery)
-    {
-        this(modelManager, modelRegistry, (ModelLoader)modelBakery);
+    public ModelBakeEvent(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelBakery modelBakery) {
+        this(modelManager, modelRegistry, (ModelLoader) modelBakery);
     }
 
-    public ModelBakeEvent(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
-    {
+    public ModelBakeEvent(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader) {
         this.modelManager = modelManager;
         this.modelRegistry = modelRegistry;
         this.modelBakery = modelLoader;

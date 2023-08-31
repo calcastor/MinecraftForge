@@ -20,12 +20,11 @@ import net.minecraft.entity.EntityLivingBase;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingFallEvent extends LivingEvent
-{
+public class LivingFallEvent extends LivingEvent {
     public float distance;
     public float damageMultiplier;
-    public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier)
-    {
+
+    public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier) {
         super(entity);
         this.distance = distance;
         this.damageMultiplier = damageMultiplier;

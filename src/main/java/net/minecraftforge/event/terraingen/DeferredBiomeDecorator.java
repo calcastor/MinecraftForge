@@ -1,6 +1,7 @@
 package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
+
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
@@ -10,20 +11,18 @@ import net.minecraftforge.common.MinecraftForge;
 public class DeferredBiomeDecorator extends BiomeDecorator {
     private BiomeDecorator wrapped;
 
-    public DeferredBiomeDecorator(BiomeDecorator wrappedOriginal)
-    {
+    public DeferredBiomeDecorator(BiomeDecorator wrappedOriginal) {
         this.wrapped = wrappedOriginal;
     }
 
     @Override
-    public void decorate(World par1World, Random par2Random, BiomeGenBase biome, BlockPos pos)
-    {
+    public void decorate(World par1World, Random par2Random, BiomeGenBase biome, BlockPos pos) {
         fireCreateEventAndReplace(biome);
         // On first call to decorate, we fire and substitute ourselves, if we haven't already done so
         biome.theBiomeDecorator.decorate(par1World, par2Random, biome, pos);
     }
-    public void fireCreateEventAndReplace(BiomeGenBase biome)
-    {
+
+    public void fireCreateEventAndReplace(BiomeGenBase biome) {
         // Copy any configuration from us to the real instance.
         wrapped.bigMushroomsPerChunk = bigMushroomsPerChunk;
         wrapped.cactiPerChunk = cactiPerChunk;

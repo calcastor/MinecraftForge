@@ -12,11 +12,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  */
 @Cancelable
 public class RenderBlockOverlayEvent extends Event {
-    
+
     public static enum OverlayType {
         FIRE, BLOCK, WATER
     }
-    
+
     /**
      * The player which the overlay will apply to
      */
@@ -31,21 +31,19 @@ public class RenderBlockOverlayEvent extends Event {
      */
     public final IBlockState blockForOverlay;
     public final BlockPos blockPos;
-    
+
     @Deprecated
-    public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, Block block, int x, int y, int z)
-    {
+    public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, Block block, int x, int y, int z) {
         this(player, renderPartialTicks, type, block.getDefaultState(), new BlockPos(x, y, z));
     }
-    
-    public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos blockPos)
-    {
+
+    public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos blockPos) {
         this.player = player;
         this.renderPartialTicks = renderPartialTicks;
         this.overlayType = type;
         this.blockForOverlay = block;
         this.blockPos = blockPos;
-        
+
     }
 
 }

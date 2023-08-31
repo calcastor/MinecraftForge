@@ -61,28 +61,30 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  * </pre>
  *
  * @author cpw
- *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface Mod
-{
+public @interface Mod {
     /**
      * The unique mod identifier for this mod
      */
     String modid();
+
     /**
      * A user friendly name for the mod
      */
     String name() default "";
+
     /**
      * A version string for this mod
      */
     String version() default "";
+
     /**
      * A simple dependency string for this mod (see modloader's "priorities" string specification)
      */
     String dependencies() default "";
+
     /**
      * Whether to use the mcmod.info metadata by default for this mod.
      * If true, settings in the mcmod.info file will override settings in these annotations.
@@ -106,14 +108,16 @@ public @interface Mod
      * The default ("empty string") indicates that the currently RUNNING minecraft version is acceptable.
      * This means ANY version that the end user adds the mod to. Modders PLEASS set this.
      * FML will refuse to run with an error if the minecraft version is not in this range across all mods.
+     *
      * @return A version range as specified by the maven version range specification or the empty string
      */
     String acceptedMinecraftVersions() default "";
+
     /**
      * A replacement for the no-longer-existing "versionRange" of NetworkMod. Specify a remote version range
      * that this mod will accept as valid. Defaults to nothing, which is interpreted as "only this version".
      * Another special value is '*' which means accept all versions.
-     *
+     * <p>
      * This is ignored if there is a {@link NetworkCheckHandler} annotation on a method in this class.
      *
      * @return A version range as specified by the maven version range specification or the empty string
@@ -123,16 +127,18 @@ public @interface Mod
     /**
      * A version range specifying compatible save version information. If your mod follows good version numbering
      * practice <a href="http://semver.org/">Like this (http://semver.org/)</a> then this should be sufficient.
-     *
+     * <p>
      * Advanced users can specify a {@link SaveInspectionHandler} instead.
+     *
      * @return A version range as specified by the maven version range specification or the empty string
      */
     String acceptableSaveVersions() default "";
+
     /**
      * Specifying this field allows for a mod to expect a signed jar with a fingerprint matching this value.
      * The fingerprint should be SHA-1 encoded, lowercase with ':' removed. An empty value indicates that
      * the mod is not expecting to be signed.
-     *
+     * <p>
      * Any incorrectness of the fingerprint, be it missing or wrong, will result in the {@link FMLFingerprintViolationEvent}
      * event firing <i>prior to any other event on the mod</i>.
      *
@@ -151,7 +157,7 @@ public @interface Mod
     /**
      * The language adapter to be used to load this mod. This overrides the value of modLanguage. The class must have a
      * public zero variable constructor and implement {@link ILanguageAdapter} just like the Java and Scala adapters.
-     *
+     * <p>
      * A class with an invalid constructor or that doesn't implement {@link ILanguageAdapter} will throw an exception and
      * halt loading.
      *
@@ -183,6 +189,7 @@ public @interface Mod
      * An optional URL to a JSON file that will be checked once per launch to determine if there is an updated
      * version of this mod and notify the end user. For more information see ForgeVersion.
      * Format is defined here: https://gist.github.com/LexManos/7aacb9aa991330523884
+     *
      * @return URL to update metadata json
      */
     String updateJSON() default "";
@@ -190,39 +197,43 @@ public @interface Mod
     /**
      * A list of custom properties for this mod. Completely up to the mod author if/when they
      * want to put anything in here.
+     *
      * @return an optional list of custom properties
      */
     CustomProperty[] customProperties() default {};
 
     /**
      * A custom key => value property pair for use with {@link Mod#customProperties()}
-     * @author cpw
      *
+     * @author cpw
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({})
-    public @interface CustomProperty
-    {
+    public @interface CustomProperty {
         /**
          * A key. Should be unique.
+         *
          * @return A key
          */
         String k();
+
         /**
          * A value. Can be anything.
+         *
          * @return A value
          */
         String v();
     }
+
     /**
      * Marks the associated method as handling an FML lifecycle event.
      * The method must have a single parameter, one of the following types. This annotation
      * replaces the multiple different annotations that previously were used.
-     *
+     * <p>
      * Current event classes. This first section is standard lifecycle events. They are dispatched
      * at various phases as the game starts. Each event should have information useful to that
      * phase of the lifecycle. They are fired in this order.
-     *
+     * <p>
      * These suggestions are mostly just suggestions on what to do in each event.
      * <ul>
      * <li> {@link FMLPreInitializationEvent} : Run before anything else. Read your config, create blocks,
@@ -251,17 +262,17 @@ public @interface Mod
      * </ul>
      *
      * @author cpw
-     *
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)
-    public @interface EventHandler{}
+    public @interface EventHandler {
+    }
 
     /**
      * Populate the annotated field with the mod instance based on the specified ModId. This can be used
      * to retrieve instances of other mods.
-     * @author cpw
      *
+     * @author cpw
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
@@ -271,10 +282,11 @@ public @interface Mod
          */
         String value() default "";
     }
+
     /**
      * Populate the annotated field with the mod's metadata.
-     * @author cpw
      *
+     * @author cpw
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
@@ -287,8 +299,8 @@ public @interface Mod
 
     /**
      * Mod instance factory method. Should return an instance of the mod. Applies only to static methods on the same class as {@link Mod}.
-     * @author cpw
      *
+     * @author cpw
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.METHOD)

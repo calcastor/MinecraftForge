@@ -12,24 +12,21 @@ import java.lang.ref.WeakReference;
 
 import com.google.common.base.Objects;
 
-public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler
-{
+public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest> implements IItemHandler {
     // Dummy cache value to signify that we have checked and definitely found no adjacent chests
     public static final VanillaDoubleChestItemHandler NO_ADJACENT_CHESTS_INSTANCE = new VanillaDoubleChestItemHandler(null, null, false);
     private final boolean mainChestIsUpper;
     private final TileEntityChest mainChest;
     private final int hashCode;
 
-    public VanillaDoubleChestItemHandler(TileEntityChest mainChest, TileEntityChest other, boolean mainChestIsUpper)
-    {
+    public VanillaDoubleChestItemHandler(TileEntityChest mainChest, TileEntityChest other, boolean mainChestIsUpper) {
         super(other);
         this.mainChest = mainChest;
         this.mainChestIsUpper = mainChestIsUpper;
         hashCode = Objects.hashCode(mainChestIsUpper ? mainChest : other) * 31 + Objects.hashCode(!mainChestIsUpper ? mainChest : other);
     }
 
-    public static VanillaDoubleChestItemHandler get(TileEntityChest chest)
-    {
+    public static VanillaDoubleChestItemHandler get(TileEntityChest chest) {
         World world = chest.getWorld();
         BlockPos pos = chest.getPos();
         if (world == null || pos == null || !world.isBlockLoaded(pos))
@@ -44,12 +41,10 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
             BlockPos blockpos = pos.offset(enumfacing);
             Block block = world.getBlockState(blockpos).getBlock();
 
-            if (block == blockType)
-            {
+            if (block == blockType) {
                 TileEntity otherTE = world.getTileEntity(blockpos);
 
-                if (otherTE instanceof TileEntityChest)
-                {
+                if (otherTE instanceof TileEntityChest) {
                     TileEntityChest otherChest = (TileEntityChest) otherTE;
                     return new VanillaDoubleChestItemHandler(chest, otherChest,
                             enumfacing != net.minecraft.util.EnumFacing.WEST && enumfacing != net.minecraft.util.EnumFacing.NORTH);
@@ -60,31 +55,26 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         return NO_ADJACENT_CHESTS_INSTANCE; //All alone
     }
 
-    public TileEntityChest getChest(boolean accessingUpper)
-    {
+    public TileEntityChest getChest(boolean accessingUpper) {
         if (accessingUpper == mainChestIsUpper)
             return mainChest;
-        else
-        {
+        else {
             return getOtherChest();
         }
     }
 
-    private TileEntityChest getOtherChest()
-    {
+    private TileEntityChest getOtherChest() {
         TileEntityChest tileEntityChest = get();
         return tileEntityChest != null && !tileEntityChest.isInvalid() ? tileEntityChest : null;
     }
 
     @Override
-    public int getSlots()
-    {
+    public int getSlots() {
         return 27 * 2;
     }
 
     @Override
-    public ItemStack getStackInSlot(int slot)
-    {
+    public ItemStack getStackInSlot(int slot) {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
@@ -92,8 +82,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
-    {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
@@ -101,8 +90,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
         boolean accessingUpperChest = slot < 27;
         int targetSlot = accessingUpperChest ? slot : slot - 27;
         TileEntityChest chest = getChest(accessingUpperChest);
@@ -110,8 +98,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -130,13 +117,11 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return hashCode;
     }
 
-    public boolean needsRefresh()
-    {
+    public boolean needsRefresh() {
         if (this == NO_ADJACENT_CHESTS_INSTANCE)
             return false;
         TileEntityChest tileEntityChest = get();

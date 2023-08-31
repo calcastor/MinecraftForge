@@ -16,12 +16,10 @@ import net.minecraft.util.BlockPos;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class MinecartUpdateEvent extends MinecartEvent
-{
+public class MinecartUpdateEvent extends MinecartEvent {
     public final BlockPos pos;
 
-    public MinecartUpdateEvent(EntityMinecart minecart, BlockPos pos)
-    {
+    public MinecartUpdateEvent(EntityMinecart minecart, BlockPos pos) {
         super(minecart);
         this.pos = pos;
     }

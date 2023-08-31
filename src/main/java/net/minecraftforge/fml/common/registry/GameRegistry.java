@@ -60,8 +60,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Sets;
 import com.google.common.primitives.Ints;
 
-public class GameRegistry
-{
+public class GameRegistry {
     private static Set<IWorldGenerator> worldGenerators = Sets.newHashSet();
     private static Map<IWorldGenerator, Integer> worldGeneratorIndex = Maps.newHashMap();
     private static List<IFuelHandler> fuelHandlers = Lists.newArrayList();
@@ -74,12 +73,10 @@ public class GameRegistry
      * @param modGenerationWeight a weight to assign to this generator. Heavy weights tend to sink to the bottom of
      *                            list of world generators (i.e. they run later)
      */
-    public static void registerWorldGenerator(IWorldGenerator generator, int modGenerationWeight)
-    {
+    public static void registerWorldGenerator(IWorldGenerator generator, int modGenerationWeight) {
         worldGenerators.add(generator);
         worldGeneratorIndex.put(generator, modGenerationWeight);
-        if (sortedGeneratorList != null)
-        {
+        if (sortedGeneratorList != null) {
             sortedGeneratorList = null;
         }
     }
@@ -94,10 +91,8 @@ public class GameRegistry
      * @param chunkGenerator The chunk generator
      * @param chunkProvider  The chunk provider
      */
-    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
-    {
-        if (sortedGeneratorList == null)
-        {
+    public static void generateWorld(int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider) {
+        if (sortedGeneratorList == null) {
             computeSortedGeneratorList();
         }
         long worldSeed = world.getSeed();
@@ -106,21 +101,17 @@ public class GameRegistry
         long zSeed = fmlRandom.nextLong() >> 2 + 1L;
         long chunkSeed = (xSeed * chunkX + zSeed * chunkZ) ^ worldSeed;
 
-        for (IWorldGenerator generator : sortedGeneratorList)
-        {
+        for (IWorldGenerator generator : sortedGeneratorList) {
             fmlRandom.setSeed(chunkSeed);
             generator.generate(fmlRandom, chunkX, chunkZ, world, chunkGenerator, chunkProvider);
         }
     }
 
-    private static void computeSortedGeneratorList()
-    {
+    private static void computeSortedGeneratorList() {
         ArrayList<IWorldGenerator> list = Lists.newArrayList(worldGenerators);
-        Collections.sort(list, new Comparator<IWorldGenerator>()
-        {
+        Collections.sort(list, new Comparator<IWorldGenerator>() {
             @Override
-            public int compare(IWorldGenerator o1, IWorldGenerator o2)
-            {
+            public int compare(IWorldGenerator o1, IWorldGenerator o2) {
                 return Ints.compare(worldGeneratorIndex.get(o1), worldGeneratorIndex.get(o2));
             }
         });
@@ -132,8 +123,7 @@ public class GameRegistry
      *
      * @param item The item to register
      */
-    public static void registerItem(Item item)
-    {
+    public static void registerItem(Item item) {
         registerItem(item, item.getRegistryName());
     }
 
@@ -143,10 +133,8 @@ public class GameRegistry
      * @param item The item to register
      * @param name The mod-unique name of the item
      */
-    public static void registerItem(Item item, String name)
-    {
-        if (Strings.isNullOrEmpty(name))
-        {
+    public static void registerItem(Item item, String name) {
+        if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Attempted to register a block with no name: " + item);
         }
         GameData.getMain().registerItem(item, name);
@@ -160,8 +148,7 @@ public class GameRegistry
      * @param modId deprecated, unused
      */
     @Deprecated // See version without modID remove in 1.9
-    public static Item registerItem(Item item, String name, String modId)
-    {
+    public static Item registerItem(Item item, String name, String modId) {
         registerItem(item, name);
         return item;
     }
@@ -177,8 +164,7 @@ public class GameRegistry
      * @throws ExistingSubstitutionException     if someone else has already registered an alias either from or to one of the names
      * @throws IncompatibleSubstitutionException if the substitution is incompatible
      */
-    public static void addSubstitutionAlias(String nameToSubstitute, GameRegistry.Type type, Object object) throws ExistingSubstitutionException
-    {
+    public static void addSubstitutionAlias(String nameToSubstitute, GameRegistry.Type type, Object object) throws ExistingSubstitutionException {
         GameData.getMain().registerSubstitutionAlias(nameToSubstitute, type, object);
     }
 
@@ -187,8 +173,7 @@ public class GameRegistry
      *
      * @param block The block to register
      */
-    public static Block registerBlock(Block block)
-    {
+    public static Block registerBlock(Block block) {
         return registerBlock(block, block.getRegistryName());
     }
 
@@ -198,8 +183,7 @@ public class GameRegistry
      * @param block The block to register
      * @param name  The mod-unique name to register it as, will get prefixed by your modid.
      */
-    public static Block registerBlock(Block block, String name)
-    {
+    public static Block registerBlock(Block block, String name) {
         return registerBlock(block, ItemBlock.class, name);
     }
 
@@ -209,8 +193,7 @@ public class GameRegistry
      * @param block     The block to register
      * @param itemclass The item type to register with it : null registers a block without associated item.
      */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass)
-    {
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass) {
         return registerBlock(block, itemclass, block.getRegistryName());
     }
 
@@ -221,9 +204,8 @@ public class GameRegistry
      * @param itemclass The item type to register with it : null registers a block without associated item.
      * @param name      The mod-unique name to register it as, will get prefixed by your modid.
      */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name)
-    {
-        return registerBlock(block, itemclass, name, new Object[] {});
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name) {
+        return registerBlock(block, itemclass, name, new Object[]{});
     }
 
 
@@ -234,8 +216,7 @@ public class GameRegistry
      * @param itemclass    The item type to register with it : null registers a block without associated item.
      * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs)
-    {
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, Object... itemCtorArgs) {
         return registerBlock(block, itemclass, block.getRegistryName(), itemCtorArgs);
     }
 
@@ -247,26 +228,20 @@ public class GameRegistry
      * @param name         The mod-unique name to register it as, will get prefixed by your modid.
      * @param itemCtorArgs Arguments to pass (after the required {@code Block} parameter) to the ItemBlock constructor (optional).
      */
-    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs)
-    {
-        if (Strings.isNullOrEmpty(name))
-        {
+    public static Block registerBlock(Block block, Class<? extends ItemBlock> itemclass, String name, Object... itemCtorArgs) {
+        if (Strings.isNullOrEmpty(name)) {
             throw new IllegalArgumentException("Attempted to register a block with no name: " + block);
         }
-        if (Loader.instance().isInState(LoaderState.CONSTRUCTING))
-        {
+        if (Loader.instance().isInState(LoaderState.CONSTRUCTING)) {
             FMLLog.warning("The mod %s is attempting to register a block whilst it it being constructed. This is bad modding practice - please use a proper mod lifecycle event.", Loader.instance().activeModContainer());
         }
-        try
-        {
+        try {
             assert block != null : "registerBlock: block cannot be null";
             ItemBlock i = null;
-            if (itemclass != null)
-            {
+            if (itemclass != null) {
                 Class<?>[] ctorArgClasses = new Class<?>[itemCtorArgs.length + 1];
                 ctorArgClasses[0] = Block.class;
-                for (int idx = 1; idx < ctorArgClasses.length; idx++)
-                {
+                for (int idx = 1; idx < ctorArgClasses.length; idx++) {
                     ctorArgClasses[idx] = itemCtorArgs[idx - 1].getClass();
                 }
                 Constructor<? extends ItemBlock> itemCtor = itemclass.getConstructor(ctorArgClasses);
@@ -274,56 +249,46 @@ public class GameRegistry
             }
             // block registration has to happen first
             GameData.getMain().registerBlock(block, name);
-            if (i != null)
-            {
+            if (i != null) {
                 GameData.getMain().registerItem(i, name);
                 GameData.getBlockItemMap().put(block, i);
             }
             return block;
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log(Level.ERROR, e, "Caught an exception during block registration");
             throw new LoaderException(e);
         }
     }
 
-    public static void addRecipe(ItemStack output, Object... params)
-    {
+    public static void addRecipe(ItemStack output, Object... params) {
         addShapedRecipe(output, params);
     }
 
-    public static IRecipe addShapedRecipe(ItemStack output, Object... params)
-    {
+    public static IRecipe addShapedRecipe(ItemStack output, Object... params) {
         return CraftingManager.getInstance().addRecipe(output, params);
     }
 
-    public static void addShapelessRecipe(ItemStack output, Object... params)
-    {
+    public static void addShapelessRecipe(ItemStack output, Object... params) {
         CraftingManager.getInstance().addShapelessRecipe(output, params);
     }
 
-    public static void addRecipe(IRecipe recipe)
-    {
+    public static void addRecipe(IRecipe recipe) {
         CraftingManager.getInstance().getRecipeList().add(recipe);
     }
 
-    public static void addSmelting(Block input, ItemStack output, float xp)
-    {
+    public static void addSmelting(Block input, ItemStack output, float xp) {
         FurnaceRecipes.instance().addSmeltingRecipeForBlock(input, output, xp);
     }
 
-    public static void addSmelting(Item input, ItemStack output, float xp)
-    {
+    public static void addSmelting(Item input, ItemStack output, float xp) {
         FurnaceRecipes.instance().addSmelting(input, output, xp);
     }
 
-    public static void addSmelting(ItemStack input, ItemStack output, float xp)
-    {
+    public static void addSmelting(ItemStack input, ItemStack output, float xp) {
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
 
-    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id)
-    {
+    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String id) {
         TileEntity.addMapping(tileEntityClass, id);
     }
 
@@ -335,29 +300,23 @@ public class GameRegistry
      * @param id              The primary ID, this will be the ID that the tileentity saves as
      * @param alternatives    A list of alternative IDs that will also map to this class. These will never save, but they will load
      */
-    public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives)
-    {
+    public static void registerTileEntityWithAlternatives(Class<? extends TileEntity> tileEntityClass, String id, String... alternatives) {
         TileEntity.addMapping(tileEntityClass, id);
         Map<String, Class<?>> teMappings = ObfuscationReflectionHelper.getPrivateValue(TileEntity.class, null, "field_" + "145855_i", "nameToClassMap");
-        for (String s : alternatives)
-        {
-            if (!teMappings.containsKey(s))
-            {
+        for (String s : alternatives) {
+            if (!teMappings.containsKey(s)) {
                 teMappings.put(s, tileEntityClass);
             }
         }
     }
 
-    public static void registerFuelHandler(IFuelHandler handler)
-    {
+    public static void registerFuelHandler(IFuelHandler handler) {
         fuelHandlers.add(handler);
     }
 
-    public static int getFuelValue(ItemStack itemStack)
-    {
+    public static int getFuelValue(ItemStack itemStack) {
         int fuelValue = 0;
-        for (IFuelHandler handler : fuelHandlers)
-        {
+        for (IFuelHandler handler : fuelHandlers) {
             fuelValue = Math.max(fuelValue, handler.getBurnTime(itemStack));
         }
         return fuelValue;
@@ -370,8 +329,7 @@ public class GameRegistry
      * @param name  The name of the block itself
      * @return The block or null if not found
      */
-    public static Block findBlock(String modId, String name)
-    {
+    public static Block findBlock(String modId, String name) {
         return GameData.findBlock(modId, name);
     }
 
@@ -382,8 +340,7 @@ public class GameRegistry
      * @param name  The name of the item itself
      * @return The item or null if not found
      */
-    public static Item findItem(String modId, String name)
-    {
+    public static Item findItem(String modId, String name) {
         return GameData.findItem(modId, name);
     }
 
@@ -391,73 +348,58 @@ public class GameRegistry
      * Will be switching to using ResourceLocation, since it's used widely elsewhere
      */
     @Deprecated
-    public static final class UniqueIdentifier
-    {
+    public static final class UniqueIdentifier {
         public final String modId;
         public final String name;
 
-        UniqueIdentifier(String modId, String name)
-        {
+        UniqueIdentifier(String modId, String name) {
             this.modId = modId;
             this.name = name;
         }
 
-        public UniqueIdentifier(String string)
-        {
+        public UniqueIdentifier(String string) {
             String[] parts = string.split(":");
             this.modId = parts[0];
             this.name = parts[1];
         }
 
-        public UniqueIdentifier(Object obj)
-        {
-            if (obj instanceof String)
-            {
-                String[] parts = ((String)obj).split(":");
+        public UniqueIdentifier(Object obj) {
+            if (obj instanceof String) {
+                String[] parts = ((String) obj).split(":");
                 this.modId = parts[0];
                 this.name = parts[1];
-            }
-            else if (obj instanceof ResourceLocation)
-            {
-                this.modId = ((ResourceLocation)obj).getResourceDomain();
-                this.name = ((ResourceLocation)obj).getResourcePath();
-            }
-            else
-            {
+            } else if (obj instanceof ResourceLocation) {
+                this.modId = ((ResourceLocation) obj).getResourceDomain();
+                this.name = ((ResourceLocation) obj).getResourcePath();
+            } else {
                 throw new IllegalArgumentException("UniqueIdentifier must be a String or ResourceLocation, was " + obj.getClass());
             }
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
+        public boolean equals(Object obj) {
+            if (obj == null) {
                 return false;
             }
-            if (obj.getClass() != this.getClass())
-            {
+            if (obj.getClass() != this.getClass()) {
                 return false;
             }
-            final UniqueIdentifier other = (UniqueIdentifier)obj;
+            final UniqueIdentifier other = (UniqueIdentifier) obj;
             return Objects.equal(modId, other.modId) && Objects.equal(name, other.name);
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(modId, name);
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return String.format("%s:%s", modId, name);
         }
     }
 
-    public enum Type
-    {
+    public enum Type {
         BLOCK,
         ITEM;
     }
@@ -472,8 +414,7 @@ public class GameRegistry
      * @return a {@link UniqueIdentifier} for the block or null
      */
     @Deprecated
-    public static UniqueIdentifier findUniqueIdentifierFor(Block block)
-    {
+    public static UniqueIdentifier findUniqueIdentifierFor(Block block) {
         return GameData.getUniqueName(block);
     }
 
@@ -487,8 +428,7 @@ public class GameRegistry
      * @return a {@link UniqueIdentifier} for the item or null
      */
     @Deprecated
-    public static UniqueIdentifier findUniqueIdentifierFor(Item item)
-    {
+    public static UniqueIdentifier findUniqueIdentifierFor(Item item) {
         return GameData.getUniqueName(item);
     }
 
@@ -499,8 +439,7 @@ public class GameRegistry
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.TYPE, ElementType.FIELD})
-    public @interface ObjectHolder
-    {
+    public @interface ObjectHolder {
         /**
          * If used on a class, this represents a modid only.
          * If used on a field, it represents a name, which can be abbreviated or complete.
@@ -521,8 +460,7 @@ public class GameRegistry
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
-    public @interface ItemStackHolder
-    {
+    public @interface ItemStackHolder {
         /**
          * The registry name of the item being looked up.
          *
@@ -557,38 +495,29 @@ public class GameRegistry
      * @param nbtString an nbt stack as a string, will be processed by {@link JsonToNBT}
      * @return a new itemstack
      */
-    public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString)
-    {
-        if (itemName == null)
-        {
+    public static ItemStack makeItemStack(String itemName, int meta, int stackSize, String nbtString) {
+        if (itemName == null) {
             throw new IllegalArgumentException("The itemName cannot be null");
         }
         Item item = GameData.getItemRegistry().getObject(new ResourceLocation(itemName));
-        if (item == null)
-        {
+        if (item == null) {
             FMLLog.getLogger().log(Level.TRACE, "Unable to find item with name {}", itemName);
             return null;
         }
         ItemStack is = new ItemStack(item, stackSize, meta);
-        if (!Strings.isNullOrEmpty(nbtString))
-        {
+        if (!Strings.isNullOrEmpty(nbtString)) {
             NBTBase nbttag = null;
-            try
-            {
+            try {
                 nbttag = JsonToNBT.getTagFromJson(nbtString);
-            } catch (NBTException e)
-            {
+            } catch (NBTException e) {
                 FMLLog.getLogger().log(Level.WARN, "Encountered an exception parsing ItemStack NBT string {}", nbtString, e);
                 throw Throwables.propagate(e);
             }
-            if (!(nbttag instanceof NBTTagCompound))
-            {
+            if (!(nbttag instanceof NBTTagCompound)) {
                 FMLLog.getLogger().log(Level.WARN, "Unexpected NBT string - multiple values {}", nbtString);
                 throw new RuntimeException("Invalid NBT JSON");
-            }
-            else
-            {
-                is.setTagCompound((NBTTagCompound)nbttag);
+            } else {
+                is.setTagCompound((NBTTagCompound) nbttag);
             }
         }
         return is;

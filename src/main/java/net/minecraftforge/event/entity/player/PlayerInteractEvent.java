@@ -2,6 +2,7 @@ package net.minecraftforge.event.entity.player;
 
 import static net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT;
 import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -33,10 +34,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class PlayerInteractEvent extends PlayerEvent
-{
-    public static enum Action
-    {
+public class PlayerInteractEvent extends PlayerEvent {
+    public static enum Action {
         RIGHT_CLICK_AIR,
         RIGHT_CLICK_BLOCK,
         LEFT_CLICK_BLOCK
@@ -52,13 +51,11 @@ public class PlayerInteractEvent extends PlayerEvent
     public Result useItem = DEFAULT;
 
     @Deprecated
-    public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world)
-    {
+    public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world) {
         this(player, action, pos, face, world, null);
     }
 
-    public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world, Vec3 localPos)
-    {
+    public PlayerInteractEvent(EntityPlayer player, Action action, BlockPos pos, EnumFacing face, World world, Vec3 localPos) {
         super(player);
         this.action = action;
         this.pos = pos;
@@ -69,8 +66,7 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     @Override
-    public void setCanceled(boolean cancel)
-    {
+    public void setCanceled(boolean cancel) {
         super.setCanceled(cancel);
         useBlock = (cancel ? DENY : useBlock == DENY ? DEFAULT : useBlock);
         useItem = (cancel ? DENY : useItem == DENY ? DEFAULT : useItem);

@@ -12,8 +12,7 @@
 
 package net.minecraftforge.fml.client.config;
 
-public enum ConfigGuiType
-{
+public enum ConfigGuiType {
     STRING,
     INTEGER,
     BOOLEAN,

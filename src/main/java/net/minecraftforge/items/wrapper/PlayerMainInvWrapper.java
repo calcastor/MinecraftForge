@@ -8,67 +8,54 @@ import net.minecraft.item.ItemStack;
  * Exposes the player inventory WITHOUT the armor inventory as IItemHandler.
  * Also takes core of inserting/extracting having the same logic as picking up items.
  */
-public class PlayerMainInvWrapper extends InvWrapper
-{
+public class PlayerMainInvWrapper extends InvWrapper {
 
     public final InventoryPlayer inventoryPlayer;
 
-    public PlayerMainInvWrapper(InventoryPlayer inv)
-    {
+    public PlayerMainInvWrapper(InventoryPlayer inv) {
         super(inv);
 
         inventoryPlayer = inv;
     }
 
     @Override
-    public int getSlots()
-    {
+    public int getSlots() {
         return inventoryPlayer.mainInventory.length;
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
-    {
+    public void setStackInSlot(int slot, ItemStack stack) {
         // prevent setting of armor inventory
-        if (slot > getSlots())
-        {
+        if (slot > getSlots()) {
             return;
         }
         super.setStackInSlot(slot, stack);
     }
 
     @Override
-    public ItemStack getStackInSlot(int slot)
-    {
+    public ItemStack getStackInSlot(int slot) {
         // prevent getting of armor inventory
-        if (slot > getSlots())
-        {
+        if (slot > getSlots()) {
             return null;
         }
         return super.getStackInSlot(slot);
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
-    {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         // prevent inserting into armor inventory
-        if (slot > getSlots())
-        {
+        if (slot > getSlots()) {
             return stack;
         }
 
         ItemStack rest = super.insertItem(slot, stack, simulate);
-        if (rest == null || rest.stackSize != stack.stackSize)
-        {
+        if (rest == null || rest.stackSize != stack.stackSize) {
             // the stack in the slot changed, animate it
             ItemStack inSlot = getStackInSlot(slot);
-            if(inSlot != null)
-            {
-                if (inventoryPlayer.player.worldObj.isRemote)
-                {
+            if (inSlot != null) {
+                if (inventoryPlayer.player.worldObj.isRemote) {
                     inSlot.animationsToGo = 5;
-                }
-                else if(inventoryPlayer.player instanceof EntityPlayerMP) {
+                } else if (inventoryPlayer.player instanceof EntityPlayerMP) {
                     inventoryPlayer.player.openContainer.detectAndSendChanges();
                 }
             }
@@ -77,11 +64,9 @@ public class PlayerMainInvWrapper extends InvWrapper
     }
 
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
         // prevent extraction from armor inventory
-        if (slot > getSlots())
-        {
+        if (slot > getSlots()) {
             return null;
         }
         return super.extractItem(slot, amount, simulate);

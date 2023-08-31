@@ -18,13 +18,11 @@ import net.minecraft.util.BlockPos;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerSleepInBedEvent extends PlayerEvent
-{
+public class PlayerSleepInBedEvent extends PlayerEvent {
     public EnumStatus result = null;
     public final BlockPos pos;
 
-    public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos)
-    {
+    public PlayerSleepInBedEvent(EntityPlayer player, BlockPos pos) {
         super(player);
         this.pos = pos;
     }

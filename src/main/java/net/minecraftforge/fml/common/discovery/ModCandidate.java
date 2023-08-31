@@ -24,8 +24,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 
-public class ModCandidate
-{
+public class ModCandidate {
     private File classPathRoot;
     private File modContainer;
     private ContainerType sourceType;
@@ -38,12 +37,11 @@ public class ModCandidate
     private List<String> packages = Lists.newArrayList();
     private ASMDataTable table;
 
-    public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType)
-    {
+    public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType) {
         this(classPathRoot, modContainer, sourceType, false, false);
     }
-    public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType, boolean isMinecraft, boolean classpath)
-    {
+
+    public ModCandidate(File classPathRoot, File modContainer, ContainerType sourceType, boolean isMinecraft, boolean classpath) {
         this.classPathRoot = classPathRoot;
         this.modContainer = modContainer;
         this.sourceType = sourceType;
@@ -51,76 +49,69 @@ public class ModCandidate
         this.classpath = classpath;
     }
 
-    public File getClassPathRoot()
-    {
+    public File getClassPathRoot() {
         return classPathRoot;
     }
 
-    public File getModContainer()
-    {
+    public File getModContainer() {
         return modContainer;
     }
 
-    public ContainerType getSourceType()
-    {
+    public ContainerType getSourceType() {
         return sourceType;
     }
-    public List<ModContainer> explore(ASMDataTable table)
-    {
+
+    public List<ModContainer> explore(ASMDataTable table) {
         this.table = table;
         this.mods = sourceType.findMods(this, table);
-        if (!baseModCandidateTypes.isEmpty())
-        {
+        if (!baseModCandidateTypes.isEmpty()) {
             FMLLog.info("Attempting to reparse the mod container %s", getModContainer().getName());
             this.mods = sourceType.findMods(this, table);
         }
         return this.mods;
     }
 
-    public void addClassEntry(String name)
-    {
+    public void addClassEntry(String name) {
         String className = name.substring(0, name.lastIndexOf('.')); // strip the .class
         foundClasses.add(className);
-        className = className.replace('/','.');
+        className = className.replace('/', '.');
         int pkgIdx = className.lastIndexOf('.');
-        if (pkgIdx > -1)
-        {
-            String pkg = className.substring(0,pkgIdx);
+        if (pkgIdx > -1) {
+            String pkg = className.substring(0, pkgIdx);
             packages.add(pkg);
-            this.table.registerPackage(this,pkg);
+            this.table.registerPackage(this, pkg);
         }
     }
 
-    public boolean isClasspath()
-    {
+    public boolean isClasspath() {
         return classpath;
     }
-    public void rememberBaseModType(String className)
-    {
+
+    public void rememberBaseModType(String className) {
         baseModTypes.add(className);
     }
-    public List<String> getRememberedBaseMods()
-    {
+
+    public List<String> getRememberedBaseMods() {
         return baseModTypes;
     }
-    public boolean isMinecraftJar()
-    {
+
+    public boolean isMinecraftJar() {
         return isMinecraft;
     }
-    public void rememberModCandidateType(ASMModParser modParser)
-    {
+
+    public void rememberModCandidateType(ASMModParser modParser) {
         baseModCandidateTypes.add(modParser);
     }
-    public Set<String> getClassList()
-    {
+
+    public Set<String> getClassList() {
         return foundClasses;
     }
-    public List<ModContainer> getContainedMods()
-    {
+
+    public List<ModContainer> getContainedMods() {
         return mods;
     }
-    public List<String> getContainedPackages()
-    {
+
+    public List<String> getContainedPackages() {
         return packages;
     }
 }

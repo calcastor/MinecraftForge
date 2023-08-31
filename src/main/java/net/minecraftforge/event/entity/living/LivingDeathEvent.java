@@ -6,9 +6,9 @@ import net.minecraft.entity.EntityLivingBase;
 
 /**
  * LivingDeathEvent is fired when an Entity dies. <br>
- * This event is fired whenever an Entity dies in 
- * EntityLivingBase#onDeath(DamageSource), 
- * EntityPlayer#onDeath(DamageSource), and 
+ * This event is fired whenever an Entity dies in
+ * EntityLivingBase#onDeath(DamageSource),
+ * EntityPlayer#onDeath(DamageSource), and
  * EntityPlayerMP#onDeath(DamageSource). <br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingDeath(EntityLivingBase, DamageSource)}.<br>
@@ -23,11 +23,10 @@ import net.minecraft.entity.EntityLivingBase;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class LivingDeathEvent extends LivingEvent
-{
+public class LivingDeathEvent extends LivingEvent {
     public final DamageSource source;
-    public LivingDeathEvent(EntityLivingBase entity, DamageSource source)
-    {
+
+    public LivingDeathEvent(EntityLivingBase entity, DamageSource source) {
         super(entity);
         this.source = source;
     }

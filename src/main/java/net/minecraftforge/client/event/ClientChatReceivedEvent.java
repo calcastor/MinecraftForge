@@ -5,8 +5,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
-public class ClientChatReceivedEvent extends Event
-{
+public class ClientChatReceivedEvent extends Event {
     public IChatComponent message;
     /**
      * Introduced in 1.8:
@@ -15,8 +14,8 @@ public class ClientChatReceivedEvent extends Event
      * 2 : 'Status' message, displayed above action bar, where song notifications are.
      */
     public final byte type;
-    public ClientChatReceivedEvent(byte type, IChatComponent message)
-    {
+
+    public ClientChatReceivedEvent(byte type, IChatComponent message) {
         this.type = type;
         this.message = message;
     }

@@ -11,55 +11,42 @@ import jline.console.ConsoleReader;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.EnumChatFormatting;
 
-public final class TerminalHandler
-{
+public final class TerminalHandler {
 
     private static final Logger logger = LogManager.getLogger();
 
-    private TerminalHandler()
-    {
+    private TerminalHandler() {
     }
 
-    public static boolean handleCommands(DedicatedServer server)
-    {
+    public static boolean handleCommands(DedicatedServer server) {
         final ConsoleReader reader = TerminalConsoleAppender.getReader();
-        if (reader != null)
-        {
+        if (reader != null) {
             TerminalConsoleAppender.setFormatter(new ConsoleFormatter());
             reader.addCompleter(new ConsoleCommandCompleter(server));
 
             String line;
-            while (!server.isServerStopped() && server.isServerRunning())
-            {
-                try
-                {
+            while (!server.isServerStopped() && server.isServerRunning()) {
+                try {
                     line = reader.readLine("> ");
-                    if (line == null)
-                    {
+                    if (line == null) {
                         break;
                     }
 
                     line = line.trim();
-                    if (!line.isEmpty())
-                    {
+                    if (!line.isEmpty()) {
                         server.addPendingCommand(line, server);
                     }
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     logger.error("Exception handling console input", e);
                 }
             }
 
             return true;
-        }
-        else
-        {
+        } else {
             TerminalConsoleAppender.setFormatter(new Function<String, String>() {
 
                 @Override
-                public String apply(String text)
-                {
+                public String apply(String text) {
                     return EnumChatFormatting.getTextWithoutFormattingCodes(text);
                 }
 

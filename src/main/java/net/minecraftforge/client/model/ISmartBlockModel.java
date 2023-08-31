@@ -15,77 +15,61 @@ import net.minecraft.util.EnumFacing;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-public interface ISmartBlockModel extends IBakedModel
-{
+public interface ISmartBlockModel extends IBakedModel {
     IBakedModel handleBlockState(IBlockState state);
 
-    public static abstract class Wrapper implements ISmartBlockModel, IFlexibleBakedModel
-    {
+    public static abstract class Wrapper implements ISmartBlockModel, IFlexibleBakedModel {
         protected final IFlexibleBakedModel parent;
 
-        public Wrapper(IFlexibleBakedModel parent)
-        {
+        public Wrapper(IFlexibleBakedModel parent) {
             this.parent = parent;
         }
 
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
+        public List<BakedQuad> getFaceQuads(EnumFacing side) {
             return parent.getFaceQuads(side);
         }
 
-        public List<BakedQuad> getGeneralQuads()
-        {
+        public List<BakedQuad> getGeneralQuads() {
             return parent.getGeneralQuads();
         }
 
-        public boolean isAmbientOcclusion()
-        {
+        public boolean isAmbientOcclusion() {
             return parent.isAmbientOcclusion();
         }
 
-        public boolean isGui3d()
-        {
+        public boolean isGui3d() {
             return parent.isGui3d();
         }
 
-        public boolean isBuiltInRenderer()
-        {
+        public boolean isBuiltInRenderer() {
             return parent.isBuiltInRenderer();
         }
 
-        public TextureAtlasSprite getParticleTexture()
-        {
+        public TextureAtlasSprite getParticleTexture() {
             return parent.getParticleTexture();
         }
 
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
+        public ItemCameraTransforms getItemCameraTransforms() {
             return parent.getItemCameraTransforms();
         }
 
-        public VertexFormat getFormat()
-        {
+        public VertexFormat getFormat() {
             return parent.getFormat();
         }
     }
 
-    public static abstract class PerspectiveWrapper extends Wrapper implements IPerspectiveAwareModel
-    {
+    public static abstract class PerspectiveWrapper extends Wrapper implements IPerspectiveAwareModel {
         protected final IPerspectiveAwareModel parent;
 
-        public PerspectiveWrapper(IPerspectiveAwareModel parent)
-        {
+        public PerspectiveWrapper(IPerspectiveAwareModel parent) {
             super(parent);
             this.parent = parent;
         }
 
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType type)
-        {
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType type) {
             Pair<? extends IFlexibleBakedModel, Matrix4f> pair = parent.handlePerspective(type);
-            return Pair.of(new ISmartBlockModel.Wrapper(pair.getLeft())
-            {
-                public IBakedModel handleBlockState(IBlockState state)
-                {
+            return Pair.of(new ISmartBlockModel.Wrapper(pair.getLeft()) {
+                public IBakedModel handleBlockState(IBlockState state) {
                     return PerspectiveWrapper.this.handleBlockState(state);
                 }
             }, pair.getRight());

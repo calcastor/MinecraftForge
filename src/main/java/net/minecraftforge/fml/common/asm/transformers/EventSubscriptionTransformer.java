@@ -45,7 +45,8 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class EventSubscriptionTransformer implements IClassTransformer {
 
-    public EventSubscriptionTransformer() {}
+    public EventSubscriptionTransformer() {
+    }
 
     @Override
     public byte[] transform(String name, String transformedName, byte[] bytes) {

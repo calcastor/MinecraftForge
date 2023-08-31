@@ -12,14 +12,12 @@
 
 package net.minecraftforge.fml.common;
 
-public class WrongMinecraftVersionException extends EnhancedRuntimeException
-{
+public class WrongMinecraftVersionException extends EnhancedRuntimeException {
     private static final long serialVersionUID = 1L;
     public ModContainer mod;
     private String mcVersion;
 
-    public WrongMinecraftVersionException(ModContainer mod, String mcver)
-    {
+    public WrongMinecraftVersionException(ModContainer mod, String mcver) {
         super(String.format("Wrong Minecraft version for %s", mod.getModId()));
         this.mod = mod;
         this.mcVersion = mcver;

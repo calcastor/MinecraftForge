@@ -1,6 +1,7 @@
 package net.minecraftforge.common.util;
 
 import com.google.common.base.Throwables;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
@@ -23,83 +24,80 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.Stronghold.Door;
 import org.apache.commons.lang3.ArrayUtils;
 
-public class EnumHelper
-{
+public class EnumHelper {
     //Some enums are decompiled with extra arguments, so lets check for that
     @SuppressWarnings("rawtypes")
     private static Class[][] commonTypes =
-    {
-        {EnumAction.class},
-        {ArmorMaterial.class, String.class, int.class, int[].class, int.class},
-        {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
-        {EnumCreatureAttribute.class},
-        {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
-        {Door.class},
-        {EnumEnchantmentType.class},
-        {Sensitivity.class},
-        {MovingObjectType.class},
-        {EnumSkyBlock.class, int.class},
-        {EnumStatus.class},
-        {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
-        {EnumRarity.class, EnumChatFormatting.class, String.class}
-    };
+            {
+                    {EnumAction.class},
+                    {ArmorMaterial.class, String.class, int.class, int[].class, int.class},
+                    {EnumArt.class, String.class, int.class, int.class, int.class, int.class},
+                    {EnumCreatureAttribute.class},
+                    {EnumCreatureType.class, Class.class, int.class, Material.class, boolean.class, boolean.class},
+                    {Door.class},
+                    {EnumEnchantmentType.class},
+                    {Sensitivity.class},
+                    {MovingObjectType.class},
+                    {EnumSkyBlock.class, int.class},
+                    {EnumStatus.class},
+                    {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
+                    {EnumRarity.class, EnumChatFormatting.class, String.class}
+            };
 
-    public static EnumAction addAction(String name)
-    {
+    public static EnumAction addAction(String name) {
         return addEnum(EnumAction.class, name);
     }
-    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability)
-    {
+
+    public static ArmorMaterial addArmorMaterial(String name, String textureName, int durability, int[] reductionAmounts, int enchantability) {
         return addEnum(ArmorMaterial.class, name, textureName, durability, reductionAmounts, enchantability);
     }
-    public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY)
-    {
+
+    public static EnumArt addArt(String name, String tile, int sizeX, int sizeY, int offsetX, int offsetY) {
         return addEnum(EnumArt.class, name, tile, sizeX, sizeY, offsetX, offsetY);
     }
-    public static EnumCreatureAttribute addCreatureAttribute(String name)
-    {
+
+    public static EnumCreatureAttribute addCreatureAttribute(String name) {
         return addEnum(EnumCreatureAttribute.class, name);
     }
+
     @SuppressWarnings("rawtypes")
-    public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful, boolean animal)
-    {
+    public static EnumCreatureType addCreatureType(String name, Class typeClass, int maxNumber, Material material, boolean peaceful, boolean animal) {
         return addEnum(EnumCreatureType.class, name, typeClass, maxNumber, material, peaceful, animal);
     }
-    public static Door addDoor(String name)
-    {
+
+    public static Door addDoor(String name) {
         return addEnum(Door.class, name);
     }
-    public static EnumEnchantmentType addEnchantmentType(String name)
-    {
+
+    public static EnumEnchantmentType addEnchantmentType(String name) {
         return addEnum(EnumEnchantmentType.class, name);
     }
-    public static Sensitivity addSensitivity(String name)
-    {
+
+    public static Sensitivity addSensitivity(String name) {
         return addEnum(Sensitivity.class, name);
     }
-    public static MovingObjectType addMovingObjectType(String name)
-    {
+
+    public static MovingObjectType addMovingObjectType(String name) {
         return addEnum(MovingObjectType.class, name);
     }
-    public static EnumSkyBlock addSkyBlock(String name, int lightValue)
-    {
+
+    public static EnumSkyBlock addSkyBlock(String name, int lightValue) {
         return addEnum(EnumSkyBlock.class, name, lightValue);
     }
-    public static EnumStatus addStatus(String name)
-    {
+
+    public static EnumStatus addStatus(String name) {
         return addEnum(EnumStatus.class, name);
     }
-    public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability)
-    {
+
+    public static ToolMaterial addToolMaterial(String name, int harvestLevel, int maxUses, float efficiency, float damage, int enchantability) {
         return addEnum(ToolMaterial.class, name, harvestLevel, maxUses, efficiency, damage, enchantability);
     }
-    public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName)
-    {
+
+    public static EnumRarity addRarity(String name, EnumChatFormatting color, String displayName) {
         return addEnum(EnumRarity.class, name, color, displayName);
     }
 
-    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception
-    {
+    public static void setFailsafeFieldValue(Field field, Object target, Object value) throws Exception {
         try {
             setFieldHandle.invokeExact(field, target, value);
         } catch (Throwable e) {
@@ -107,21 +105,16 @@ public class EnumHelper
         }
     }
 
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Object... paramValues)
-    {
+    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Object... paramValues) {
         return addEnum(commonTypes, enumType, enumName, paramValues);
     }
 
     @SuppressWarnings("rawtypes")
-    public static <T extends Enum<? >> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues)
-    {
-        for (Class[] lookup : map)
-        {
-            if (lookup[0] == enumType)
-            {
+    public static <T extends Enum<?>> T addEnum(Class[][] map, Class<T> enumType, String enumName, Object... paramValues) {
+        for (Class[] lookup : map) {
+            if (lookup[0] == enumType) {
                 Class<?>[] paramTypes = new Class<?>[lookup.length - 1];
-                if (paramTypes.length > 0)
-                {
+                if (paramTypes.length > 0) {
                     System.arraycopy(lookup, 1, paramTypes, 0, paramTypes.length);
                 }
                 return addEnum(enumType, enumName, paramTypes, paramValues);
@@ -131,8 +124,7 @@ public class EnumHelper
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Enum<? >> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues)
-    {
+    public static <T extends Enum<?>> T addEnum(Class<T> enumType, String enumName, Class<?>[] paramTypes, Object[] paramValues) {
         try {
             paramTypes = ArrayUtils.add(paramTypes, 0, String.class);
             paramValues = ArrayUtils.add(paramValues, 0, enumName);

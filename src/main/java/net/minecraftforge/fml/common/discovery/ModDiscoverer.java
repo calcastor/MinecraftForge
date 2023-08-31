@@ -31,8 +31,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
 
-public class ModDiscoverer
-{
+public class ModDiscoverer {
     private static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
 
     private List<ModCandidate> candidates = Lists.newArrayList();
@@ -41,8 +40,7 @@ public class ModDiscoverer
 
     private List<File> nonModLibs = Lists.newArrayList();
 
-    public void findClasspathMods(ModClassLoader modClassLoader)
-    {
+    public void findClasspathMods(ModClassLoader modClassLoader) {
         List<String> knownLibraries = ImmutableList.<String>builder()
                 // skip default libs
                 .addAll(modClassLoader.getDefaultLibraries())
@@ -52,32 +50,22 @@ public class ModDiscoverer
                 .addAll(CoreModManager.getReparseableCoremods())
                 .build();
         File[] minecraftSources = modClassLoader.getParentSources();
-        if (minecraftSources.length == 1 && minecraftSources[0].isFile())
-        {
+        if (minecraftSources.length == 1 && minecraftSources[0].isFile()) {
             FMLLog.fine("Minecraft is a file at %s, loading", minecraftSources[0].getAbsolutePath());
             addCandidate(new ModCandidate(minecraftSources[0], minecraftSources[0], ContainerType.JAR, true, true));
-        }
-        else
-        {
+        } else {
             int i = 0;
-            for (File source : minecraftSources)
-            {
-                if (source.isFile())
-                {
-                    if (knownLibraries.contains(source.getName()) || modClassLoader.isDefaultLibrary(source))
-                    {
+            for (File source : minecraftSources) {
+                if (source.isFile()) {
+                    if (knownLibraries.contains(source.getName()) || modClassLoader.isDefaultLibrary(source)) {
                         FMLLog.finer("Skipping known library file %s", source.getAbsolutePath());
-                    }
-                    else
-                    {
+                    } else {
                         FMLLog.fine("Found a minecraft related file at %s, examining for mod candidates", source.getAbsolutePath());
-                        addCandidate(new ModCandidate(source, source, ContainerType.JAR, i==0, true));
+                        addCandidate(new ModCandidate(source, source, ContainerType.JAR, i == 0, true));
                     }
-                }
-                else if (minecraftSources[i].isDirectory())
-                {
+                } else if (minecraftSources[i].isDirectory()) {
                     FMLLog.fine("Found a minecraft related directory at %s, examining for mod candidates", source.getAbsolutePath());
-                    addCandidate(new ModCandidate(source, source, ContainerType.DIR, i==0, true));
+                    addCandidate(new ModCandidate(source, source, ContainerType.DIR, i == 0, true));
                 }
                 i++;
             }
@@ -85,68 +73,47 @@ public class ModDiscoverer
 
     }
 
-    public void findModDirMods(File modsDir)
-    {
+    public void findModDirMods(File modsDir) {
         findModDirMods(modsDir, new File[0]);
     }
 
-    public void findModDirMods(File modsDir, File[] supplementalModFileCandidates)
-    {
+    public void findModDirMods(File modsDir, File[] supplementalModFileCandidates) {
         File[] modList = FileListHelper.sortFileList(modsDir, null);
         modList = FileListHelper.sortFileList(ObjectArrays.concat(modList, supplementalModFileCandidates, File.class));
-        for (File modFile : modList)
-        {
+        for (File modFile : modList) {
             // skip loaded coremods
-            if (CoreModManager.getIgnoredMods().contains(modFile.getName()))
-            {
+            if (CoreModManager.getIgnoredMods().contains(modFile.getName())) {
                 FMLLog.finer("Skipping already parsed coremod or tweaker %s", modFile.getName());
-            }
-            else if (modFile.isDirectory())
-            {
+            } else if (modFile.isDirectory()) {
                 FMLLog.fine("Found a candidate mod directory %s", modFile.getName());
                 addCandidate(new ModCandidate(modFile, modFile, ContainerType.DIR));
-            }
-            else
-            {
+            } else {
                 Matcher matcher = zipJar.matcher(modFile.getName());
 
-                if (matcher.matches())
-                {
+                if (matcher.matches()) {
                     FMLLog.fine("Found a candidate zip or jar file %s", matcher.group(0));
                     addCandidate(new ModCandidate(modFile, modFile, ContainerType.JAR));
-                }
-                else
-                {
+                } else {
                     FMLLog.fine("Ignoring unknown file %s in mods directory", modFile.getName());
                 }
             }
         }
     }
 
-    public List<ModContainer> identifyMods()
-    {
+    public List<ModContainer> identifyMods() {
         List<ModContainer> modList = Lists.newArrayList();
 
-        for (ModCandidate candidate : candidates)
-        {
-            try
-            {
+        for (ModCandidate candidate : candidates) {
+            try {
                 List<ModContainer> mods = candidate.explore(dataTable);
-                if (mods.isEmpty() && !candidate.isClasspath())
-                {
+                if (mods.isEmpty() && !candidate.isClasspath()) {
                     nonModLibs.add(candidate.getModContainer());
-                }
-                else
-                {
+                } else {
                     modList.addAll(mods);
                 }
-            }
-            catch (LoaderException le)
-            {
+            } catch (LoaderException le) {
                 FMLLog.log(Level.WARN, le, "Identified a problem with the mod candidate %s, ignoring this source", candidate.getModContainer());
-            }
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
                 Throwables.propagate(t);
             }
         }
@@ -154,22 +121,17 @@ public class ModDiscoverer
         return modList;
     }
 
-    public ASMDataTable getASMTable()
-    {
+    public ASMDataTable getASMTable() {
         return dataTable;
     }
 
-    public List<File> getNonModLibs()
-    {
+    public List<File> getNonModLibs() {
         return nonModLibs;
     }
 
-    private void addCandidate(ModCandidate candidate)
-    {
-        for (ModCandidate c : candidates)
-        {
-            if (c.getModContainer().equals(candidate.getModContainer()))
-            {
+    private void addCandidate(ModCandidate candidate) {
+        for (ModCandidate c : candidates) {
+            if (c.getModContainer().equals(candidate.getModContainer())) {
                 FMLLog.finer("  Skipping already in list %s", candidate.getModContainer());
                 return;
             }

@@ -41,25 +41,23 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * Handles primary communication from hooked code into the system
- *
+ * <p>
  * The FML entry point is {@link #beginServerLoading(MinecraftServer)} called from
  * {@link net.minecraft.server.dedicated.DedicatedServer}
- *
+ * <p>
  * Obfuscated code should focus on this class and other members of the "server"
  * (or "client") code
- *
+ * <p>
  * The actual mod loading is handled at arms length by {@link Loader}
- *
+ * <p>
  * It is expected that a similar class will exist for each target environment:
  * Bukkit and Client side.
- *
+ * <p>
  * It should not be directly modified.
  *
  * @author cpw
- *
  */
-public class FMLServerHandler implements IFMLSidedHandler
-{
+public class FMLServerHandler implements IFMLSidedHandler {
     /**
      * The singleton
      */
@@ -70,10 +68,10 @@ public class FMLServerHandler implements IFMLSidedHandler
      */
     private MinecraftServer server;
 
-    private FMLServerHandler()
-    {
+    private FMLServerHandler() {
         FMLCommonHandler.instance().beginLoading(this);
     }
+
     /**
      * Called to start the whole game off from
      * {@link MinecraftServer#startServer}
@@ -81,8 +79,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @param minecraftServer
      */
     @Override
-    public void beginServerLoading(MinecraftServer minecraftServer)
-    {
+    public void beginServerLoading(MinecraftServer minecraftServer) {
         server = minecraftServer;
         Loader.instance().loadMods();
         Loader.instance().preinitializeMods();
@@ -92,20 +89,17 @@ public class FMLServerHandler implements IFMLSidedHandler
      * Called a bit later on during server initialization to finish loading mods
      */
     @Override
-    public void finishServerLoading()
-    {
+    public void finishServerLoading() {
         Loader.instance().initializeMods();
     }
 
     @Override
-    public void haltGame(String message, Throwable exception)
-    {
+    public void haltGame(String message, Throwable exception) {
         throw new RuntimeException(message, exception);
     }
 
     @Override
-    public File getSavesDirectory()
-    {
+    public File getSavesDirectory() {
         return ((SaveFormatOld) server.getActiveAnvilConverter()).savesDirectory;
     }
 
@@ -113,16 +107,14 @@ public class FMLServerHandler implements IFMLSidedHandler
      * Get the server instance
      */
     @Override
-    public MinecraftServer getServer()
-    {
+    public MinecraftServer getServer() {
         return server;
     }
 
     /**
      * @return the instance
      */
-    public static FMLServerHandler instance()
-    {
+    public static FMLServerHandler instance() {
         return INSTANCE;
     }
 
@@ -130,8 +122,7 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @see net.minecraftforge.fml.common.IFMLSidedHandler#getAdditionalBrandingInformation()
      */
     @Override
-    public List<String> getAdditionalBrandingInformation()
-    {
+    public List<String> getAdditionalBrandingInformation() {
         return ImmutableList.<String>of();
     }
 
@@ -139,27 +130,21 @@ public class FMLServerHandler implements IFMLSidedHandler
      * @see net.minecraftforge.fml.common.IFMLSidedHandler#getSide()
      */
     @Override
-    public Side getSide()
-    {
+    public Side getSide() {
         return Side.SERVER;
     }
 
     @Override
-    public void showGuiScreen(Object clientGuiElement)
-    {
+    public void showGuiScreen(Object clientGuiElement) {
 
     }
 
     @Override
-    public void queryUser(StartupQuery query) throws InterruptedException
-    {
-        if (query.getResult() == null)
-        {
+    public void queryUser(StartupQuery query) throws InterruptedException {
+        if (query.getResult() == null) {
             FMLLog.warning("%s", query.getText());
             query.finish();
-        }
-        else
-        {
+        } else {
             String text = query.getText() +
                     "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
                     "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
@@ -169,35 +154,27 @@ public class FMLServerHandler implements IFMLSidedHandler
 
             boolean done = false;
 
-            while (!done && server.isServerRunning())
-            {
+            while (!done && server.isServerRunning()) {
                 if (Thread.interrupted()) throw new InterruptedException();
 
                 DedicatedServer dedServer = (DedicatedServer) server;
 
                 // rudimentary command processing, check for fml confirm/cancel and stop commands
-                synchronized (dedServer.pendingCommandList)
-                {
-                    for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext(); )
-                    {
+                synchronized (dedServer.pendingCommandList) {
+                    for (Iterator<ServerCommand> it = GenericIterableFactory.newCastingIterable(dedServer.pendingCommandList, ServerCommand.class).iterator(); it.hasNext(); ) {
                         String cmd = it.next().command.trim().toLowerCase();
 
-                        if (cmd.equals("/fml confirm"))
-                        {
+                        if (cmd.equals("/fml confirm")) {
                             FMLLog.info("confirmed");
                             query.setResult(true);
                             done = true;
                             it.remove();
-                        }
-                        else if (cmd.equals("/fml cancel"))
-                        {
+                        } else if (cmd.equals("/fml cancel")) {
                             FMLLog.info("cancelled");
                             query.setResult(false);
                             done = true;
                             it.remove();
-                        }
-                        else if (cmd.equals("/stop"))
-                        {
+                        } else if (cmd.equals("/stop")) {
                             StartupQuery.abort();
                         }
                     }
@@ -211,47 +188,42 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public boolean shouldServerShouldBeKilledQuietly()
-    {
+    public boolean shouldServerShouldBeKilledQuietly() {
         return false;
     }
+
     @Override
-    public void addModAsResource(ModContainer container)
-    {
+    public void addModAsResource(ModContainer container) {
         LanguageRegistry.instance().loadLanguagesFor(container, Side.SERVER);
     }
 
     @Override
-    public String getCurrentLanguage()
-    {
+    public String getCurrentLanguage() {
         return "en_US";
     }
 
     @Override
-    public void serverStopped()
-    {
+    public void serverStopped() {
         // NOOP
     }
+
     @Override
-    public NetworkManager getClientToServerNetworkManager()
-    {
+    public NetworkManager getClientToServerNetworkManager() {
         throw new RuntimeException("Missing");
     }
+
     @Override
-    public INetHandler getClientPlayHandler()
-    {
+    public INetHandler getClientPlayHandler() {
         return null;
     }
 
     @Override
-    public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side)
-    {
+    public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side) {
         bus.post(new FMLNetworkEvent.CustomPacketRegistrationEvent<NetHandlerPlayServer>(manager, channelSet, channel, side, NetHandlerPlayServer.class));
     }
 
     @Override
-    public boolean shouldAllowPlayerLogins()
-    {
+    public boolean shouldAllowPlayerLogins() {
         return DedicatedServer.allowPlayerLogins;
     }
 
@@ -261,21 +233,18 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     @Override
-    public IThreadListener getWorldThread(INetHandler net)
-    {
+    public IThreadListener getWorldThread(INetHandler net) {
         // Always the server on the dedicated server, eventually add Per-World if Mojang adds world stuff.
         return getServer();
     }
 
     @Override
-    public void processWindowMessages()
-    {
+    public void processWindowMessages() {
         // NOOP
     }
 
     @Override
-    public String stripSpecialChars(String message)
-    {
+    public String stripSpecialChars(String message) {
         return message;
     }
 }

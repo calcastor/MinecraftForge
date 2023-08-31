@@ -12,8 +12,7 @@ import com.google.common.base.Function;
  * Interface for models that can be baked
  * (possibly to different vertex formats and with different state).
  */
-public interface IModel
-{
+public interface IModel {
     /*
      * Returns all model locations that this model depends on.
      * Assume that returned collection is immutable.

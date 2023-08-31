@@ -16,23 +16,22 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
  * world.
  */
 @Cancelable
-public class PlayerDropsEvent extends LivingDropsEvent
-{
+public class PlayerDropsEvent extends LivingDropsEvent {
     public final EntityPlayer entityPlayer;
 
     /**
      * Creates a new event containing all the items that will drop into the
      * world when a player dies.
+     *
      * @param entity The dying player.
      * @param source The source of the damage which is killing the player.
-     * @param drops List of all drops entering the world.
+     * @param drops  List of all drops entering the world.
      */
-    public PlayerDropsEvent(EntityPlayer entity, DamageSource source, List<EntityItem> drops, boolean recentlyHit)
-    {
+    public PlayerDropsEvent(EntityPlayer entity, DamageSource source, List<EntityItem> drops, boolean recentlyHit) {
         super(entity, source, drops,
-            (source.getEntity() instanceof EntityPlayer) ?
-                EnchantmentHelper.getLootingModifier(((EntityPlayer)source.getEntity())) : 0,
-            recentlyHit);
+                (source.getEntity() instanceof EntityPlayer) ?
+                        EnchantmentHelper.getLootingModifier(((EntityPlayer) source.getEntity())) : 0,
+                recentlyHit);
 
         this.entityPlayer = entity;
     }

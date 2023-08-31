@@ -1,6 +1,7 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
+
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -16,11 +17,10 @@ import net.minecraftforge.event.entity.living.LivingEvent;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class PlayerEvent extends LivingEvent
-{
+public class PlayerEvent extends LivingEvent {
     public final EntityPlayer entityPlayer;
-    public PlayerEvent(EntityPlayer player)
-    {
+
+    public PlayerEvent(EntityPlayer player) {
         super(player);
         entityPlayer = player;
     }
@@ -41,13 +41,11 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class HarvestCheck extends PlayerEvent
-    {
+    public static class HarvestCheck extends PlayerEvent {
         public final Block block;
         public boolean success;
 
-        public HarvestCheck(EntityPlayer player, Block block, boolean success)
-        {
+        public HarvestCheck(EntityPlayer player, Block block, boolean success) {
             super(player);
             this.block = block;
             this.success = success;
@@ -74,15 +72,13 @@ public class PlayerEvent extends LivingEvent
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
     @Cancelable
-    public static class BreakSpeed extends PlayerEvent
-    {
+    public static class BreakSpeed extends PlayerEvent {
         public final IBlockState state;
         public final float originalSpeed;
         public float newSpeed = 0.0f;
         public final BlockPos pos; // Y position of -1 notes unknown location
 
-        public BreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos)
-        {
+        public BreakSpeed(EntityPlayer player, IBlockState state, float original, BlockPos pos) {
             super(player);
             this.state = state;
             this.originalSpeed = original;
@@ -107,8 +103,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    public static class NameFormat extends PlayerEvent
-    {
+    public static class NameFormat extends PlayerEvent {
         public final String username;
         public String displayname;
 
@@ -123,8 +118,7 @@ public class PlayerEvent extends LivingEvent
      * Fired when the EntityPlayer is cloned, typically caused by the network sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
      */
-    public static class Clone extends PlayerEvent
-    {
+    public static class Clone extends PlayerEvent {
         /**
          * The old EntityPlayer that this new entity is a clone of.
          */
@@ -135,8 +129,7 @@ public class PlayerEvent extends LivingEvent
          */
         public final boolean wasDeath;
 
-        public Clone(EntityPlayer _new, EntityPlayer oldPlayer, boolean wasDeath)
-        {
+        public Clone(EntityPlayer _new, EntityPlayer oldPlayer, boolean wasDeath) {
             super(_new);
             this.original = oldPlayer;
             this.wasDeath = wasDeath;
@@ -145,7 +138,6 @@ public class PlayerEvent extends LivingEvent
 
     /**
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
-     *
      */
     public static class StartTracking extends PlayerEvent {
 
@@ -154,8 +146,7 @@ public class PlayerEvent extends LivingEvent
          */
         public final Entity target;
 
-        public StartTracking(EntityPlayer player, Entity target)
-        {
+        public StartTracking(EntityPlayer player, Entity target) {
             super(player);
             this.target = target;
         }
@@ -164,7 +155,6 @@ public class PlayerEvent extends LivingEvent
 
     /**
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
-     *
      */
     public static class StopTracking extends PlayerEvent {
 
@@ -173,8 +163,7 @@ public class PlayerEvent extends LivingEvent
          */
         public final Entity target;
 
-        public StopTracking(EntityPlayer player, Entity target)
-        {
+        public StopTracking(EntityPlayer player, Entity target) {
             super(player);
             this.target = target;
         }
@@ -199,8 +188,7 @@ public class PlayerEvent extends LivingEvent
          */
         public final String playerUUID;
 
-        public LoadFromFile(EntityPlayer player, File originDirectory, String playerUUID)
-        {
+        public LoadFromFile(EntityPlayer player, File originDirectory, String playerUUID) {
             super(player);
             this.playerDirectory = originDirectory;
             this.playerUUID = playerUUID;
@@ -208,15 +196,16 @@ public class PlayerEvent extends LivingEvent
 
         /**
          * Construct and return a recommended file for the supplied suffix
+         *
          * @param suffix The suffix to use.
          * @return
          */
-        public File getPlayerFile(String suffix)
-        {
+        public File getPlayerFile(String suffix) {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+            return new File(this.playerDirectory, this.playerUUID + "." + suffix);
         }
     }
+
     /**
      * The player is being saved to the world store. Note that the
      * player may be in the process of logging out or otherwise departing
@@ -242,8 +231,7 @@ public class PlayerEvent extends LivingEvent
          */
         public final String playerUUID;
 
-        public SaveToFile(EntityPlayer player, File originDirectory, String playerUUID)
-        {
+        public SaveToFile(EntityPlayer player, File originDirectory, String playerUUID) {
             super(player);
             this.playerDirectory = originDirectory;
             this.playerUUID = playerUUID;
@@ -251,13 +239,13 @@ public class PlayerEvent extends LivingEvent
 
         /**
          * Construct and return a recommended file for the supplied suffix
+         *
          * @param suffix The suffix to use.
          * @return
          */
-        public File getPlayerFile(String suffix)
-        {
+        public File getPlayerFile(String suffix) {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.playerDirectory, this.playerUUID+"."+suffix);
+            return new File(this.playerDirectory, this.playerUUID + "." + suffix);
         }
     }
 }

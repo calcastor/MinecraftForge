@@ -13,12 +13,10 @@ import net.minecraft.world.biome.BiomeGenBase;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
  **/
-public class BiomeEvent extends Event
-{
+public class BiomeEvent extends Event {
     public final BiomeGenBase biome;
 
-    public BiomeEvent(BiomeGenBase biome)
-    {
+    public BiomeEvent(BiomeGenBase biome) {
         this.biome = biome;
     }
 
@@ -36,13 +34,11 @@ public class BiomeEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
      **/
-    public static class CreateDecorator extends BiomeEvent
-    {
+    public static class CreateDecorator extends BiomeEvent {
         public final BiomeDecorator originalBiomeDecorator;
         public BiomeDecorator newBiomeDecorator;
 
-        public CreateDecorator(BiomeGenBase biome, BiomeDecorator original)
-        {
+        public CreateDecorator(BiomeGenBase biome, BiomeDecorator original) {
             super(biome);
             originalBiomeDecorator = original;
             newBiomeDecorator = original;
@@ -56,13 +52,11 @@ public class BiomeEvent extends Event
      * <br>
      * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
      **/
-    public static class BiomeColor extends BiomeEvent
-    {
+    public static class BiomeColor extends BiomeEvent {
         public final int originalColor;
         public int newColor;
 
-        public BiomeColor(BiomeGenBase biome, int original)
-        {
+        public BiomeColor(BiomeGenBase biome, int original) {
             super(biome);
             originalColor = original;
             newColor = original;
@@ -72,17 +66,15 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when the village generator attempts to choose a block ID
      * based on the village's biome.
-     *
+     * <p>
      * You can cancel the event to override default values
      */
     @HasResult
-    public static class GetVillageBlockID extends BiomeEvent
-    {
+    public static class GetVillageBlockID extends BiomeEvent {
         public final IBlockState original;
         public IBlockState replacement;
 
-        public GetVillageBlockID(BiomeGenBase biome, IBlockState original)
-        {
+        public GetVillageBlockID(BiomeGenBase biome, IBlockState original) {
             super(biome);
             this.original = original;
         }
@@ -91,10 +83,8 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when a biome is queried for its grass color.
      */
-    public static class GetGrassColor extends BiomeColor
-    {
-        public GetGrassColor(BiomeGenBase biome, int original)
-        {
+    public static class GetGrassColor extends BiomeColor {
+        public GetGrassColor(BiomeGenBase biome, int original) {
             super(biome, original);
         }
     }
@@ -102,10 +92,8 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when a biome is queried for its grass color.
      */
-    public static class GetFoliageColor extends BiomeColor
-    {
-        public GetFoliageColor(BiomeGenBase biome, int original)
-        {
+    public static class GetFoliageColor extends BiomeColor {
+        public GetFoliageColor(BiomeGenBase biome, int original) {
             super(biome, original);
         }
     }
@@ -113,10 +101,8 @@ public class BiomeEvent extends Event
     /**
      * This event is fired when a biome is queried for its water color.
      */
-    public static class GetWaterColor extends BiomeColor
-    {
-        public GetWaterColor(BiomeGenBase biome, int original)
-        {
+    public static class GetWaterColor extends BiomeColor {
+        public GetWaterColor(BiomeGenBase biome, int original) {
             super(biome, original);
         }
     }

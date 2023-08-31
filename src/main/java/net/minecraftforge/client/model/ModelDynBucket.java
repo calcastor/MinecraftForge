@@ -27,8 +27,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
-public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>, IRetexturableModel<ModelDynBucket>
-{
+public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>, IRetexturableModel<ModelDynBucket> {
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation("forge", "dynbucket"), "inventory");
 
     // minimal Z offset to prevent depth-fighting
@@ -46,13 +45,11 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
     protected final Fluid fluid;
     protected final boolean flipGas;
 
-    public ModelDynBucket()
-    {
+    public ModelDynBucket() {
         this(null, null, null, null, false);
     }
 
-    public ModelDynBucket(ResourceLocation baseLocation, ResourceLocation liquidLocation, ResourceLocation coverLocation, Fluid fluid, boolean flipGas)
-    {
+    public ModelDynBucket(ResourceLocation baseLocation, ResourceLocation liquidLocation, ResourceLocation coverLocation, Fluid fluid, boolean flipGas) {
         this.baseLocation = baseLocation;
         this.liquidLocation = liquidLocation;
         this.coverLocation = coverLocation;
@@ -61,14 +58,12 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
+    public Collection<ResourceLocation> getDependencies() {
         return ImmutableList.of();
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures()
-    {
+    public Collection<ResourceLocation> getTextures() {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
         if (baseLocation != null)
             builder.add(baseLocation);
@@ -82,14 +77,12 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
 
     @Override
     public IFlexibleBakedModel bake(IModelState state, VertexFormat format,
-                                    Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-    {
+                                    Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
 
         ImmutableMap<TransformType, TRSRTransformation> transformMap = IPerspectiveAwareModel.MapWrapper.getTransforms(state);
 
         // if the fluid is a gas wi manipulate the initial state to be rotated 180° to turn it upside down
-        if (flipGas && fluid != null && fluid.isGaseous())
-        {
+        if (flipGas && fluid != null && fluid.isGaseous()) {
             state = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
         }
 
@@ -97,25 +90,22 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
         TextureAtlasSprite fluidSprite = null;
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
-        if(fluid != null) {
+        if (fluid != null) {
             fluidSprite = bakedTextureGetter.apply(fluid.getStill());
         }
 
-        if (baseLocation != null)
-        {
+        if (baseLocation != null) {
             // build base (insidest)
             IFlexibleBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(state, format, bakedTextureGetter);
             builder.addAll(model.getGeneralQuads());
         }
-        if (liquidLocation != null && fluidSprite != null)
-        {
+        if (liquidLocation != null && fluidSprite != null) {
             TextureAtlasSprite liquid = bakedTextureGetter.apply(liquidLocation);
             // build liquid layer (inside)
             builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, EnumFacing.NORTH, fluid.getColor()));
             builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, EnumFacing.SOUTH, fluid.getColor()));
         }
-        if (coverLocation != null)
-        {
+        if (coverLocation != null) {
             // cover (the actual item around the other two)
             TextureAtlasSprite base = bakedTextureGetter.apply(coverLocation);
             builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_BASE, base, EnumFacing.NORTH, 0xffffffff));
@@ -127,8 +117,7 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
     }
 
     @Override
-    public IModelState getDefaultState()
-    {
+    public IModelState getDefaultState() {
         return TRSRTransformation.identity();
     }
 
@@ -140,16 +129,14 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
      * If the fluid can't be found, water is used
      */
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
-    {
+    public IModel process(ImmutableMap<String, String> customData) {
         String fluidName = customData.get("fluid");
         Fluid fluid = FluidRegistry.getFluid(fluidName);
 
         if (fluid == null) fluid = this.fluid;
 
         boolean flip = flipGas;
-        if (customData.containsKey("flipGas"))
-        {
+        if (customData.containsKey("flipGas")) {
             String flipStr = customData.get("flipGas");
             if (flipStr.equals("true")) flip = true;
             else if (flipStr.equals("false")) flip = false;
@@ -171,8 +158,7 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
      * If no liquid is given a hardcoded variant for the bucket is used.
      */
     @Override
-    public IModel retexture(ImmutableMap<String, String> textures)
-    {
+    public IModel retexture(ImmutableMap<String, String> textures) {
 
         ResourceLocation base = baseLocation;
         ResourceLocation liquid = liquidLocation;
@@ -188,32 +174,27 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
         return new ModelDynBucket(base, liquid, cover, fluid, flipGas);
     }
 
-    public enum LoaderDynBucket implements ICustomModelLoader
-    {
+    public enum LoaderDynBucket implements ICustomModelLoader {
         instance;
 
         @Override
-        public boolean accepts(ResourceLocation modelLocation)
-        {
+        public boolean accepts(ResourceLocation modelLocation) {
             return modelLocation.getResourceDomain().equals("forge") && modelLocation.getResourcePath().contains("forgebucket");
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation) throws IOException
-        {
+        public IModel loadModel(ResourceLocation modelLocation) throws IOException {
             return MODEL;
         }
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager)
-        {
+        public void onResourceManagerReload(IResourceManager resourceManager) {
             // no need to clear cache since we create a new model instance
         }
     }
 
     // the dynamic bucket is based on the empty bucket
-    protected static class BakedDynBucket extends ItemLayerModel.BakedModel implements ISmartItemModel, IPerspectiveAwareModel
-    {
+    protected static class BakedDynBucket extends ItemLayerModel.BakedModel implements ISmartItemModel, IPerspectiveAwareModel {
 
         private final ModelDynBucket parent;
         private final Map<String, IFlexibleBakedModel> cache; // contains all the baked models since they'll never change
@@ -221,8 +202,7 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
 
         public BakedDynBucket(ModelDynBucket parent,
                               ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format, ImmutableMap<ItemCameraTransforms.TransformType, TRSRTransformation> transforms,
-                              Map<String, IFlexibleBakedModel> cache)
-        {
+                              Map<String, IFlexibleBakedModel> cache) {
             super(quads, particle, format);
             this.parent = parent;
             this.transforms = transforms;
@@ -230,20 +210,16 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
         }
 
         @Override
-        public IBakedModel handleItemState(ItemStack stack)
-        {
+        public IBakedModel handleItemState(ItemStack stack) {
             FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(stack);
-            if (fluidStack == null)
-            {
-                if (stack.getItem() instanceof IFluidContainerItem)
-                {
+            if (fluidStack == null) {
+                if (stack.getItem() instanceof IFluidContainerItem) {
                     fluidStack = ((IFluidContainerItem) stack.getItem()).getFluid(stack);
                 }
             }
 
             // not a fluid item apparently
-            if (fluidStack == null)
-            {
+            if (fluidStack == null) {
                 // empty bucket
                 return this;
             }
@@ -252,14 +228,11 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
             Fluid fluid = fluidStack.getFluid();
             String name = fluid.getName();
 
-            if (!cache.containsKey(name))
-            {
+            if (!cache.containsKey(name)) {
                 IModel model = parent.process(ImmutableMap.of("fluid", name));
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-                textureGetter = new Function<ResourceLocation, TextureAtlasSprite>()
-                {
-                    public TextureAtlasSprite apply(ResourceLocation location)
-                    {
+                textureGetter = new Function<ResourceLocation, TextureAtlasSprite>() {
+                    public TextureAtlasSprite apply(ResourceLocation location) {
                         return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
                     }
                 };
@@ -273,8 +246,7 @@ public class ModelDynBucket implements IModel, IModelCustomData<ModelDynBucket>,
         }
 
         @Override
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
-        {
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, transforms, cameraTransformType);
         }
     }

@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 /**
  * MinecartInteractEvent is fired when a player interacts with a minecart. <br>
  * This event is fired whenever a player interacts with a minecart in
- * EntityMinecartContainer#interactFirst(EntityPlayer), 
+ * EntityMinecartContainer#interactFirst(EntityPlayer),
  * EntityMinecartEmpty#interactFirst(EntityPlayer)
  * EntityMinecartFurnace#interactFirst(EntityPlayer)
  * EntityMinecartHopper#interactFirst(EntityPlayer).<br>
@@ -22,12 +22,10 @@ import net.minecraft.entity.player.EntityPlayer;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class MinecartInteractEvent extends MinecartEvent
-{
+public class MinecartInteractEvent extends MinecartEvent {
     public final EntityPlayer player;
 
-    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player)
-    {
+    public MinecartInteractEvent(EntityMinecart minecart, EntityPlayer player) {
         super(minecart);
         this.player = player;
     }

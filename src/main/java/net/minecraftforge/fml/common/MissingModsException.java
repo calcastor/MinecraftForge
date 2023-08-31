@@ -16,23 +16,19 @@ import java.util.Set;
 
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-public class MissingModsException extends EnhancedRuntimeException
-{
+public class MissingModsException extends EnhancedRuntimeException {
     private static final long serialVersionUID = 1L;
     public final Set<ArtifactVersion> missingMods;
 
-    public MissingModsException(Set<ArtifactVersion> missingMods, String id, String name)
-    {
+    public MissingModsException(Set<ArtifactVersion> missingMods, String id, String name) {
         super(String.format("Mod %s (%s) requires %s", id, name, missingMods));
         this.missingMods = missingMods;
     }
 
     @Override
-    protected void printStackTrace(WrappedPrintStream stream)
-    {
+    protected void printStackTrace(WrappedPrintStream stream) {
         stream.println("Missing Mods:");
-        for (ArtifactVersion v : missingMods)
-        {
+        for (ArtifactVersion v : missingMods) {
             stream.println(String.format("\t%s : %s", v.getLabel(), v.getRangeString()));
         }
         stream.println("");

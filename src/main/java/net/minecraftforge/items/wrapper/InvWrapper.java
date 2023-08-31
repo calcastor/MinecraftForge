@@ -5,18 +5,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-public class InvWrapper implements IItemHandlerModifiable
-{
+public class InvWrapper implements IItemHandlerModifiable {
     public final IInventory inv;
 
-    public InvWrapper(IInventory inv)
-    {
+    public InvWrapper(IInventory inv) {
         this.inv = inv;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
@@ -29,26 +26,22 @@ public class InvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return inv.hashCode();
     }
 
     @Override
-    public int getSlots()
-    {
+    public int getSlots() {
         return inv.getSizeInventory();
     }
 
     @Override
-    public ItemStack getStackInSlot(int slot)
-    {
+    public ItemStack getStackInSlot(int slot) {
         return inv.getStackInSlot(slot);
     }
 
     @Override
-    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
-    {
+    public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (stack == null)
             return null;
 
@@ -58,17 +51,14 @@ public class InvWrapper implements IItemHandlerModifiable
         ItemStack stackInSlot = inv.getStackInSlot(slot);
 
         int m;
-        if (stackInSlot != null)
-        {
+        if (stackInSlot != null) {
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit()) - stackInSlot.stackSize;
 
-            if (stack.stackSize <= m)
-            {
-                if (!simulate)
-                {
+            if (stack.stackSize <= m) {
+                if (!simulate) {
                     ItemStack copy = stack.copy();
                     copy.stackSize += stackInSlot.stackSize;
                     inv.setInventorySlotContents(slot, copy);
@@ -76,49 +66,35 @@ public class InvWrapper implements IItemHandlerModifiable
                 }
 
                 return null;
-            }
-            else
-            {
+            } else {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (!simulate)
-                {
+                if (!simulate) {
                     ItemStack copy = stack.splitStack(m);
                     copy.stackSize += stackInSlot.stackSize;
                     inv.setInventorySlotContents(slot, copy);
                     inv.markDirty();
                     return stack;
-                }
-                else
-                {
+                } else {
                     stack.stackSize -= m;
                     return stack;
                 }
             }
-        }
-        else
-        {
+        } else {
             m = Math.min(stack.getMaxStackSize(), inv.getInventoryStackLimit());
-            if (m < stack.stackSize)
-            {
+            if (m < stack.stackSize) {
                 // copy the stack to not modify the original one
                 stack = stack.copy();
-                if (!simulate)
-                {
+                if (!simulate) {
                     inv.setInventorySlotContents(slot, stack.splitStack(m));
                     inv.markDirty();
                     return stack;
-                }
-                else
-                {
+                } else {
                     stack.stackSize -= m;
                     return stack;
                 }
-            }
-            else
-            {
-                if (!simulate)
-                {
+            } else {
+                if (!simulate) {
                     inv.setInventorySlotContents(slot, stack);
                     inv.markDirty();
                 }
@@ -129,8 +105,7 @@ public class InvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    public ItemStack extractItem(int slot, int amount, boolean simulate)
-    {
+    public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0)
             return null;
 
@@ -139,21 +114,15 @@ public class InvWrapper implements IItemHandlerModifiable
         if (stackInSlot == null)
             return null;
 
-        if (simulate)
-        {
-            if (stackInSlot.stackSize < amount)
-            {
+        if (simulate) {
+            if (stackInSlot.stackSize < amount) {
                 return stackInSlot.copy();
-            }
-            else
-            {
+            } else {
                 ItemStack copy = stackInSlot.copy();
                 copy.stackSize = amount;
                 return copy;
             }
-        }
-        else
-        {
+        } else {
             int m = Math.min(stackInSlot.stackSize, amount);
 
             ItemStack decrStackSize = inv.decrStackSize(slot, m);
@@ -163,8 +132,7 @@ public class InvWrapper implements IItemHandlerModifiable
     }
 
     @Override
-    public void setStackInSlot(int slot, ItemStack stack)
-    {
+    public void setStackInSlot(int slot, ItemStack stack) {
         inv.setInventorySlotContents(slot, stack);
     }
 }

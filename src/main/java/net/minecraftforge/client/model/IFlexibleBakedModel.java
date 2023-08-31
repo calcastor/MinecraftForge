@@ -13,8 +13,7 @@ import net.minecraft.util.EnumFacing;
  * Version of IBakedModel with less restriction on camera transformations and with explicit format of the baked array.
  */
 @SuppressWarnings("deprecation")
-public interface IFlexibleBakedModel extends IBakedModel
-{
+public interface IFlexibleBakedModel extends IBakedModel {
     /*
      * Specifies the format which BakedQuads' getVertexData will have.
      */
@@ -23,55 +22,45 @@ public interface IFlexibleBakedModel extends IBakedModel
     /*
      * Default implementation of IFlexibleBakedModel that should be useful in most cases
      */
-    public static class Wrapper implements IFlexibleBakedModel
-    {
+    public static class Wrapper implements IFlexibleBakedModel {
         private final IBakedModel parent;
         VertexFormat format;
 
-        public Wrapper(IBakedModel parent, VertexFormat format)
-        {
+        public Wrapper(IBakedModel parent, VertexFormat format) {
             this.parent = parent;
             this.format = format;
         }
 
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
+        public List<BakedQuad> getFaceQuads(EnumFacing side) {
             return parent.getFaceQuads(side);
         }
 
-        public List<BakedQuad> getGeneralQuads()
-        {
+        public List<BakedQuad> getGeneralQuads() {
             return parent.getGeneralQuads();
         }
 
-        public boolean isAmbientOcclusion()
-        {
+        public boolean isAmbientOcclusion() {
             return parent.isAmbientOcclusion();
         }
 
-        public boolean isGui3d()
-        {
+        public boolean isGui3d() {
             return parent.isGui3d();
         }
 
-        public boolean isBuiltInRenderer()
-        {
+        public boolean isBuiltInRenderer() {
             return parent.isBuiltInRenderer();
         }
 
-        public TextureAtlasSprite getParticleTexture()
-        {
+        public TextureAtlasSprite getParticleTexture() {
             return parent.getParticleTexture();
         }
 
         @Deprecated
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
+        public ItemCameraTransforms getItemCameraTransforms() {
             return parent.getItemCameraTransforms();
         }
 
-        public VertexFormat getFormat()
-        {
+        public VertexFormat getFormat() {
             return new VertexFormat(format);
         }
     }

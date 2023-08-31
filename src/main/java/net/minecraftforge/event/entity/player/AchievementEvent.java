@@ -11,8 +11,8 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 public class AchievementEvent extends PlayerEvent {
 
     public final Achievement achievement;
-    public AchievementEvent(EntityPlayer player, Achievement achievement)
-    {
+
+    public AchievementEvent(EntityPlayer player, Achievement achievement) {
         super(player);
         this.achievement = achievement;
     }

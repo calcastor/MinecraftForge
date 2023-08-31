@@ -54,38 +54,32 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 @SuppressWarnings("deprecation")
-public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel>
-{
+public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<OBJModel> {
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
     private final ResourceLocation modelLocation;
     private CustomData customData;
 
-    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation)
-    {
+    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation) {
         this(matLib, modelLocation, new CustomData());
     }
 
-    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation, CustomData customData)
-    {
+    public OBJModel(MaterialLibrary matLib, ResourceLocation modelLocation, CustomData customData) {
         this.matLib = matLib;
         this.modelLocation = modelLocation;
         this.customData = customData;
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
+    public Collection<ResourceLocation> getDependencies() {
         return Collections.emptyList();
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures()
-    {
+    public Collection<ResourceLocation> getTextures() {
         Iterator<Material> materialIterator = this.matLib.materials.values().iterator();
         List<ResourceLocation> textures = Lists.newArrayList();
-        while (materialIterator.hasNext())
-        {
+        while (materialIterator.hasNext()) {
             Material mat = materialIterator.next();
             ResourceLocation textureLoc = new ResourceLocation(mat.getTexture().getPath());
             if (!textures.contains(textureLoc) && !mat.isWhite())
@@ -95,20 +89,15 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
     }
 
     @Override
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-    {
+    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
         builder.put(ModelLoader.White.loc.toString(), ModelLoader.White.instance);
         TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
-        for (Map.Entry<String, Material> e : matLib.materials.entrySet())
-        {
-            if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#"))
-            {
+        for (Map.Entry<String, Material> e : matLib.materials.entrySet()) {
+            if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#")) {
                 FMLLog.severe("OBJLoader: Unresolved texture '%s' for obj model '%s'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
                 builder.put(e.getKey(), missing);
-            }
-            else
-            {
+            } else {
                 builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue().getTexture().getTextureLocation()));
             }
         }
@@ -116,47 +105,41 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         return new OBJBakedModel(this, state, format, builder.build());
     }
 
-    public MaterialLibrary getMatLib()
-    {
+    public MaterialLibrary getMatLib() {
         return this.matLib;
     }
 
     @Override
-    public IModel process(ImmutableMap<String, String> customData)
-    {
+    public IModel process(ImmutableMap<String, String> customData) {
         OBJModel ret = new OBJModel(this.matLib, this.modelLocation, new CustomData(this.customData, customData));
         return ret;
     }
 
     @Override
-    public IModel retexture(ImmutableMap<String, String> textures)
-    {
+    public IModel retexture(ImmutableMap<String, String> textures) {
         OBJModel ret = new OBJModel(this.matLib.makeLibWithReplacements(textures), this.modelLocation, this.customData);
         return ret;
     }
 
-    static class CustomData
-    {
+    static class CustomData {
         public boolean ambientOcclusion = true;
         public boolean gui3d = true;
         // should be an enum, TODO
         //public boolean modifyUVs = false;
         public boolean flipV = false;
 
-        public CustomData(CustomData parent, ImmutableMap<String, String> customData)
-        {
+        public CustomData(CustomData parent, ImmutableMap<String, String> customData) {
             this.ambientOcclusion = parent.ambientOcclusion;
             this.gui3d = parent.gui3d;
             this.flipV = parent.flipV;
             this.process(customData);
         }
 
-        public CustomData() {}
+        public CustomData() {
+        }
 
-        public void process(ImmutableMap<String, String> customData)
-        {
-            for (Map.Entry<String, String> e : customData.entrySet())
-            {
+        public void process(ImmutableMap<String, String> customData) {
+            for (Map.Entry<String, String> e : customData.entrySet()) {
                 if (e.getKey().equals("ambient"))
                     this.ambientOcclusion = Boolean.valueOf(e.getValue());
                 else if (e.getKey().equals("gui3d"))
@@ -169,8 +152,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class Parser
-    {
+    public static class Parser {
         private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
         private static Set<String> unknownObjectCommands = new HashSet<String>();
         public MaterialLibrary materialLibrary = new MaterialLibrary();
@@ -184,21 +166,18 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         private List<Normal> normals = Lists.newArrayList();
         private List<TextureCoordinate> texCoords = Lists.newArrayList();
 
-        public Parser(IResource from, IResourceManager manager) throws IOException
-        {
+        public Parser(IResource from, IResourceManager manager) throws IOException {
             this.manager = manager;
             this.objFrom = from.getResourceLocation();
             this.objStream = new InputStreamReader(from.getInputStream(), Charsets.UTF_8);
             this.objReader = new BufferedReader(objStream);
         }
 
-        public List<String> getElements()
-        {
+        public List<String> getElements() {
             return this.groupList;
         }
 
-        public OBJModel parse() throws IOException
-        {
+        public OBJModel parse() throws IOException {
             String currentLine = "";
             Material material = new Material();
             material.setName(Material.DEFAULT_NAME);
@@ -207,8 +186,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //            float[] minUVBounds = new float[] {0.0f, 0.0f};
 //            float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
-            for (;;)
-            {
+            for (; ; ) {
                 currentLine = objReader.readLine();
                 if (currentLine == null) break;
                 currentLine.trim();
@@ -221,30 +199,23 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 
                 if (key.equalsIgnoreCase("mtllib"))
                     this.materialLibrary.parseMaterials(manager, data, objFrom);
-                else if (key.equalsIgnoreCase("usemtl"))
-                {
+                else if (key.equalsIgnoreCase("usemtl")) {
                     material = this.materialLibrary.materials.get(data);
                     usemtlCounter++;
-                }
-                else if (key.equalsIgnoreCase("v"))
-                {
+                } else if (key.equalsIgnoreCase("v")) {
                     float[] floatSplitData = new float[splitData.length];
                     for (int i = 0; i < splitData.length; i++)
                         floatSplitData[i] = Float.parseFloat(splitData[i]);
                     Vector4f pos = new Vector4f(floatSplitData[0], floatSplitData[1], floatSplitData[2], floatSplitData.length == 4 ? floatSplitData[3] : 1);
                     Vertex vertex = new Vertex(pos, material);
                     this.vertices.add(vertex);
-                }
-                else if (key.equalsIgnoreCase("vn"))
-                {
+                } else if (key.equalsIgnoreCase("vn")) {
                     float[] floatSplitData = new float[splitData.length];
                     for (int i = 0; i < splitData.length; i++)
                         floatSplitData[i] = Float.parseFloat(splitData[i]);
                     Normal normal = new Normal(floatSplitData);
                     this.normals.add(normal);
-                }
-                else if (key.equalsIgnoreCase("vt"))
-                {
+                } else if (key.equalsIgnoreCase("vt")) {
                     float[] floatSplitData = new float[splitData.length];
                     for (int i = 0; i < splitData.length; i++)
                         floatSplitData[i] = Float.parseFloat(splitData[i]);
@@ -266,11 +237,10 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //                    maxUVBounds[1] = floatSplitData[1] > maxUVBounds[1] ? floatSplitData[1] : maxUVBounds[1];
 //                    FMLLog.info("u: [%f, %f] v: [%f, %f]", minUVBounds[]);
                     this.texCoords.add(texCoord);
-                }
-                else if (key.equalsIgnoreCase("f"))
-                {
+                } else if (key.equalsIgnoreCase("f")) {
                     String[][] splitSlash = new String[splitData.length][];
-                    if (splitData.length > 4) FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+                    if (splitData.length > 4)
+                        FMLLog.warning("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
 
                     int vert = 0;
                     int texCoord = 0;
@@ -280,10 +250,8 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //                    List<TextureCoordinate> t = Lists.newArrayListWithCapacity(splitData.length);
 //                    List<Normal> n = Lists.newArrayListWithCapacity(splitData.length);
 
-                    for (int i = 0; i < splitData.length; i++)
-                    {
-                        if (splitData[i].contains("//"))
-                        {
+                    for (int i = 0; i < splitData.length; i++) {
+                        if (splitData[i].contains("//")) {
                             splitSlash[i] = splitData[i].split("//");
 
                             vert = Integer.parseInt(splitSlash[i][0]);
@@ -296,17 +264,14 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 
                             v.add(newV);
 //                            n.add(this.normals.get(norm));
-                        }
-                        else if (splitData[i].contains("/"))
-                        {
+                        } else if (splitData[i].contains("/")) {
                             splitSlash[i] = splitData[i].split("/");
 
                             vert = Integer.parseInt(splitSlash[i][0]);
                             vert = vert < 0 ? this.vertices.size() - 1 : vert - 1;
                             texCoord = Integer.parseInt(splitSlash[i][1]);
                             texCoord = texCoord < 0 ? this.texCoords.size() - 1 : texCoord - 1;
-                            if (splitSlash[i].length > 2)
-                            {
+                            if (splitSlash[i].length > 2) {
                                 norm = Integer.parseInt(splitSlash[i][2]);
                                 norm = norm < 0 ? this.normals.size() - 1 : norm - 1;
                             }
@@ -318,9 +283,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
                             v.add(newV);
 //                            t.add(this.texCoords.get(texCoord));
 //                            if (splitSlash[i].length > 2) n.add(this.normals.get(norm));
-                        }
-                        else
-                        {
+                        } else {
                             splitSlash[i] = splitData[i].split("");
 
                             vert = Integer.parseInt(splitSlash[i][0]);
@@ -338,62 +301,42 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //                    Normal[] na = new Normal[n.size()];
 //                    n.toArray(na);
                     Face face = new Face(va, material.name);
-                    if (usemtlCounter < this.vertices.size())
-                    {
-                        for (Vertex ver : face.getVertices())
-                        {
+                    if (usemtlCounter < this.vertices.size()) {
+                        for (Vertex ver : face.getVertices()) {
                             ver.setMaterial(material);
                         }
                     }
 
-                    if (groupList.isEmpty())
-                    {
-                        if (this.materialLibrary.getGroups().containsKey(Group.DEFAULT_NAME))
-                        {
+                    if (groupList.isEmpty()) {
+                        if (this.materialLibrary.getGroups().containsKey(Group.DEFAULT_NAME)) {
                             this.materialLibrary.getGroups().get(Group.DEFAULT_NAME).addFace(face);
-                        }
-                        else
-                        {
+                        } else {
                             Group def = new Group(Group.DEFAULT_NAME, null);
                             def.addFace(face);
                             this.materialLibrary.getGroups().put(Group.DEFAULT_NAME, def);
                         }
-                    }
-                    else
-                    {
-                        for (String s : groupList)
-                        {
-                            if (this.materialLibrary.getGroups().containsKey(s))
-                            {
+                    } else {
+                        for (String s : groupList) {
+                            if (this.materialLibrary.getGroups().containsKey(s)) {
                                 this.materialLibrary.getGroups().get(s).addFace(face);
-                            }
-                            else
-                            {
+                            } else {
                                 Group e = new Group(s, null);
                                 e.addFace(face);
                                 this.materialLibrary.getGroups().put(s, e);
                             }
                         }
                     }
-                }
-                else if (key.equalsIgnoreCase("g") || key.equalsIgnoreCase("o"))
-                {
+                } else if (key.equalsIgnoreCase("g") || key.equalsIgnoreCase("o")) {
                     groupList.clear();
-                    if (key.equalsIgnoreCase("g"))
-                    {
+                    if (key.equalsIgnoreCase("g")) {
                         String[] splitSpace = data.split(" ");
                         for (String s : splitSpace)
                             groupList.add(s);
-                    }
-                    else
-                    {
+                    } else {
                         groupList.add(data);
                     }
-                }
-                else
-                {
-                    if (!unknownObjectCommands.contains(key))
-                    {
+                } else {
+                    if (!unknownObjectCommands.contains(key)) {
                         unknownObjectCommands.add(key);
                         FMLLog.info("OBJLoader.Parser: command '%s' (model: '%s') is not currently supported, skipping", key, objFrom);
                     }
@@ -406,8 +349,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class MaterialLibrary
-    {
+    public static class MaterialLibrary {
         private static final Pattern WHITE_SPACE = Pattern.compile("\\s+");
         private Set<String> unknownMaterialCommands = new HashSet<String>();
         private Map<String, Material> materials = new HashMap<String, Material>();
@@ -418,42 +360,34 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //        private float[] minUVBounds = new float[] {0.0f, 0.0f};
 //        private float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
-        public MaterialLibrary()
-        {
+        public MaterialLibrary() {
             this.groups.put(Group.DEFAULT_NAME, new Group(Group.DEFAULT_NAME, null));
             Material def = new Material();
             def.setName(Material.DEFAULT_NAME);
             this.materials.put(Material.DEFAULT_NAME, def);
         }
 
-        public MaterialLibrary makeLibWithReplacements(ImmutableMap<String, String> replacements)
-        {
+        public MaterialLibrary makeLibWithReplacements(ImmutableMap<String, String> replacements) {
             Map<String, Material> mats = new HashMap<String, Material>();
-            for (Map.Entry<String, Material> e : this.materials.entrySet())
-            {
+            for (Map.Entry<String, Material> e : this.materials.entrySet()) {
                 // key for the material name, with # added if missing
                 String keyMat = e.getKey();
-                if(!keyMat.startsWith("#")) keyMat = "#" + keyMat;
+                if (!keyMat.startsWith("#")) keyMat = "#" + keyMat;
                 // key for the texture name, with ".png" stripped and # added if missing
                 String keyTex = e.getValue().getTexture().getPath();
-                if(keyTex.endsWith(".png")) keyTex = keyTex.substring(0, keyTex.length() - ".png".length());
-                if(!keyTex.startsWith("#")) keyTex = "#" + keyTex;
-                if (replacements.containsKey(keyMat))
-                {
+                if (keyTex.endsWith(".png")) keyTex = keyTex.substring(0, keyTex.length() - ".png".length());
+                if (!keyTex.startsWith("#")) keyTex = "#" + keyTex;
+                if (replacements.containsKey(keyMat)) {
                     Texture currentTexture = e.getValue().texture;
                     Texture replacementTexture = new Texture(replacements.get(keyMat), currentTexture.position, currentTexture.scale, currentTexture.rotation);
                     Material replacementMaterial = new Material(e.getValue().color, replacementTexture, e.getValue().name);
                     mats.put(e.getKey(), replacementMaterial);
-                }
-                else if (replacements.containsKey(keyTex))
-                {
+                } else if (replacements.containsKey(keyTex)) {
                     Texture currentTexture = e.getValue().texture;
                     Texture replacementTexture = new Texture(replacements.get(keyTex), currentTexture.position, currentTexture.scale, currentTexture.rotation);
                     Material replacementMaterial = new Material(e.getValue().color, replacementTexture, e.getValue().name);
                     mats.put(e.getKey(), replacementMaterial);
-                }
-                else
-                {
+                } else {
                     mats.put(e.getKey(), e.getValue());
                 }
             }
@@ -486,23 +420,19 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //            this.maxUVBounds[1] = maxV;
 //        }
 
-        public Map<String, Group> getGroups()
-        {
+        public Map<String, Group> getGroups() {
             return this.groups;
         }
 
-        public List<Group> getGroupsContainingFace(Face f)
-        {
+        public List<Group> getGroupsContainingFace(Face f) {
             List<Group> groupList = Lists.newArrayList();
-            for (Group g : this.groups.values())
-            {
+            for (Group g : this.groups.values()) {
                 if (g.faces.contains(f)) groupList.add(g);
             }
             return groupList;
         }
 
-        public void changeMaterialColor(String name, int color)
-        {
+        public void changeMaterialColor(String name, int color) {
             Vector4f colorVec = new Vector4f();
             colorVec.w = (color >> 24 & 255) / 255;
             colorVec.x = (color >> 16 & 255) / 255;
@@ -511,18 +441,15 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             this.materials.get(name).setColor(colorVec);
         }
 
-        public Material getMaterial(String name)
-        {
+        public Material getMaterial(String name) {
             return this.materials.get(name);
         }
 
-        public ImmutableList<String> getMaterialNames()
-        {
+        public ImmutableList<String> getMaterialNames() {
             return ImmutableList.copyOf(this.materials.keySet());
         }
 
-        public void parseMaterials(IResourceManager manager, String path, ResourceLocation from) throws IOException
-        {
+        public void parseMaterials(IResourceManager manager, String path, ResourceLocation from) throws IOException {
             this.materials.clear();
             boolean hasSetTexture = false;
             boolean hasSetColor = false;
@@ -539,8 +466,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             this.materials.put(Material.WHITE_NAME, material);
             this.materials.put(Material.DEFAULT_NAME, new Material(Texture.WHITE));
 
-            for (;;)
-            {
+            for (; ; ) {
                 currentLine = mtlReader.readLine();
                 if (currentLine == null) break;
                 currentLine.trim();
@@ -550,64 +476,45 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
                 String key = fields[0];
                 String data = fields[1];
 
-                if (key.equalsIgnoreCase("newmtl"))
-                {
+                if (key.equalsIgnoreCase("newmtl")) {
                     hasSetColor = false;
                     hasSetTexture = false;
                     material = new Material();
                     material.setName(data);
                     this.materials.put(data, material);
-                }
-                else if (key.equalsIgnoreCase("Ka") || key.equalsIgnoreCase("Kd") || key.equalsIgnoreCase("Ks"))
-                {
-                    if (key.equalsIgnoreCase("Kd") || !hasSetColor)
-                    {
+                } else if (key.equalsIgnoreCase("Ka") || key.equalsIgnoreCase("Kd") || key.equalsIgnoreCase("Ks")) {
+                    if (key.equalsIgnoreCase("Kd") || !hasSetColor) {
                         String[] rgbStrings = WHITE_SPACE.split(data, 3);
                         Vector4f color = new Vector4f(Float.parseFloat(rgbStrings[0]), Float.parseFloat(rgbStrings[1]), Float.parseFloat(rgbStrings[2]), 1.0f);
                         hasSetColor = true;
                         material.setColor(color);
-                    }
-                    else
-                    {
+                    } else {
                         FMLLog.info("OBJModel: A color has already been defined for material '%s' in '%s'. The color defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
-                }
-                else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
-                {
-                    if (key.equalsIgnoreCase("map_Kd") || !hasSetTexture)
-                    {
-                        if (data.contains(" "))
-                        {
+                } else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks")) {
+                    if (key.equalsIgnoreCase("map_Kd") || !hasSetTexture) {
+                        if (data.contains(" ")) {
                             String[] mapStrings = WHITE_SPACE.split(data);
                             String texturePath = mapStrings[mapStrings.length - 1];
                             Texture texture = new Texture(texturePath);
                             hasSetTexture = true;
                             material.setTexture(texture);
-                        }
-                        else
-                        {
+                        } else {
                             Texture texture = new Texture(data);
                             hasSetTexture = true;
                             material.setTexture(texture);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         FMLLog.info("OBJModel: A texture has already been defined for material '%s' in '%s'. The texture defined by key '%s' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
-                }
-                else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
-                {
+                } else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr")) {
                     //d <-optional key here> float[0.0:1.0, 1.0]
                     //Tr r g b OR Tr spectral map file OR Tr xyz r g b (CIEXYZ colorspace)
                     String[] splitData = WHITE_SPACE.split(data);
                     float alpha = Float.parseFloat(splitData[splitData.length - 1]);
                     material.getColor().setW(alpha);
-                }
-                else
-                {
-                    if (!unknownMaterialCommands.contains(key))
-                    {
+                } else {
+                    if (!unknownMaterialCommands.contains(key)) {
                         unknownMaterialCommands.add(key);
                         FMLLog.info("OBJLoader.MaterialLibrary: key '%s' (model: '%s') is not currently supported, skipping", key, new ResourceLocation(domain, path));
                     }
@@ -616,74 +523,61 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class Material
-    {
+    public static class Material {
         public static final String WHITE_NAME = "OBJModel.White.Texture.Name";
         public static final String DEFAULT_NAME = "OBJModel.Default.Texture.Name";
         private Vector4f color;
         private Texture texture = Texture.WHITE;
         private String name = DEFAULT_NAME;
 
-        public Material()
-        {
+        public Material() {
             this(new Vector4f(1f, 1f, 1f, 1f));
         }
 
-        public Material(Vector4f color)
-        {
+        public Material(Vector4f color) {
             this(color, Texture.WHITE, WHITE_NAME);
         }
 
-        public Material(Texture texture)
-        {
+        public Material(Texture texture) {
             this(new Vector4f(1f, 1f, 1f, 1f), texture, DEFAULT_NAME);
         }
 
-        public Material(Vector4f color, Texture texture, String name)
-        {
+        public Material(Vector4f color, Texture texture, String name) {
             this.color = color;
             this.texture = texture;
             this.name = name != null ? name : DEFAULT_NAME;
         }
 
-        public void setName(String name)
-        {
+        public void setName(String name) {
             this.name = name != null ? name : DEFAULT_NAME;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return this.name;
         }
 
-        public void setColor(Vector4f color)
-        {
+        public void setColor(Vector4f color) {
             this.color = color;
         }
 
-        public Vector4f getColor()
-        {
+        public Vector4f getColor() {
             return this.color;
         }
 
-        public void setTexture(Texture texture)
-        {
+        public void setTexture(Texture texture) {
             this.texture = texture;
         }
 
-        public Texture getTexture()
-        {
+        public Texture getTexture() {
             return this.texture;
         }
 
-        public boolean isWhite()
-        {
+        public boolean isWhite() {
             return this.texture.equals(Texture.WHITE);
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             StringBuilder builder = new StringBuilder(String.format("%nMaterial:%n"));
             builder.append(String.format("    Name: %s%n", this.name));
             builder.append(String.format("    Color: %s%n", this.color.toString()));
@@ -692,84 +586,70 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class Texture
-    {
+    public static class Texture {
         public static Texture WHITE = new Texture("builtin/white", new Vector2f(0, 0), new Vector2f(1, 1), 0);
         private String path;
         private Vector2f position;
         private Vector2f scale;
         private float rotation;
 
-        public Texture(String path)
-        {
+        public Texture(String path) {
             this(path, new Vector2f(0, 0), new Vector2f(1, 1), 0);
         }
 
-        public Texture(String path, Vector2f position, Vector2f scale, float rotation)
-        {
+        public Texture(String path, Vector2f position, Vector2f scale, float rotation) {
             this.path = path;
             this.position = position;
             this.scale = scale;
             this.rotation = rotation;
         }
 
-        public ResourceLocation getTextureLocation()
-        {
+        public ResourceLocation getTextureLocation() {
             ResourceLocation loc = new ResourceLocation(this.path);
             return loc;
         }
 
-        public void setPath(String path)
-        {
+        public void setPath(String path) {
             this.path = path;
         }
 
-        public String getPath()
-        {
+        public String getPath() {
             return this.path;
         }
 
-        public void setPosition(Vector2f position)
-        {
+        public void setPosition(Vector2f position) {
             this.position = position;
         }
 
-        public Vector2f getPosition()
-        {
+        public Vector2f getPosition() {
             return this.position;
         }
 
-        public void setScale(Vector2f scale)
-        {
+        public void setScale(Vector2f scale) {
             this.scale = scale;
         }
 
-        public Vector2f getScale()
-        {
+        public Vector2f getScale() {
             return this.scale;
         }
 
-        public void setRotation(float rotation)
-        {
+        public void setRotation(float rotation) {
             this.rotation = rotation;
         }
 
-        public float getRotation()
-        {
+        public float getRotation() {
             return this.rotation;
         }
     }
 
-    public static class Face
-    {
+    public static class Face {
         private Vertex[] verts = new Vertex[4];
-//        private Normal[] norms = new Normal[4];
+        //        private Normal[] norms = new Normal[4];
 //        private TextureCoordinate[] texCoords = new TextureCoordinate[4];
         private String materialName = Material.DEFAULT_NAME;
         private boolean isTri = false;
 
-        public Face(Vertex[] verts)
-        {
+        public Face(Vertex[] verts) {
             this(verts, Material.DEFAULT_NAME);
         }
 
@@ -803,40 +683,33 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //            checkData();
 //        }
 
-        private void checkData()
-        {
-            if (this.verts != null && this.verts.length == 3)
-            {
+        private void checkData() {
+            if (this.verts != null && this.verts.length == 3) {
                 this.isTri = true;
                 this.verts = new Vertex[]{this.verts[0], this.verts[1], this.verts[2], this.verts[2]};
             }
         }
 
-        public void setMaterialName(String materialName)
-        {
+        public void setMaterialName(String materialName) {
             this.materialName = materialName != null && !materialName.isEmpty() ? materialName : this.materialName;
         }
 
-        public String getMaterialName()
-        {
+        public String getMaterialName() {
             return this.materialName;
         }
-        
-        public boolean isTriangles() 
-        {
+
+        public boolean isTriangles() {
             return isTri;
         }
 
-        public boolean setVertices(Vertex[] verts)
-        {
+        public boolean setVertices(Vertex[] verts) {
             if (verts == null) return false;
             else this.verts = verts;
             checkData();
             return true;
         }
 
-        public Vertex[] getVertices()
-        {
+        public Vertex[] getVertices() {
             return this.verts;
         }
 
@@ -867,16 +740,14 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //            }
 //        }
 
-        public Face bake(TRSRTransformation transform)
-        {
+        public Face bake(TRSRTransformation transform) {
             Matrix4f m = transform.getMatrix();
             Matrix3f mn = null;
             Vertex[] vertices = new Vertex[verts.length];
 //            Normal[] normals = norms != null ? new Normal[norms.length] : null;
 //            TextureCoordinate[] textureCoords = texCoords != null ? new TextureCoordinate[texCoords.length] : null;
 
-            for (int i = 0; i < verts.length; i++)
-            {
+            for (int i = 0; i < verts.length; i++) {
                 Vertex v = verts[i];
 //                Normal n = norms != null ? norms[i] : null;
 //                TextureCoordinate t = texCoords != null ? texCoords[i] : null;
@@ -886,10 +757,8 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
                 m.transform(pos, newPos);
                 vertices[i] = new Vertex(newPos, v.getMaterial());
 
-                if (v.hasNormal())
-                {
-                    if(mn == null)
-                    {
+                if (v.hasNormal()) {
+                    if (mn == null) {
                         mn = new Matrix3f();
                         m.getRotationScale(mn);
                         mn.invert();
@@ -910,8 +779,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             return new Face(vertices, this.materialName);
         }
 
-        public Normal getNormal()
-        {
+        public Normal getNormal() {
             Vector3f a = this.verts[2].getPos3();
             a.sub(this.verts[0].getPos3());
             Vector3f b = this.verts[3].getPos3();
@@ -922,61 +790,50 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class Vertex
-    {
+    public static class Vertex {
         private Vector4f position;
         private Normal normal;
         private TextureCoordinate texCoord;
         private Material material = new Material();
 
-        public Vertex(Vector4f position, Material material)
-        {
+        public Vertex(Vector4f position, Material material) {
             this.position = position;
             this.material = material;
         }
 
-        public void setPos(Vector4f position)
-        {
+        public void setPos(Vector4f position) {
             this.position = position;
         }
 
-        public Vector4f getPos()
-        {
+        public Vector4f getPos() {
             return this.position;
         }
 
-        public Vector3f getPos3()
-        {
+        public Vector3f getPos3() {
             return new Vector3f(this.position.x, this.position.y, this.position.z);
         }
 
-        public boolean hasNormal()
-        {
+        public boolean hasNormal() {
             return this.normal != null;
         }
 
-        public void setNormal(Normal normal)
-        {
+        public void setNormal(Normal normal) {
             this.normal = normal;
         }
 
-        public Normal getNormal()
-        {
+        public Normal getNormal() {
             return this.normal;
         }
 
-        public boolean hasTextureCoordinate()
-        {
+        public boolean hasTextureCoordinate() {
             return this.texCoord != null;
         }
 
-        public void setTextureCoordinate(TextureCoordinate texCoord)
-        {
+        public void setTextureCoordinate(TextureCoordinate texCoord) {
             this.texCoord = texCoord;
         }
 
-        public TextureCoordinate getTextureCoordinate()
-        {
+        public TextureCoordinate getTextureCoordinate() {
             return this.texCoord;
         }
 
@@ -985,19 +842,16 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
 //            return this.texCoord.u >= 0.0f && this.texCoord.u <= 1.0f && this.texCoord.v >= 0.0f && this.texCoord.v <= 1.0f;
 //        }
 
-        public void setMaterial(Material material)
-        {
+        public void setMaterial(Material material) {
             this.material = material;
         }
 
-        public Material getMaterial()
-        {
+        public Material getMaterial() {
             return this.material;
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append(String.format("v:%n"));
             builder.append(String.format("    position: %s %s %s%n", position.x, position.y, position.z));
@@ -1006,22 +860,18 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class Normal
-    {
+    public static class Normal {
         public float x, y, z;
 
-        public Normal()
-        {
+        public Normal() {
             this(0.0f, 0.0f, 0.0f);
         }
 
-        public Normal(float[] data)
-        {
+        public Normal(float[] data) {
             this(data[0], data[1], data[2]);
         }
 
-        public Normal(Vector3f vector3f)
-        {
+        public Normal(Vector3f vector3f) {
             this(vector3f.x, vector3f.y, vector3f.z);
         }
 
@@ -1031,45 +881,37 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             this.z = z;
         }
 
-        public Vector3f getData()
-        {
+        public Vector3f getData() {
             return new Vector3f(this.x, this.y, this.z);
         }
     }
 
-    public static class TextureCoordinate
-    {
+    public static class TextureCoordinate {
         public float u, v, w;
 
-        public TextureCoordinate()
-        {
+        public TextureCoordinate() {
             this(0.0f, 0.0f, 1.0f);
         }
 
-        public TextureCoordinate(float[] data)
-        {
+        public TextureCoordinate(float[] data) {
             this(data[0], data[1], data[2]);
         }
 
-        public TextureCoordinate(Vector3f data)
-        {
+        public TextureCoordinate(Vector3f data) {
             this(data.x, data.y, data.z);
         }
 
-        public TextureCoordinate(float u, float v, float w)
-        {
+        public TextureCoordinate(float u, float v, float w) {
             this.u = u;
             this.v = v;
             this.w = w;
         }
 
-        public Vector3f getData()
-        {
+        public Vector3f getData() {
             return new Vector3f(this.u, this.v, this.w);
         }
 
-        public static TextureCoordinate[] getDefaultUVs()
-        {
+        public static TextureCoordinate[] getDefaultUVs() {
             TextureCoordinate[] texCoords = new TextureCoordinate[4];
             texCoords[0] = new TextureCoordinate(0.0f, 0.0f, 1.0f);
             texCoords[1] = new TextureCoordinate(1.0f, 0.0f, 1.0f);
@@ -1079,167 +921,134 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
     }
 
-    public static class Group implements IModelPart
-    {
+    public static class Group implements IModelPart {
         public static final String DEFAULT_NAME = "OBJModel.Default.Element.Name";
         public static final String ALL = "OBJModel.Group.All.Key";
         public static final String ALL_EXCEPT = "OBJModel.Group.All.Except.Key";
         private String name = DEFAULT_NAME;
         private LinkedHashSet<Face> faces = new LinkedHashSet<Face>();
-        public float[] minUVBounds = new float[] {0.0f, 0.0f};
-        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
+        public float[] minUVBounds = new float[]{0.0f, 0.0f};
+        public float[] maxUVBounds = new float[]{1.0f, 1.0f};
 
 //        public float[] minUVBounds = new float[] {0.0f, 0.0f};
 //        public float[] maxUVBounds = new float[] {1.0f, 1.0f};
 
-        public Group(String name, LinkedHashSet<Face> faces)
-        {
+        public Group(String name, LinkedHashSet<Face> faces) {
             this.name = name != null ? name : DEFAULT_NAME;
             this.faces = faces == null ? new LinkedHashSet<Face>() : faces;
         }
 
-        public LinkedHashSet<Face> applyTransform(Optional<TRSRTransformation> transform)
-        {
+        public LinkedHashSet<Face> applyTransform(Optional<TRSRTransformation> transform) {
             LinkedHashSet<Face> faceSet = new LinkedHashSet<Face>();
-            for (Face f : this.faces)
-            {
+            for (Face f : this.faces) {
 //                if (minUVBounds != null && maxUVBounds != null) f.normalizeUVs(minUVBounds, maxUVBounds);
                 faceSet.add(f.bake(transform.or(TRSRTransformation.identity())));
             }
             return faceSet;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return this.name;
         }
 
-        public LinkedHashSet<Face> getFaces()
-        {
+        public LinkedHashSet<Face> getFaces() {
             return this.faces;
         }
 
-        public void setFaces(LinkedHashSet<Face> faces)
-        {
+        public void setFaces(LinkedHashSet<Face> faces) {
             this.faces = faces;
         }
 
-        public void addFace(Face face)
-        {
+        public void addFace(Face face) {
             this.faces.add(face);
         }
 
-        public void addFaces(List<Face> faces)
-        {
+        public void addFaces(List<Face> faces) {
             this.faces.addAll(faces);
         }
     }
 
-    public static class OBJState implements IModelState
-    {
+    public static class OBJState implements IModelState {
         protected Map<String, Boolean> visibilityMap = Maps.newHashMap();
         public IModelState parent;
         protected Operation operation = Operation.SET_TRUE;
 
-        public OBJState(List<String> visibleGroups, boolean visibility)
-        {
+        public OBJState(List<String> visibleGroups, boolean visibility) {
             this(visibleGroups, visibility, TRSRTransformation.identity());
         }
 
-        public OBJState(List<String> visibleGroups, boolean visibility, IModelState parent)
-        {
+        public OBJState(List<String> visibleGroups, boolean visibility, IModelState parent) {
             this.parent = parent;
             for (String s : visibleGroups) this.visibilityMap.put(s, visibility);
         }
 
-        public IModelState getParent(IModelState parent)
-        {
+        public IModelState getParent(IModelState parent) {
             if (parent == null) return null;
             else if (parent instanceof OBJState) return ((OBJState) parent).parent;
             return parent;
         }
 
-        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part)
-        {
+        public Optional<TRSRTransformation> apply(Optional<? extends IModelPart> part) {
             if (parent != null) return parent.apply(part);
             return Optional.absent();
         }
 
-        public Map<String, Boolean> getVisibilityMap()
-        {
+        public Map<String, Boolean> getVisibilityMap() {
             return this.visibilityMap;
         }
 
-        public List<String> getGroupsWithVisibility(boolean visibility)
-        {
+        public List<String> getGroupsWithVisibility(boolean visibility) {
             List<String> ret = Lists.newArrayList();
-            for (Map.Entry<String, Boolean> e : this.visibilityMap.entrySet())
-            {
-                if (e.getValue() == visibility)
-                {
+            for (Map.Entry<String, Boolean> e : this.visibilityMap.entrySet()) {
+                if (e.getValue() == visibility) {
                     ret.add(e.getKey());
                 }
             }
             return ret;
         }
 
-        public List<String> getGroupNamesFromMap()
-        {
+        public List<String> getGroupNamesFromMap() {
             return Lists.newArrayList(this.visibilityMap.keySet());
         }
 
-        public void changeGroupVisibilities(List<String> names, Operation operation)
-        {
+        public void changeGroupVisibilities(List<String> names, Operation operation) {
             if (names == null || names.isEmpty()) return;
             this.operation = operation;
-            if (names.get(0).equals(Group.ALL))
-            {
-                for (String s : this.visibilityMap.keySet())
-                {
+            if (names.get(0).equals(Group.ALL)) {
+                for (String s : this.visibilityMap.keySet()) {
                     this.visibilityMap.put(s, this.operation.performOperation(this.visibilityMap.get(s)));
                 }
-            }
-            else if (names.get(0).equals(Group.ALL_EXCEPT))
-            {
-                for (String s : this.visibilityMap.keySet())
-                {
-                    if (!names.subList(1,  names.size()).contains(s))
-                    {
-                        this.visibilityMap.put(s,  this.operation.performOperation(this.visibilityMap.get(s)));
+            } else if (names.get(0).equals(Group.ALL_EXCEPT)) {
+                for (String s : this.visibilityMap.keySet()) {
+                    if (!names.subList(1, names.size()).contains(s)) {
+                        this.visibilityMap.put(s, this.operation.performOperation(this.visibilityMap.get(s)));
                     }
                 }
-            }
-            else
-            {
-                for (String s : names)
-                {
+            } else {
+                for (String s : names) {
                     this.visibilityMap.put(s, this.operation.performOperation(this.visibilityMap.get(s)));
                 }
             }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             StringBuilder builder = new StringBuilder("OBJState: ");
             builder.append(String.format("%n    parent: %s%n", this.parent.toString()));
             builder.append(String.format("    visibility map: %n"));
-            for (Map.Entry<String, Boolean> e : this.visibilityMap.entrySet())
-            {
+            for (Map.Entry<String, Boolean> e : this.visibilityMap.entrySet()) {
                 builder.append(String.format("        name: %s visible: %b%n", e.getKey(), e.getValue()));
             }
             return builder.toString();
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(visibilityMap, parent, operation);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -1248,60 +1057,56 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
                 return false;
             OBJState other = (OBJState) obj;
             return Objects.equal(visibilityMap, other.visibilityMap) &&
-                Objects.equal(parent, other.parent) &&
-                operation == other.operation;
+                    Objects.equal(parent, other.parent) &&
+                    operation == other.operation;
         }
 
-        public enum Operation
-        {
+        public enum Operation {
             SET_TRUE,
             SET_FALSE,
             TOGGLE;
 
-            Operation(){}
+            Operation() {
+            }
 
-            public boolean performOperation(boolean valueToToggle)
-            {
-                switch(this)
-                {
-                default:
-                case SET_TRUE: return true;
-                case SET_FALSE: return false;
-                case TOGGLE: return !valueToToggle;
+            public boolean performOperation(boolean valueToToggle) {
+                switch (this) {
+                    default:
+                    case SET_TRUE:
+                        return true;
+                    case SET_FALSE:
+                        return false;
+                    case TOGGLE:
+                        return !valueToToggle;
                 }
             }
         }
     }
 
-    public enum OBJProperty implements IUnlistedProperty<OBJState>
-    {
+    public enum OBJProperty implements IUnlistedProperty<OBJState> {
         instance;
-        public String getName()
-        {
+
+        public String getName() {
             return "OBJPropery";
         }
 
         @Override
-        public boolean isValid(OBJState value)
-        {
+        public boolean isValid(OBJState value) {
             return value instanceof OBJState;
         }
 
         @Override
-        public Class<OBJState> getType()
-        {
+        public Class<OBJState> getType() {
             return OBJState.class;
         }
 
         @Override
-        public String valueToString(OBJState value)
-        {
+        public String valueToString(OBJState value) {
             return value.toString();
         }
     }
 
-    public class OBJBakedModel implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel
-    {
+    public class OBJBakedModel implements IFlexibleBakedModel, ISmartBlockModel, ISmartItemModel, IPerspectiveAwareModel {
         private final OBJModel model;
         private IModelState state;
         private final VertexFormat format;
@@ -1309,8 +1114,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         private ImmutableMap<String, TextureAtlasSprite> textures;
         private TextureAtlasSprite sprite = ModelLoader.White.instance;
 
-        public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
-        {
+        public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures) {
             this.model = model;
             this.state = state;
             if (this.state instanceof OBJState) this.updateStateVisibilityMap((OBJState) this.state);
@@ -1318,85 +1122,62 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             this.textures = textures;
         }
 
-        public void scheduleRebake()
-        {
+        public void scheduleRebake() {
             this.quads = null;
         }
 
         @Override
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
+        public List<BakedQuad> getFaceQuads(EnumFacing side) {
             return Collections.emptyList();
         }
 
         @Override
-        public List<BakedQuad> getGeneralQuads()
-        {
-            if (quads == null)
-            {
+        public List<BakedQuad> getGeneralQuads() {
+            if (quads == null) {
                 quads = Collections.synchronizedSet(new LinkedHashSet<BakedQuad>());
                 Set<Face> faces = Collections.synchronizedSet(new LinkedHashSet<Face>());
                 Optional<TRSRTransformation> transform = Optional.absent();
-                for (Group g : this.model.getMatLib().getGroups().values())
-                {
+                for (Group g : this.model.getMatLib().getGroups().values()) {
 //                    g.minUVBounds = this.model.getMatLib().minUVBounds;
 //                    g.maxUVBounds = this.model.getMatLib().maxUVBounds;
 //                    FMLLog.info("Group: %s u: [%f, %f] v: [%f, %f]", g.name, g.minUVBounds[0], g.maxUVBounds[0], g.minUVBounds[1], g.maxUVBounds[1]);
 
-                    if (this.state instanceof OBJState)
-                    {
+                    if (this.state instanceof OBJState) {
                         OBJState state = (OBJState) this.state;
-                        if (state.parent != null)
-                        {
+                        if (state.parent != null) {
                             transform = state.parent.apply(Optional.<IModelPart>absent());
                         }
                         //TODO: can this be replaced by updateStateVisibilityMap(OBJState)?
-                        if (state.getGroupNamesFromMap().contains(Group.ALL))
-                        {
+                        if (state.getGroupNamesFromMap().contains(Group.ALL)) {
                             state.visibilityMap.clear();
-                            for (String s : this.model.getMatLib().getGroups().keySet())
-                            {
+                            for (String s : this.model.getMatLib().getGroups().keySet()) {
                                 state.visibilityMap.put(s, state.operation.performOperation(true));
                             }
-                        }
-                        else if (state.getGroupNamesFromMap().contains(Group.ALL_EXCEPT))
-                        {
+                        } else if (state.getGroupNamesFromMap().contains(Group.ALL_EXCEPT)) {
                             List<String> exceptList = state.getGroupNamesFromMap().subList(1, state.getGroupNamesFromMap().size());
                             state.visibilityMap.clear();
-                            for (String s : this.model.getMatLib().getGroups().keySet())
-                            {
-                                if (!exceptList.contains(s))
-                                {
+                            for (String s : this.model.getMatLib().getGroups().keySet()) {
+                                if (!exceptList.contains(s)) {
                                     state.visibilityMap.put(s, state.operation.performOperation(true));
                                 }
                             }
-                        }
-                        else
-                        {
-                            for (String s : state.visibilityMap.keySet())
-                            {
+                        } else {
+                            for (String s : state.visibilityMap.keySet()) {
                                 state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
                             }
                         }
-                        if (state.getGroupsWithVisibility(true).contains(g.getName()))
-                        {
+                        if (state.getGroupsWithVisibility(true).contains(g.getName())) {
                             faces.addAll(g.applyTransform(transform));
                         }
-                    }
-                    else
-                    {
+                    } else {
                         transform = state.apply(Optional.<IModelPart>absent());
                         faces.addAll(g.applyTransform(transform));
                     }
                 }
-                for (Face f : faces)
-                {
-                    if (this.model.getMatLib().materials.get(f.getMaterialName()).isWhite())
-                    {
-                        for (Vertex v : f.getVertices())
-                        {//update material in each vertex
-                            if (!v.getMaterial().equals(this.model.getMatLib().getMaterial(v.getMaterial().getName())))
-                            {
+                for (Face f : faces) {
+                    if (this.model.getMatLib().materials.get(f.getMaterialName()).isWhite()) {
+                        for (Vertex v : f.getVertices()) {//update material in each vertex
+                            if (!v.getMaterial().equals(this.model.getMatLib().getMaterial(v.getMaterial().getName()))) {
                                 v.setMaterial(this.model.getMatLib().getMaterial(v.getMaterial().getName()));
                             }
                         }
@@ -1417,12 +1198,9 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             return quadList;
         }
 
-        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Normal faceNormal, TextureCoordinate defUV, TextureAtlasSprite sprite)
-        {
-            for (int e = 0; e < format.getElementCount(); e++)
-            {
-                switch (format.getElement(e).getUsage())
-                {
+        private final void putVertexData(UnpackedBakedQuad.Builder builder, Vertex v, Normal faceNormal, TextureCoordinate defUV, TextureAtlasSprite sprite) {
+            for (int e = 0; e < format.getElementCount(); e++) {
+                switch (format.getElement(e).getUsage()) {
                     case POSITION:
                         builder.put(e, v.getPos().x, v.getPos().y, v.getPos().z, v.getPos().w);
                         break;
@@ -1446,7 +1224,7 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
                         if (!v.hasTextureCoordinate())
                             builder.put(e,
                                     sprite.getInterpolatedU(defUV.u * 16),
-                                    sprite.getInterpolatedV((model.customData.flipV ? 1 - defUV.v: defUV.v) * 16),
+                                    sprite.getInterpolatedV((model.customData.flipV ? 1 - defUV.v : defUV.v) * 16),
                                     0, 1);
                         else
                             builder.put(e,
@@ -1467,60 +1245,48 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
         }
 
         @Override
-        public boolean isAmbientOcclusion()
-        {
+        public boolean isAmbientOcclusion() {
             return model != null ? model.customData.ambientOcclusion : true;
         }
 
         @Override
-        public boolean isGui3d()
-        {
+        public boolean isGui3d() {
             return model != null ? model.customData.gui3d : true;
         }
 
         @Override
-        public boolean isBuiltInRenderer()
-        {
+        public boolean isBuiltInRenderer() {
             return false;
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture()
-        {
+        public TextureAtlasSprite getParticleTexture() {
             return this.sprite;
         }
 
         @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
+        public ItemCameraTransforms getItemCameraTransforms() {
             return ItemCameraTransforms.DEFAULT;
         }
 
         @Override
-        public VertexFormat getFormat()
-        {
+        public VertexFormat getFormat() {
             return format;
         }
 
         @Override
-        public IBakedModel handleItemState(ItemStack stack)
-        {
+        public IBakedModel handleItemState(ItemStack stack) {
             return this;
         }
 
         @Override
-        public OBJBakedModel handleBlockState(IBlockState state)
-        {
-            if (state instanceof IExtendedBlockState)
-            {
+        public OBJBakedModel handleBlockState(IBlockState state) {
+            if (state instanceof IExtendedBlockState) {
                 IExtendedBlockState exState = (IExtendedBlockState) state;
-                if (exState.getUnlistedNames().contains(OBJProperty.instance))
-                {
+                if (exState.getUnlistedNames().contains(OBJProperty.instance)) {
                     OBJState s = exState.getValue(OBJProperty.instance);
-                    if (s != null)
-                    {
-                        if (s.visibilityMap.containsKey(Group.ALL) || s.visibilityMap.containsKey(Group.ALL_EXCEPT))
-                        {
+                    if (s != null) {
+                        if (s.visibilityMap.containsKey(Group.ALL) || s.visibilityMap.containsKey(Group.ALL_EXCEPT)) {
                             this.updateStateVisibilityMap(s);
                         }
                         return getCachedModel(s);
@@ -1530,94 +1296,73 @@ public class OBJModel implements IRetexturableModel<OBJModel>, IModelCustomData<
             return this;
         }
 
-        private void updateStateVisibilityMap(OBJState state)
-        {
-            if (state.visibilityMap.containsKey(Group.ALL))
-            {
+        private void updateStateVisibilityMap(OBJState state) {
+            if (state.visibilityMap.containsKey(Group.ALL)) {
                 boolean operation = state.visibilityMap.get(Group.ALL);
                 state.visibilityMap.clear();
-                for (String s : this.model.getMatLib().getGroups().keySet())
-                {
-                    state.visibilityMap.put(s,  state.operation.performOperation(operation));
+                for (String s : this.model.getMatLib().getGroups().keySet()) {
+                    state.visibilityMap.put(s, state.operation.performOperation(operation));
                 }
-            }
-            else if (state.visibilityMap.containsKey(Group.ALL_EXCEPT))
-            {
+            } else if (state.visibilityMap.containsKey(Group.ALL_EXCEPT)) {
                 List<String> exceptList = state.getGroupNamesFromMap().subList(1, state.getGroupNamesFromMap().size());
                 state.visibilityMap.remove(Group.ALL_EXCEPT);
-                for (String s : this.model.getMatLib().getGroups().keySet())
-                {
-                    if (!exceptList.contains(s))
-                    {
+                for (String s : this.model.getMatLib().getGroups().keySet()) {
+                    if (!exceptList.contains(s)) {
                         state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
                     }
                 }
-            }
-            else
-            {
-                for (String s : state.visibilityMap.keySet())
-                {
+            } else {
+                for (String s : state.visibilityMap.keySet()) {
                     state.visibilityMap.put(s, state.operation.performOperation(state.visibilityMap.get(s)));
                 }
             }
         }
 
-        private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>()
-        {
-            public OBJBakedModel load(IModelState state) throws Exception
-            {
+        private final LoadingCache<IModelState, OBJBakedModel> cache = CacheBuilder.newBuilder().maximumSize(20).build(new CacheLoader<IModelState, OBJBakedModel>() {
+            public OBJBakedModel load(IModelState state) throws Exception {
                 return new OBJBakedModel(model, state, format, textures);
             }
         });
 
-        public OBJBakedModel getCachedModel(IModelState state)
-        {
+        public OBJBakedModel getCachedModel(IModelState state) {
             return cache.getUnchecked(state);
         }
 
-        public OBJModel getModel()
-        {
+        public OBJModel getModel() {
             return this.model;
         }
 
-        public IModelState getState()
-        {
+        public IModelState getState() {
             return this.state;
         }
 
-        public OBJBakedModel getBakedModel()
-        {
+        public OBJBakedModel getBakedModel() {
             return new OBJBakedModel(this.model, this.state, this.format, this.textures);
         }
 
         @Override
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
-        {
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
             return IPerspectiveAwareModel.MapWrapper.handlePerspective(this, state, cameraTransformType);
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return this.model.modelLocation.toString();
         }
     }
 
     @SuppressWarnings("serial")
-    public static class UVsOutOfBoundsException extends RuntimeException
-    {
+    public static class UVsOutOfBoundsException extends RuntimeException {
         public ResourceLocation modelLocation;
 
-        public UVsOutOfBoundsException(ResourceLocation modelLocation)
-        {
+        public UVsOutOfBoundsException(ResourceLocation modelLocation) {
             super(String.format("Model '%s' has UVs ('vt') out of bounds 0-1! The missing model will be used instead. Support for UV processing will be added to the OBJ loader in the future.", modelLocation));
             this.modelLocation = modelLocation;
         }
     }
 
     @Override
-    public IModelState getDefaultState()
-    {
+    public IModelState getDefaultState() {
         return TRSRTransformation.identity();
     }
 }

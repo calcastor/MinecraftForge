@@ -20,16 +20,13 @@ import org.objectweb.asm.commons.RemappingClassAdapter;
 import org.objectweb.asm.commons.RemappingMethodAdapter;
 
 public class FMLRemappingAdapter extends RemappingClassAdapter {
-    public FMLRemappingAdapter(ClassVisitor cv)
-    {
+    public FMLRemappingAdapter(ClassVisitor cv) {
         super(cv, FMLDeobfuscatingRemapper.INSTANCE);
     }
 
     @Override
-    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
-    {
-        if (interfaces == null)
-        {
+    public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
+        if (interfaces == null) {
             interfaces = new String[0];
         }
         FMLDeobfuscatingRemapper.INSTANCE.mergeSuperMaps(name, superName, interfaces);
@@ -37,32 +34,26 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
     }
 
     @Override
-    protected MethodVisitor createRemappingMethodAdapter(int access, String newDesc, MethodVisitor mv)
-    {
+    protected MethodVisitor createRemappingMethodAdapter(int access, String newDesc, MethodVisitor mv) {
         return new StaticFixingMethodVisitor(access, newDesc, mv, remapper);
     }
 
-    private static class StaticFixingMethodVisitor extends RemappingMethodAdapter
-    {
+    private static class StaticFixingMethodVisitor extends RemappingMethodAdapter {
 
-        public StaticFixingMethodVisitor(int access, String desc, MethodVisitor mv, Remapper remapper)
-        {
+        public StaticFixingMethodVisitor(int access, String desc, MethodVisitor mv, Remapper remapper) {
             super(access, desc, mv, remapper);
         }
 
         @Override
-        public void visitFieldInsn(int opcode, String originalType, String originalName, String desc)
-        {
+        public void visitFieldInsn(int opcode, String originalType, String originalName, String desc) {
             // This method solves the problem of a static field reference changing type. In all probability it is a
             // compatible change, however we need to fix up the desc to point at the new type
             String type = remapper.mapType(originalType);
             String fieldName = remapper.mapFieldName(originalType, originalName, desc);
             String newDesc = remapper.mapDesc(desc);
-            if (opcode == Opcodes.GETSTATIC && type.startsWith("net/minecraft/") && newDesc.startsWith("Lnet/minecraft/"))
-            {
+            if (opcode == Opcodes.GETSTATIC && type.startsWith("net/minecraft/") && newDesc.startsWith("Lnet/minecraft/")) {
                 String replDesc = FMLDeobfuscatingRemapper.INSTANCE.getStaticFieldType(originalType, originalName, type, fieldName);
-                if (replDesc != null)
-                {
+                if (replDesc != null) {
                     newDesc = remapper.mapDesc(replDesc);
                 }
             }

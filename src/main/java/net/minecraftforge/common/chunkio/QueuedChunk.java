@@ -33,15 +33,14 @@ class QueuedChunk {
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder result = new StringBuilder();
         String NEW_LINE = System.getProperty("line.separator");
 
         result.append(this.getClass().getName() + " {" + NEW_LINE);
         result.append(" x: " + x + NEW_LINE);
         result.append(" z: " + z + NEW_LINE);
-        result.append(" loader: " + loader + NEW_LINE );
+        result.append(" loader: " + loader + NEW_LINE);
         result.append(" world: " + world.getWorldInfo().getWorldName() + NEW_LINE);
         result.append(" dimension: " + world.provider.getDimensionId() + NEW_LINE);
         result.append(" provider: " + world.provider.getClass().getName() + NEW_LINE);

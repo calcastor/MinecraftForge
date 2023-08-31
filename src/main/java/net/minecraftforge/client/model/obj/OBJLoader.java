@@ -28,37 +28,28 @@ public class OBJLoader implements ICustomModelLoader {
     private final Set<String> enabledDomains = new HashSet<String>();
     private final Map<ResourceLocation, OBJModel> cache = new HashMap<ResourceLocation, OBJModel>();
 
-    public void addDomain(String domain)
-    {
+    public void addDomain(String domain) {
         enabledDomains.add(domain.toLowerCase());
         FMLLog.log(Level.INFO, "OBJLoader: Domain %s has been added.", domain.toLowerCase());
     }
 
-    public void onResourceManagerReload(IResourceManager resourceManager)
-    {
+    public void onResourceManagerReload(IResourceManager resourceManager) {
         this.manager = resourceManager;
         cache.clear();
     }
 
-    public boolean accepts(ResourceLocation modelLocation)
-    {
+    public boolean accepts(ResourceLocation modelLocation) {
         return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
     }
 
-    public IModel loadModel(ResourceLocation modelLocation) throws IOException
-    {
+    public IModel loadModel(ResourceLocation modelLocation) throws IOException {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
-        if (!cache.containsKey(file))
-        {
-            try
-            {
+        if (!cache.containsKey(file)) {
+            try {
                 IResource resource = null;
-                try
-                {
+                try {
                     resource = manager.getResource(file);
-                }
-                catch (FileNotFoundException e)
-                {
+                } catch (FileNotFoundException e) {
                     if (modelLocation.getResourcePath().startsWith("models/block/"))
                         resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
                     else if (modelLocation.getResourcePath().startsWith("models/item/"))
@@ -67,17 +58,12 @@ public class OBJLoader implements ICustomModelLoader {
                 }
                 OBJModel.Parser parser = new OBJModel.Parser(resource, manager);
                 OBJModel model = null;
-                try
-                {
-                	model = parser.parse();
+                try {
+                    model = parser.parse();
+                } finally {
+                    cache.put(modelLocation, model);
                 }
-                finally
-                {
-                	cache.put(modelLocation, model);
-                }
-            }
-            catch (IOException e)
-            {
+            } catch (IOException e) {
 //                FMLLog.log(Level.ERROR, e, "Exception loading model '%s' with OBJ loader, skipping", modelLocation);
                 throw e;
             }

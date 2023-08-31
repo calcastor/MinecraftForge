@@ -6,7 +6,6 @@ package net.minecraftforge.client.model.animation;
  * Simplest example is the input time itself.
  * Unity calls them Parameters, Unreal calls them Variables.
  */
-public interface ITimeValue
-{
+public interface ITimeValue {
     public float apply(float input);
 }

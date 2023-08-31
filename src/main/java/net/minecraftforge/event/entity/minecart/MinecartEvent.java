@@ -12,12 +12,10 @@ import net.minecraftforge.event.entity.EntityEvent;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class MinecartEvent extends EntityEvent
-{
+public class MinecartEvent extends EntityEvent {
     public final EntityMinecart minecart;
 
-    public MinecartEvent(EntityMinecart minecart)
-    {
+    public MinecartEvent(EntityMinecart minecart) {
         super(minecart);
         this.minecart = minecart;
     }

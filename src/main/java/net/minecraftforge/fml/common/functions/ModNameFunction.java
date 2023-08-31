@@ -5,7 +5,7 @@
  * are made available under the terms of the GNU Lesser Public License v2.1
  * which accompanies this distribution, and is available at
  * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- * 
+ *
  * Contributors:
  *     cpw - implementation
  */
@@ -16,11 +16,9 @@ import net.minecraftforge.fml.common.ModContainer;
 
 import com.google.common.base.Function;
 
-public class ModNameFunction implements Function<ModContainer, String>
-{
+public class ModNameFunction implements Function<ModContainer, String> {
     @Override
-    public String apply(ModContainer input)
-    {
+    public String apply(ModContainer input) {
         return input.getName();
     }
 

@@ -2,8 +2,7 @@ package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
 
-public interface IItemHandler
-{
+public interface IItemHandler {
     /**
      * Returns the number of slots available
      *
@@ -13,13 +12,13 @@ public interface IItemHandler
 
     /**
      * Returns the ItemStack in a given slot.
-     *
+     * <p>
      * The result's stack size may be greater than the itemstacks max size.
-     *
+     * <p>
      * If the result is null, then the slot is empty.
      * If the result is not null but the stack size is zero, then it represents
      * an empty slot that will only accept* a specific itemstack.
-     *
+     * <p>
      * <p/>
      * IMPORTANT: This ItemStack MUST NOT be modified. This method is not for
      * altering an inventories contents. Any implementers who are able to detect
@@ -41,7 +40,7 @@ public interface IItemHandler
      * @param stack    ItemStack to insert.
      * @param simulate If true, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return null).
-     *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
+     * May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
      **/
     ItemStack insertItem(int slot, ItemStack stack, boolean simulate);
 

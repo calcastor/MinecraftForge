@@ -19,46 +19,37 @@ import com.google.gson.stream.JsonWriter;
 /**
  * Various implementations of ITimeValue.
  */
-public final class TimeValues
-{
-    public static enum IdentityValue implements ITimeValue, IStringSerializable
-    {
+public final class TimeValues {
+    public static enum IdentityValue implements ITimeValue, IStringSerializable {
         instance;
 
-        public float apply(float input)
-        {
+        public float apply(float input) {
             return input;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return "identity";
         }
     }
 
-    public static final class ConstValue implements ITimeValue
-    {
+    public static final class ConstValue implements ITimeValue {
         private final float output;
 
-        public ConstValue(float output)
-        {
+        public ConstValue(float output) {
             this.output = output;
         }
 
-        public float apply(float input)
-        {
+        public float apply(float input) {
             return output;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(output);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -73,34 +64,28 @@ public final class TimeValues
     /**
      * Simple value holder.
      */
-    public static final class VariableValue implements ITimeValue
-    {
+    public static final class VariableValue implements ITimeValue {
         private float output;
 
-        public VariableValue(float initialValue)
-        {
+        public VariableValue(float initialValue) {
             this.output = initialValue;
         }
 
-        public void setValue(float newValue)
-        {
+        public void setValue(float newValue) {
             this.output = newValue;
         }
 
-        public float apply(float input)
-        {
+        public float apply(float input) {
             return output;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(output);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -112,51 +97,64 @@ public final class TimeValues
         }
     }
 
-    public static final class SimpleExprValue implements ITimeValue
-    {
+    public static final class SimpleExprValue implements ITimeValue {
         private static final Pattern opsPattern = Pattern.compile("[+\\-*/mMrRfF]+");
 
         private final String operators;
         private final ImmutableList<ITimeValue> args;
 
-        public SimpleExprValue(String operators, ImmutableList<ITimeValue> args)
-        {
+        public SimpleExprValue(String operators, ImmutableList<ITimeValue> args) {
             this.operators = operators;
             this.args = args;
         }
 
-        public float apply(float input)
-        {
+        public float apply(float input) {
             float ret = input;
-            for(int i = 0; i < operators.length(); i++)
-            {
+            for (int i = 0; i < operators.length(); i++) {
                 float arg = args.get(i).apply(input);
-                switch(operators.charAt(i))
-                {
-                    case '+': ret += arg; break;
-                    case '-': ret -= arg; break;
-                    case '*': ret *= arg; break;
-                    case '/': ret /= arg; break;
-                    case 'm': ret = Math.min(ret, arg); break;
-                    case 'M': ret = Math.max(ret, arg); break;
-                    case 'r': ret = (float)Math.floor(ret / arg) * arg; break;
-                    case 'R': ret = (float)Math.ceil(ret / arg) * arg; break;
-                    case 'f': ret -= Math.floor(ret / arg) * arg; break;
-                    case 'F': ret = (float)Math.ceil(ret / arg) * arg - ret; break;
+                switch (operators.charAt(i)) {
+                    case '+':
+                        ret += arg;
+                        break;
+                    case '-':
+                        ret -= arg;
+                        break;
+                    case '*':
+                        ret *= arg;
+                        break;
+                    case '/':
+                        ret /= arg;
+                        break;
+                    case 'm':
+                        ret = Math.min(ret, arg);
+                        break;
+                    case 'M':
+                        ret = Math.max(ret, arg);
+                        break;
+                    case 'r':
+                        ret = (float) Math.floor(ret / arg) * arg;
+                        break;
+                    case 'R':
+                        ret = (float) Math.ceil(ret / arg) * arg;
+                        break;
+                    case 'f':
+                        ret -= Math.floor(ret / arg) * arg;
+                        break;
+                    case 'F':
+                        ret = (float) Math.ceil(ret / arg) * arg - ret;
+                        break;
                 }
             }
             return ret;
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(operators, args);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -168,32 +166,27 @@ public final class TimeValues
         }
     }
 
-    public static final class CompositionValue implements ITimeValue
-    {
+    public static final class CompositionValue implements ITimeValue {
         private final ITimeValue g;
         private final ITimeValue f;
 
-        public CompositionValue(ITimeValue g, ITimeValue f)
-        {
+        public CompositionValue(ITimeValue g, ITimeValue f) {
             super();
             this.g = g;
             this.f = f;
         }
 
-        public float apply(float input)
-        {
+        public float apply(float input) {
             return g.apply(f.apply(input));
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return Objects.hashCode(g, f);
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -205,54 +198,44 @@ public final class TimeValues
         }
     }
 
-    public static final class ParameterValue implements ITimeValue, IStringSerializable
-    {
+    public static final class ParameterValue implements ITimeValue, IStringSerializable {
         private final String parameterName;
         private final Function<String, ITimeValue> valueResolver;
         private ITimeValue parameter;
 
-        public ParameterValue(String parameterName, Function<String, ITimeValue> valueResolver)
-        {
+        public ParameterValue(String parameterName, Function<String, ITimeValue> valueResolver) {
             this.parameterName = parameterName;
             this.valueResolver = valueResolver;
         }
 
-        public String getName()
-        {
+        public String getName() {
             return parameterName;
         }
 
-        private void resolve()
-        {
-            if(parameter == null)
-            {
-                if(valueResolver != null)
-                {
+        private void resolve() {
+            if (parameter == null) {
+                if (valueResolver != null) {
                     parameter = valueResolver.apply(parameterName);
                 }
-                if(parameter == null)
-                {
+                if (parameter == null) {
                     throw new IllegalArgumentException("Couldn't resolve parameter value " + parameterName);
                 }
             }
         }
 
-        public float apply(float input)
-        {
+        public float apply(float input) {
             resolve();
             return parameter.apply(input);
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             resolve();
             return parameter.hashCode();
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals(Object obj) {
             if (this == obj)
                 return true;
             if (obj == null)
@@ -266,102 +249,78 @@ public final class TimeValues
         }
     }
 
-    public static enum CommonTimeValueTypeAdapterFactory implements TypeAdapterFactory
-    {
+    public static enum CommonTimeValueTypeAdapterFactory implements TypeAdapterFactory {
         INSTANCE;
 
         private final ThreadLocal<Function<String, ITimeValue>> valueResolver = new ThreadLocal<Function<String, ITimeValue>>();
 
-        public void setValueResolver(Function<String, ITimeValue> valueResolver)
-        {
+        public void setValueResolver(Function<String, ITimeValue> valueResolver) {
             this.valueResolver.set(valueResolver);
         }
 
         @SuppressWarnings("unchecked")
-        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type)
-        {
-            if(type.getRawType() != ITimeValue.class)
-            {
+        public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+            if (type.getRawType() != ITimeValue.class) {
                 return null;
             }
 
-            return (TypeAdapter<T>)new TypeAdapter<ITimeValue>()
-            {
-                public void write(JsonWriter out, ITimeValue parameter) throws IOException
-                {
-                    if(parameter instanceof ConstValue)
-                    {
-                        out.value(((ConstValue)parameter).output);
-                    }
-                    else if(parameter instanceof SimpleExprValue)
-                    {
-                        SimpleExprValue p = (SimpleExprValue)parameter;
+            return (TypeAdapter<T>) new TypeAdapter<ITimeValue>() {
+                public void write(JsonWriter out, ITimeValue parameter) throws IOException {
+                    if (parameter instanceof ConstValue) {
+                        out.value(((ConstValue) parameter).output);
+                    } else if (parameter instanceof SimpleExprValue) {
+                        SimpleExprValue p = (SimpleExprValue) parameter;
                         out.beginArray();
                         out.value(p.operators);
-                        for(ITimeValue v : p.args)
-                        {
+                        for (ITimeValue v : p.args) {
                             write(out, v);
                         }
                         out.endArray();
-                    }
-                    else if(parameter instanceof CompositionValue)
-                    {
-                        CompositionValue p = (CompositionValue)parameter;
+                    } else if (parameter instanceof CompositionValue) {
+                        CompositionValue p = (CompositionValue) parameter;
                         out.beginArray();
                         out.value("compose");
                         write(out, p.g);
                         write(out, p.f);
                         out.endArray();
-                    }
-                    else if(parameter instanceof IStringSerializable)
-                    {
-                        out.value("#" + ((IStringSerializable)parameter).getName());
+                    } else if (parameter instanceof IStringSerializable) {
+                        out.value("#" + ((IStringSerializable) parameter).getName());
                     }
                 }
 
-                public ITimeValue read(JsonReader in) throws IOException
-                {
-                    switch(in.peek())
-                    {
-                    case NUMBER:
-                        return new ConstValue((float)in.nextDouble());
-                    case BEGIN_ARRAY:
-                        in.beginArray();
-                        String type = in.nextString();
-                        ITimeValue p;
-                        if(SimpleExprValue.opsPattern.matcher(type).matches())
-                        {
-                            ImmutableList.Builder<ITimeValue> builder = ImmutableList.builder();
-                            while(in.peek() != JsonToken.END_ARRAY)
-                            {
-                                builder.add(read(in));
+                public ITimeValue read(JsonReader in) throws IOException {
+                    switch (in.peek()) {
+                        case NUMBER:
+                            return new ConstValue((float) in.nextDouble());
+                        case BEGIN_ARRAY:
+                            in.beginArray();
+                            String type = in.nextString();
+                            ITimeValue p;
+                            if (SimpleExprValue.opsPattern.matcher(type).matches()) {
+                                ImmutableList.Builder<ITimeValue> builder = ImmutableList.builder();
+                                while (in.peek() != JsonToken.END_ARRAY) {
+                                    builder.add(read(in));
+                                }
+                                p = new SimpleExprValue(type, builder.build());
+                            } else if ("compose".equals(type)) {
+                                p = new CompositionValue(read(in), read(in));
+                            } else {
+                                throw new IOException("Unknown TimeValue type \"" + type + "\"");
                             }
-                            p = new SimpleExprValue(type, builder.build());
-                        }
-                        else if("compose".equals(type))
-                        {
-                            p = new CompositionValue(read(in), read(in));
-                        }
-                        else
-                        {
-                            throw new IOException("Unknown TimeValue type \"" + type + "\"");
-                        }
-                        in.endArray();
-                        return p;
-                    case STRING:
-                        String string = in.nextString();
-                        if(string.equals("#identity"))
-                        {
-                            return IdentityValue.instance;
-                        }
-                        if(!string.startsWith("#"))
-                        {
-                            throw new IOException("Expected TimeValue reference, got \"" + string + "\"");
-                        }
-                        // User Parameter TimeValue
-                        return new ParameterValue(string.substring(1), valueResolver.get());
-                    default:
-                        throw new IOException("Expected TimeValue, got " + in.peek());
+                            in.endArray();
+                            return p;
+                        case STRING:
+                            String string = in.nextString();
+                            if (string.equals("#identity")) {
+                                return IdentityValue.instance;
+                            }
+                            if (!string.startsWith("#")) {
+                                throw new IOException("Expected TimeValue reference, got \"" + string + "\"");
+                            }
+                            // User Parameter TimeValue
+                            return new ParameterValue(string.substring(1), valueResolver.get());
+                        default:
+                            throw new IOException("Expected TimeValue, got " + in.peek());
                     }
                 }
             };

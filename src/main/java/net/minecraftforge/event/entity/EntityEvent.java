@@ -12,15 +12,13 @@ import net.minecraft.entity.Entity;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class EntityEvent extends Event
-{
+public class EntityEvent extends Event {
     public final Entity entity;
 
-    public EntityEvent(Entity entity)
-    {
+    public EntityEvent(Entity entity) {
         this.entity = entity;
     }
-    
+
     /**
      * EntityConstructing is fired when an Entity is being created. <br>
      * This event is fired within the constructor of the Entity.<br>
@@ -31,10 +29,8 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EntityConstructing extends EntityEvent
-    {
-        public EntityConstructing(Entity entity)
-        {
+    public static class EntityConstructing extends EntityEvent {
+        public EntityConstructing(Entity entity) {
             super(entity);
         }
     }
@@ -52,15 +48,14 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class CanUpdate extends EntityEvent
-    {
+    public static class CanUpdate extends EntityEvent {
         public boolean canUpdate = false;
-        public CanUpdate(Entity entity)
-        {
+
+        public CanUpdate(Entity entity) {
             super(entity);
         }
     }
-    
+
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>
@@ -72,15 +67,13 @@ public class EntityEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class EnteringChunk extends EntityEvent
-    {
+    public static class EnteringChunk extends EntityEvent {
         public int newChunkX;
         public int newChunkZ;
         public int oldChunkX;
         public int oldChunkZ;
 
-        public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ)
-        {
+        public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ) {
             super(entity);
             this.newChunkX = newChunkX;
             this.newChunkZ = newChunkZ;

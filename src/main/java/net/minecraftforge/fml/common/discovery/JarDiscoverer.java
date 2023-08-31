@@ -30,47 +30,35 @@ import java.util.zip.ZipEntry;
 
 import com.google.common.collect.Lists;
 
-public class JarDiscoverer implements ITypeDiscoverer
-{
+public class JarDiscoverer implements ITypeDiscoverer {
     @Override
-    public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table)
-    {
+    public List<ModContainer> discover(ModCandidate candidate, ASMDataTable table) {
         List<ModContainer> foundMods = Lists.newArrayList();
         FMLLog.fine("Examining file %s for potential mods", candidate.getModContainer().getName());
         JarFile jar = null;
-        try
-        {
+        try {
             jar = new JarFile(candidate.getModContainer());
 
             ZipEntry modInfo = jar.getEntry("mcmod.info");
             MetadataCollection mc = null;
-            if (modInfo != null)
-            {
+            if (modInfo != null) {
                 FMLLog.finer("Located mcmod.info file in file %s", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(jar.getInputStream(modInfo), candidate.getModContainer().getName());
-            }
-            else
-            {
+            } else {
                 FMLLog.fine("The mod container %s appears to be missing an mcmod.info file", candidate.getModContainer().getName());
                 mc = MetadataCollection.from(null, "");
             }
-            for (ZipEntry ze : Collections.list(jar.entries()))
-            {
-                if (ze.getName()!=null && (ze.getName().startsWith("__MACOSX") || ze.getName().startsWith("META-INF/versions/") || ze.getName().contains("module-info.class")))
-                {
+            for (ZipEntry ze : Collections.list(jar.entries())) {
+                if (ze.getName() != null && (ze.getName().startsWith("__MACOSX") || ze.getName().startsWith("META-INF/versions/") || ze.getName().contains("module-info.class"))) {
                     continue;
                 }
                 Matcher match = classFile.matcher(ze.getName());
-                if (match.matches())
-                {
+                if (match.matches()) {
                     ASMModParser modParser;
-                    try
-                    {
+                    try {
                         modParser = new ASMModParser(jar.getInputStream(ze));
                         candidate.addClassEntry(ze.getName());
-                    }
-                    catch (LoaderException e)
-                    {
+                    } catch (LoaderException e) {
                         FMLLog.log(Level.ERROR, e, "There was a problem reading the entry %s in the jar %s - probably a corrupt zip", ze.getName(), candidate.getModContainer().getPath());
                         jar.close();
                         throw e;
@@ -78,29 +66,20 @@ public class JarDiscoverer implements ITypeDiscoverer
                     modParser.validate();
                     modParser.sendToTable(table, candidate);
                     ModContainer container = ModContainerFactory.instance().build(modParser, candidate.getModContainer(), candidate);
-                    if (container!=null)
-                    {
+                    if (container != null) {
                         table.addContainer(container);
                         foundMods.add(container);
                         container.bindMetadata(mc);
                     }
                 }
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             FMLLog.log(Level.WARN, e, "Zip file %s failed to read properly, it will be ignored", candidate.getModContainer().getName());
-        }
-        finally
-        {
-            if (jar != null)
-            {
-                try
-                {
+        } finally {
+            if (jar != null) {
+                try {
                     jar.close();
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                 }
             }
         }

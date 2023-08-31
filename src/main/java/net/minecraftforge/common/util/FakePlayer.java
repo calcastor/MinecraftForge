@@ -15,22 +15,60 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 //Preliminary, simple Fake Player class
-public class FakePlayer extends EntityPlayerMP
-{
-    public FakePlayer(WorldServer world, GameProfile name)
-    {
+public class FakePlayer extends EntityPlayerMP {
+    public FakePlayer(WorldServer world, GameProfile name) {
         super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new ItemInWorldManager(world));
     }
 
-    @Override public Vec3 getPositionVector(){ return new Vec3(0, 0, 0); }
-    @Override public boolean canCommandSenderUseCommand(int i, String s){ return false; }
-    @Override public void addChatComponentMessage(IChatComponent chatmessagecomponent){}
-    @Override public void addStat(StatBase par1StatBase, int par2){}
-    @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
-    @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
-    @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
-    @Override public void onDeath(DamageSource source){ return; }
-    @Override public void onUpdate(){ return; }
-    @Override public void travelToDimension(int dim){ return; }
-    @Override public void handleClientSettings(C15PacketClientSettings pkt){ return; }
+    @Override
+    public Vec3 getPositionVector() {
+        return new Vec3(0, 0, 0);
+    }
+
+    @Override
+    public boolean canCommandSenderUseCommand(int i, String s) {
+        return false;
+    }
+
+    @Override
+    public void addChatComponentMessage(IChatComponent chatmessagecomponent) {
+    }
+
+    @Override
+    public void addStat(StatBase par1StatBase, int par2) {
+    }
+
+    @Override
+    public void openGui(Object mod, int modGuiId, World world, int x, int y, int z) {
+    }
+
+    @Override
+    public boolean isEntityInvulnerable(DamageSource source) {
+        return true;
+    }
+
+    @Override
+    public boolean canAttackPlayer(EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public void onDeath(DamageSource source) {
+        return;
+    }
+
+    @Override
+    public void onUpdate() {
+        return;
+    }
+
+    @Override
+    public void travelToDimension(int dim) {
+        return;
+    }
+
+    @Override
+    public void handleClientSettings(C15PacketClientSettings pkt) {
+        return;
+    }
 }

@@ -22,14 +22,12 @@ import org.apache.logging.log4j.Level;
 /*
  * Central hub for custom model loaders.
  */
-public class ModelLoaderRegistry
-{
+public class ModelLoaderRegistry {
     private static final Set<ICustomModelLoader> loaders = new HashSet<ICustomModelLoader>();
     private static final Map<ResourceLocation, IModel> cache = new HashMap<ResourceLocation, IModel>();
 
     // Forge built-in loaders
-    static
-    {
+    static {
         registerLoader(B3DLoader.instance);
         registerLoader(OBJLoader.instance);
         registerLoader(ModelFluid.FluidLoader.instance);
@@ -41,21 +39,18 @@ public class ModelLoaderRegistry
     /*
      * Makes system aware of your loader.
      */
-    public static void registerLoader(ICustomModelLoader loader)
-    {
+    public static void registerLoader(ICustomModelLoader loader) {
         loaders.add(loader);
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(loader);
     }
 
-    public static boolean loaded(ResourceLocation location)
-    {
+    public static boolean loaded(ResourceLocation location) {
         return cache.containsKey(location);
     }
 
 
-    public static ResourceLocation getActualLocation(ResourceLocation location)
-    {
-        if(location.getResourcePath().startsWith("builtin/")) return location;
+    public static ResourceLocation getActualLocation(ResourceLocation location) {
+        if (location.getResourcePath().startsWith("builtin/")) return location;
         return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
     }
 
@@ -64,70 +59,48 @@ public class ModelLoaderRegistry
      * ResourceLocation argument will be passed directly to the custom model loaders,
      * ModelResourceLocation argument will be loaded through the blockstate system.
      */
-    public static IModel getModel(ResourceLocation location) throws IOException
-    {
+    public static IModel getModel(ResourceLocation location) throws IOException {
         IModel model;
-        if(location instanceof ModelResourceLocation)
-        {
+        if (location instanceof ModelResourceLocation) {
             ModelLoader loader = ModelLoader.VanillaLoader.instance.getLoader();
-            if(loader != null)
-            {
-                model = loader.getVariantModel((ModelResourceLocation)location);
-            }
-            else
-            {
+            if (loader != null) {
+                model = loader.getVariantModel((ModelResourceLocation) location);
+            } else {
                 FMLLog.log(Level.ERROR, "Loading model too early, skipping: %s", location);
                 model = getMissingModel();
             }
-        }
-        else
-        {
-            if(cache.containsKey(location)) return cache.get(location);
+        } else {
+            if (cache.containsKey(location)) return cache.get(location);
             ResourceLocation actual = getActualLocation(location);
             ICustomModelLoader accepted = null;
-            for(ICustomModelLoader loader : loaders)
-            {
-                try
-                {
-                    if(loader.accepts(actual))
-                    {
-                        if(accepted != null)
-                        {
+            for (ICustomModelLoader loader : loaders) {
+                try {
+                    if (loader.accepts(actual)) {
+                        if (accepted != null) {
                             FMLLog.severe("2 loaders (%s and %s) want to load the same model %s", accepted, loader, location);
                             throw new IllegalStateException("2 loaders want to load the same model");
                         }
                         accepted = loader;
                     }
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     FMLLog.log(Level.ERROR, e, "Exception checking if model %s can be loaded with loader %s, skipping", location, loader);
                 }
             }
 
             // no custom loaders found, try vanilla one
-            if(accepted == null)
-            {
-                if(VanillaLoader.instance.accepts(actual)) accepted = VanillaLoader.instance;
+            if (accepted == null) {
+                if (VanillaLoader.instance.accepts(actual)) accepted = VanillaLoader.instance;
             }
 
-            if(accepted == null)
-            {
+            if (accepted == null) {
                 FMLLog.severe("no suitable loader found for the model %s, skipping", location);
                 model = getMissingModel();
-            }
-            else
-            {
-                try
-                {
+            } else {
+                try {
                     model = accepted.loadModel(actual);
-                }
-                catch (IOException e)
-                {
+                } catch (IOException e) {
                     throw e;
-                }
-                catch(Exception e)
-                {
+                } catch (Exception e) {
                     FMLLog.log(Level.ERROR, e, "Exception loading model %s with loader %s, skipping", location, accepted);
                     model = getMissingModel();
                 }
@@ -137,13 +110,11 @@ public class ModelLoaderRegistry
         return model;
     }
 
-    public static IModel getMissingModel()
-    {
+    public static IModel getMissingModel() {
         return ModelLoader.VanillaLoader.instance.getLoader().getMissingModel();
     }
 
-    public static void clearModelCache()
-    {
+    public static void clearModelCache() {
         cache.clear();
         // putting the builtin models in
         cache.put(new ResourceLocation("minecraft:builtin/generated"), ModelLoader.VanillaLoader.instance.getLoader().getItemModel());

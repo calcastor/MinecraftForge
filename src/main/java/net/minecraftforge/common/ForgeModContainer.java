@@ -56,8 +56,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
-{
+public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer {
     public static final String VERSION_CHECK_CAT = "version_checking";
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
@@ -65,7 +64,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean disableStitchedFileSaving = false;
     public static boolean fullBoundingBoxLadders = false;
     public static double zombieSummonBaseChance = 0.1;
-    public static int[] blendRanges = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 };
+    public static int[] blendRanges = {2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34};
     public static float zombieBabyChance = 0.05f;
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
@@ -76,32 +75,32 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
     private static Configuration config;
     private static ForgeModContainer INSTANCE;
-    public static ForgeModContainer getInstance()
-    {
+
+    public static ForgeModContainer getInstance() {
         return INSTANCE;
     }
 
     private URL updateJSONUrl = null;
     public UniversalBucket universalBucket;
 
-    public ForgeModContainer()
-    {
+    public ForgeModContainer() {
         super(new ModMetadata());
         ModMetadata meta = getMetadata();
-        meta.modId       = "Forge";
-        meta.name        = "Minecraft Forge";
-        meta.version     = ForgeVersion.getVersion();
-        meta.credits     = "Made possible with help from many people";
-        meta.authorList  = Arrays.asList("LexManos", "cpw", "fry");
+        meta.modId = "Forge";
+        meta.name = "Minecraft Forge";
+        meta.version = ForgeVersion.getVersion();
+        meta.credits = "Made possible with help from many people";
+        meta.authorList = Arrays.asList("LexManos", "cpw", "fry");
         meta.description = "Minecraft Forge is a common open source API allowing a broad range of mods " +
-                           "to work cooperatively together. It allows many mods to be created without " +
-                           "them editing the main Minecraft code.";
-        meta.url         = "http://minecraftforge.net";
+                "to work cooperatively together. It allows many mods to be created without " +
+                "them editing the main Minecraft code.";
+        meta.url = "http://minecraftforge.net";
         meta.screenshots = new String[0];
-        meta.logoFile    = "/forge_logo.png";
+        meta.logoFile = "/forge_logo.png";
         try {
-            updateJSONUrl    = new URL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
-        } catch (MalformedURLException e) {}
+            updateJSONUrl = new URL("http://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json");
+        } catch (MalformedURLException e) {
+        }
 
         config = null;
         File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
@@ -113,34 +112,28 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     }
 
     @Override
-    public String getGuiClassName()
-    {
+    public String getGuiClassName() {
         return "net.minecraftforge.client.gui.ForgeGuiFactory";
     }
 
-    public static Configuration getConfig()
-    {
+    public static Configuration getConfig() {
         return config;
     }
 
     /**
      * Synchronizes the local fields with the values in the Configuration object.
      */
-    private static void syncConfig(boolean load)
-    {
+    private static void syncConfig(boolean load) {
         // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
         // Property order lists are defined per-ConfigCategory.
         List<String> propOrder = new ArrayList<String>();
 
-        if (!config.isChild)
-        {
-            if (load)
-            {
+        if (!config.isChild) {
+            if (load) {
                 config.load();
             }
             Property enableGlobalCfg = config.get(Configuration.CATEGORY_GENERAL, "enableGlobalConfig", false).setShowInGui(false);
-            if (enableGlobalCfg.getBoolean(false))
-            {
+            if (enableGlobalCfg.getBoolean(false)) {
                 Configuration.enableGlobalConfig();
             }
         }
@@ -161,8 +154,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024", 64, 1024);
         prop.setLanguageKey("forge.configgui.clumpingThreshold").setRequiresWorldRestart(true);
         clumpingThreshold = prop.getInt(64);
-        if (clumpingThreshold > 1024 || clumpingThreshold < 64)
-        {
+        if (clumpingThreshold > 1024 || clumpingThreshold < 64) {
             clumpingThreshold = 64;
             prop.set(64);
         }
@@ -180,8 +172,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         removeErroringEntities = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        if (removeErroringEntities)
-        {
+        if (removeErroringEntities) {
             FMLLog.warning("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
@@ -191,8 +182,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         removeErroringTileEntities = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        if (removeErroringTileEntities)
-        {
+        if (removeErroringTileEntities) {
             FMLLog.warning("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
@@ -206,7 +196,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         fullBoundingBoxLadders = prop.getBoolean(false);
         propOrder.add(prop.getName());
 
-        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[] { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34 });
+        prop = config.get(Configuration.CATEGORY_GENERAL, "biomeSkyBlendRange", new int[]{2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34});
         prop.comment = "Control the range of sky blending for colored skies in biomes.";
         prop.setLanguageKey("forge.configgui.biomeSkyBlendRange");
         blendRanges = prop.getIntList();
@@ -225,8 +215,8 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "defaultSpawnFuzz", 20,
-            "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
-            1, Integer.MAX_VALUE);
+                "The spawn fuzz when a player respawns in the world, this is controlable by WorldType, this config option is for the default overworld.",
+                1, Integer.MAX_VALUE);
         prop.setLanguageKey("forge.configgui.spawnfuzz").setRequiresWorldRestart(false);
         defaultSpawnFuzz = prop.getInt(20);
         propOrder.add(prop.getName());
@@ -260,8 +250,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);
 
-        if (config.hasChanged())
-        {
+        if (config.hasChanged()) {
             config.save();
         }
     }
@@ -271,62 +260,49 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
      * This implementation uses the optional configID string to handle multiple Configurations using one event handler.
      */
     @SubscribeEvent
-    public void onConfigChanged(OnConfigChangedEvent event)
-    {
-        if (getMetadata().modId.equals(event.modID) && !event.isWorldRunning)
-        {
-            if (Configuration.CATEGORY_GENERAL.equals(event.configID))
-            {
+    public void onConfigChanged(OnConfigChangedEvent event) {
+        if (getMetadata().modId.equals(event.modID) && !event.isWorldRunning) {
+            if (Configuration.CATEGORY_GENERAL.equals(event.configID)) {
                 syncConfig(false);
-            }
-            else if ("chunkLoader".equals(event.configID))
-            {
+            } else if ("chunkLoader".equals(event.configID)) {
                 ForgeChunkManager.syncConfigDefaults();
                 ForgeChunkManager.loadConfiguration();
-            }
-            else if (VERSION_CHECK_CAT.equals(event.configID))
-            {
+            } else if (VERSION_CHECK_CAT.equals(event.configID)) {
                 syncConfig(false);
             }
         }
     }
 
     @SubscribeEvent
-    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
-    {
+    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
     }
 
     @Override
-    public boolean registerBus(EventBus bus, LoadController controller)
-    {
+    public boolean registerBus(EventBus bus, LoadController controller) {
         bus.register(this);
         return true;
     }
 
     @Subscribe
-    public void modConstruction(FMLConstructionEvent evt)
-    {
+    public void modConstruction(FMLConstructionEvent evt) {
         NetworkRegistry.INSTANCE.register(this, this.getClass(), "*", evt.getASMHarvestedData());
         ForgeNetworkHandler.registerChannel(this, evt.getSide());
     }
 
     @Subscribe
-    public void preInit(FMLPreInitializationEvent evt)
-    {
+    public void preInit(FMLPreInitializationEvent evt) {
         CapabilityItemHandler.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);
 
-        if (!ForgeModContainer.disableVersionCheck)
-        {
+        if (!ForgeModContainer.disableVersionCheck) {
             ForgeVersion.startVersionCheck();
         }
 
         // Add and register the forge universal bucket, if it's enabled
-        if(FluidRegistry.isUniversalBucketEnabled())
-        {
+        if (FluidRegistry.isUniversalBucketEnabled()) {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
             GameRegistry.registerItem(universalBucket, "bucketFilled");
@@ -335,30 +311,26 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     }
 
     @Subscribe
-    public void postInit(FMLPostInitializationEvent evt)
-    {
+    public void postInit(FMLPostInitializationEvent evt) {
         BiomeDictionary.registerAllBiomesAndGenerateEvents();
         ForgeChunkManager.loadConfiguration();
     }
 
     @Subscribe
-    public void onAvailable(FMLLoadCompleteEvent evt)
-    {
-        if (shouldSortRecipies)
-        {
+    public void onAvailable(FMLLoadCompleteEvent evt) {
+        if (shouldSortRecipies) {
             RecipeSorter.sortCraftManager();
         }
         FluidRegistry.validateFluidRegistry();
     }
 
     @Subscribe
-    public void serverStarting(FMLServerStartingEvent evt)
-    {
+    public void serverStarting(FMLServerStartingEvent evt) {
         evt.registerServerCommand(new ForgeCommand(evt.getServer()));
     }
+
     @Override
-    public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
-    {
+    public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info) {
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
         forgeData.setTag("DimensionData", dimData);
@@ -367,40 +339,33 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
-    {
+    public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag) {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         FluidRegistry.loadFluidDefaults(tag);
     }
 
     @Subscribe
-    public void mappingChanged(FMLModIdMappingEvent evt)
-    {
+    public void mappingChanged(FMLModIdMappingEvent evt) {
         OreDictionary.rebakeMap();
     }
 
 
     @Override
-    public File getSource()
-    {
+    public File getSource() {
         return FMLForgePlugin.forgeLocation;
     }
+
     @Override
-    public Class<?> getCustomResourcePackClass()
-    {
-        if (getSource().isDirectory())
-        {
+    public Class<?> getCustomResourcePackClass() {
+        if (getSource().isDirectory()) {
             return FMLFolderResourcePack.class;
-        }
-        else
-        {
+        } else {
             return FMLFileResourcePack.class;
         }
     }
 
     @Override
-    public List<String> getOwnedPackages()
-    {
+    public List<String> getOwnedPackages() {
         // All the packages which are part of forge. Only needs updating if new logic is added
         // that requires event handlers
         return ImmutableList.of(
@@ -429,21 +394,18 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "net.minecraftforge.server",
                 "net.minecraftforge.server.command",
                 "net.minecraftforge.transformers"
-                );
+        );
     }
 
 
-
     @Override
-    public Certificate getSigningCertificate()
-    {
+    public Certificate getSigningCertificate() {
         Certificate[] certificates = getClass().getProtectionDomain().getCodeSource().getCertificates();
         return certificates != null ? certificates[0] : null;
     }
 
     @Override
-    public URL getUpdateUrl()
-    {
+    public URL getUpdateUrl() {
         return updateJSONUrl;
     }
 }

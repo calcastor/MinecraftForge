@@ -29,10 +29,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 @SuppressWarnings("deprecation")
-public class MultiModel implements IModel
-{
-    public static class Baked implements IFlexibleBakedModel, IPerspectiveAwareModel
-    {
+public class MultiModel implements IModel {
+    public static class Baked implements IFlexibleBakedModel, IPerspectiveAwareModel {
         protected final IFlexibleBakedModel base;
         protected final ImmutableMap<String, IFlexibleBakedModel> parts;
 
@@ -41,20 +39,17 @@ public class MultiModel implements IModel
         protected ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> faces;
         protected final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
 
-        public Baked(IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
-        {
+        public Baked(IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts) {
             this(null, false, base, parts);
         }
 
-        public Baked(ResourceLocation location, boolean perspective, IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts)
-        {
+        public Baked(ResourceLocation location, boolean perspective, IFlexibleBakedModel base, ImmutableMap<String, IFlexibleBakedModel> parts) {
             this.base = base;
             this.parts = parts;
 
             if (base != null)
                 internalBase = base;
-            else
-            {
+            else {
                 Iterator<IFlexibleBakedModel> iter = parts.values().iterator();
                 if (iter.hasNext())
                     internalBase = iter.next();
@@ -63,64 +58,52 @@ public class MultiModel implements IModel
             }
 
             // Only changes the base model based on perspective, may recurse for parts in the future.
-            if(perspective && base instanceof IPerspectiveAwareModel)
-            {
-                IPerspectiveAwareModel perBase = (IPerspectiveAwareModel)base;
+            if (perspective && base instanceof IPerspectiveAwareModel) {
+                IPerspectiveAwareModel perBase = (IPerspectiveAwareModel) base;
                 ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
-                for(TransformType type : TransformType.values())
-                {
+                for (TransformType type : TransformType.values()) {
                     Pair<? extends IFlexibleBakedModel, Matrix4f> p = perBase.handlePerspective(type);
                     IFlexibleBakedModel newBase = p.getLeft();
                     builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
                 }
                 transforms = builder.build();
-            }
-            else
-            {
+            } else {
                 transforms = ImmutableMap.of();
             }
         }
 
         @Override
-        public boolean isAmbientOcclusion()
-        {
+        public boolean isAmbientOcclusion() {
             return internalBase.isAmbientOcclusion();
         }
 
         @Override
-        public boolean isGui3d()
-        {
+        public boolean isGui3d() {
             return internalBase.isGui3d();
         }
 
         @Override
-        public boolean isBuiltInRenderer()
-        {
+        public boolean isBuiltInRenderer() {
             return internalBase.isBuiltInRenderer();
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture()
-        {
+        public TextureAtlasSprite getParticleTexture() {
             return internalBase.getParticleTexture();
         }
 
         @Override
-        public ItemCameraTransforms getItemCameraTransforms()
-        {
+        public ItemCameraTransforms getItemCameraTransforms() {
             return internalBase.getItemCameraTransforms();
         }
 
         @Override
-        public List<BakedQuad> getFaceQuads(EnumFacing side)
-        {
-            if(faces == null)
-            {
+        public List<BakedQuad> getFaceQuads(EnumFacing side) {
+            if (faces == null) {
                 // Create map of each face's quads.
                 EnumMap<EnumFacing, ImmutableList<BakedQuad>> faces = Maps.newEnumMap(EnumFacing.class);
 
-                for (EnumFacing face : EnumFacing.values())
-                {
+                for (EnumFacing face : EnumFacing.values()) {
                     ImmutableList.Builder<BakedQuad> faceQuads = ImmutableList.builder();
                     if (base != null)
                         faceQuads.addAll(base.getFaceQuads(face));
@@ -134,10 +117,8 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getGeneralQuads()
-        {
-            if(general == null)
-            {
+        public List<BakedQuad> getGeneralQuads() {
+            if (general == null) {
                 // Create list of general quads.
                 ImmutableList.Builder<BakedQuad> genQuads = ImmutableList.builder();
                 if (base != null)
@@ -150,25 +131,21 @@ public class MultiModel implements IModel
         }
 
         @Override
-        public VertexFormat getFormat()
-        {
+        public VertexFormat getFormat() {
             return internalBase.getFormat();
         }
 
-        public IFlexibleBakedModel getBaseModel()
-        {
+        public IFlexibleBakedModel getBaseModel() {
             return base;
         }
 
-        public Map<String, IFlexibleBakedModel> getParts()
-        {
+        public Map<String, IFlexibleBakedModel> getParts() {
             return parts;
         }
 
         @Override
-        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
-        {
-            if(transforms.isEmpty()) return Pair.of(this, null);
+        public Pair<? extends IFlexibleBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType) {
+            if (transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
             return Pair.of(p.getLeft(), p.getRight().getMatrix());
         }
@@ -179,32 +156,27 @@ public class MultiModel implements IModel
     protected final IModelState baseState;
     protected final Map<String, Pair<IModel, IModelState>> parts;
 
-    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
-    {
+    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts) {
         this.location = location;
         this.base = base;
         this.baseState = baseState;
         this.parts = parts;
     }
 
-    public MultiModel(IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
-    {
+    public MultiModel(IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts) {
         this(null, base, baseState, parts);
     }
 
-    public MultiModel(IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
-    {
+    public MultiModel(IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts) {
         this(null, base, baseState, ImmutableMap.copyOf(parts));
     }
 
-    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
-    {
+    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts) {
         this(location, base, baseState, ImmutableMap.copyOf(parts));
     }
 
     @Override
-    public Collection<ResourceLocation> getDependencies()
-    {
+    public Collection<ResourceLocation> getDependencies() {
         Set<ResourceLocation> deps = Sets.newHashSet();
 
         if (base != null)
@@ -217,8 +189,7 @@ public class MultiModel implements IModel
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures()
-    {
+    public Collection<ResourceLocation> getTextures() {
         Set<ResourceLocation> deps = Sets.newHashSet();
 
         if (base != null)
@@ -231,8 +202,7 @@ public class MultiModel implements IModel
     }
 
     @Override
-    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-    {
+    public IFlexibleBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         IFlexibleBakedModel bakedBase = null;
 
         if (base != null)
@@ -240,14 +210,12 @@ public class MultiModel implements IModel
 
         ImmutableMap.Builder<String, IFlexibleBakedModel> mapBuilder = ImmutableMap.builder();
 
-        for (Entry<String, Pair<IModel, IModelState>> entry : parts.entrySet())
-        {
+        for (Entry<String, Pair<IModel, IModelState>> entry : parts.entrySet()) {
             Pair<IModel, IModelState> pair = entry.getValue();
             mapBuilder.put(entry.getKey(), pair.getLeft().bake(pair.getRight(), format, bakedTextureGetter));
         }
 
-        if(bakedBase == null && parts.isEmpty())
-        {
+        if (bakedBase == null && parts.isEmpty()) {
             FMLLog.log(Level.ERROR, "MultiModel %s is empty (no base model or parts were provided/resolved)", location);
             IModel missing = ModelLoaderRegistry.getMissingModel();
             return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
@@ -258,22 +226,19 @@ public class MultiModel implements IModel
     /**
      * @return The base model of this MultiModel. May be null.
      */
-    public IModel getBaseModel()
-    {
+    public IModel getBaseModel() {
         return base;
     }
 
     /**
      * @return A map of the submodel name to its IModel and IModelState.
      */
-    public Map<String, Pair<IModel, IModelState>> getParts()
-    {
+    public Map<String, Pair<IModel, IModelState>> getParts() {
         return parts;
     }
 
     @Override
-    public IModelState getDefaultState()
-    {
+    public IModelState getDefaultState() {
         return baseState;
     }
 }

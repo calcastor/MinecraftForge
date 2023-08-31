@@ -19,12 +19,10 @@ import net.minecraft.item.ItemStack;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ArrowNockEvent extends PlayerEvent
-{
+public class ArrowNockEvent extends PlayerEvent {
     public ItemStack result;
-    
-    public ArrowNockEvent(EntityPlayer player, ItemStack result)
-    {
+
+    public ArrowNockEvent(EntityPlayer player, ItemStack result) {
         super(player);
         this.result = result;
     }

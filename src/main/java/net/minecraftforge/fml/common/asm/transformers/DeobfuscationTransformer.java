@@ -32,10 +32,8 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     // that does not cause class loading.
 
     @Override
-    public byte[] transform(String name, String transformedName, byte[] bytes)
-    {
-        if (bytes == null)
-        {
+    public byte[] transform(String name, String transformedName, byte[] bytes) {
+        if (bytes == null) {
             return null;
         }
         ClassReader classReader = new ClassReader(bytes);
@@ -46,15 +44,13 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
     }
 
     @Override
-    public String remapClassName(String name)
-    {
-        return FMLDeobfuscatingRemapper.INSTANCE.map(name.replace('.','/')).replace('/', '.');
+    public String remapClassName(String name) {
+        return FMLDeobfuscatingRemapper.INSTANCE.map(name.replace('.', '/')).replace('/', '.');
     }
 
     @Override
-    public String unmapClassName(String name)
-    {
-        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/','.');
+    public String unmapClassName(String name) {
+        return FMLDeobfuscatingRemapper.INSTANCE.unmap(name.replace('.', '/')).replace('/', '.');
     }
 
 }

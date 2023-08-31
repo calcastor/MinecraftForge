@@ -12,7 +12,7 @@ package me.eigenraven.lwjgl3ify;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-@SuppressWarnings({ "restriction", "sunapi" })
+@SuppressWarnings({"restriction", "sunapi"})
 public class UnsafeHacks {
 
     private static final sun.misc.Unsafe UNSAFE;

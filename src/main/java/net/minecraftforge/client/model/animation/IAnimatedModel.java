@@ -7,7 +7,6 @@ import com.google.common.base.Optional;
 /**
  * IModel that has animation data.
  */
-public interface IAnimatedModel extends IModel
-{
+public interface IAnimatedModel extends IModel {
     Optional<? extends IClip> getClip(String name);
 }

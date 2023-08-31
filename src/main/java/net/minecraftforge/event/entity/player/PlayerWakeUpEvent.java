@@ -7,8 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
  * This is merely for purposes of listening for this to happen.<br/>
  * There is nothing that can be manipulated with this event.
  */
-public class PlayerWakeUpEvent extends PlayerEvent
-{
+public class PlayerWakeUpEvent extends PlayerEvent {
     /**
      * Used for the 'wake up animation'.
      * This is false if the player is considered 'sleepy' and the overlay should slowly fade away.
@@ -27,8 +26,7 @@ public class PlayerWakeUpEvent extends PlayerEvent
      */
     public final boolean setSpawn;
 
-    public PlayerWakeUpEvent(EntityPlayer player, boolean wakeImmediatly, boolean updateWorld, boolean setSpawn)
-    {
+    public PlayerWakeUpEvent(EntityPlayer player, boolean wakeImmediatly, boolean updateWorld, boolean setSpawn) {
         super(player);
         this.wakeImmediatly = wakeImmediatly;
         this.updateWorld = updateWorld;

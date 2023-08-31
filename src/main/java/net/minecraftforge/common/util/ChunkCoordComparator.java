@@ -4,21 +4,17 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.ChunkCoordIntPair;
 
 // Sorter to load nearby chunks first
-public class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntPair>
-{
+public class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntPair> {
     private int x;
     private int z;
 
-    public ChunkCoordComparator(EntityPlayerMP entityplayer)
-    {
+    public ChunkCoordComparator(EntityPlayerMP entityplayer) {
         x = (int) entityplayer.posX >> 4;
         z = (int) entityplayer.posZ >> 4;
     }
 
-    public int compare(ChunkCoordIntPair a, ChunkCoordIntPair b)
-    {
-        if (a.equals(b))
-        {
+    public int compare(ChunkCoordIntPair a, ChunkCoordIntPair b) {
+        if (a.equals(b)) {
             return 0;
         }
 
@@ -29,30 +25,20 @@ public class ChunkCoordComparator implements java.util.Comparator<ChunkCoordIntP
         int bz = b.chunkZPos - this.z;
         int result = ((ax - bx) * (ax + bx)) + ((az - bz) * (az + bz));
 
-        if (result != 0)
-        {
+        if (result != 0) {
             return result;
         }
 
-        if (ax < 0)
-        {
-            if (bx < 0)
-            {
+        if (ax < 0) {
+            if (bx < 0) {
                 return bz - az;
-            }
-            else
-            {
+            } else {
                 return -1;
             }
-        }
-        else
-        {
-            if (bx < 0)
-            {
+        } else {
+            if (bx < 0) {
                 return 1;
-            }
-            else
-            {
+            } else {
                 return az - bz;
             }
         }

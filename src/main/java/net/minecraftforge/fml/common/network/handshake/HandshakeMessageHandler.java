@@ -15,40 +15,37 @@ public class HandshakeMessageHandler<S extends Enum<S> & IHandshakeState<S>> ext
     private Class<S> stateType;
 
     @SuppressWarnings("unchecked")
-    public HandshakeMessageHandler(Class<S> stateType)
-    {
-        fmlHandshakeState = (AttributeKey<S>) ((Object)STATE);
+    public HandshakeMessageHandler(Class<S> stateType) {
+        fmlHandshakeState = (AttributeKey<S>) ((Object) STATE);
         initialState = Enum.valueOf(stateType, "START");
         this.stateType = stateType;
     }
+
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, FMLHandshakeMessage msg) throws Exception
-    {
+    protected void channelRead0(ChannelHandlerContext ctx, FMLHandshakeMessage msg) throws Exception {
         S state = ctx.attr(fmlHandshakeState).get();
-        FMLLog.fine(stateType.getSimpleName() + ": " + msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
+        FMLLog.fine(stateType.getSimpleName() + ": " + msg.toString(stateType) + "->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.') + 1) + ":" + state);
         S newState = state.accept(ctx, msg);
         FMLLog.fine("  Next: " + newState.name());
         ctx.attr(fmlHandshakeState).set(newState);
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception
-    {
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.attr(fmlHandshakeState).set(initialState);
     }
+
     @Override
-    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception
-    {
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
         S state = ctx.attr(fmlHandshakeState).get();
-        FMLLog.fine(stateType.getSimpleName() + ": null->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.')+1)+":"+state);
+        FMLLog.fine(stateType.getSimpleName() + ": null->" + state.getClass().getName().substring(state.getClass().getName().lastIndexOf('.') + 1) + ":" + state);
         S newState = state.accept(ctx, null);
         FMLLog.fine("  Next: " + newState.name());
         ctx.attr(fmlHandshakeState).set(newState);
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
-    {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         FMLLog.log(Level.ERROR, cause, "HandshakeMessageHandler exception");
         super.exceptionCaught(ctx, cause);
     }
