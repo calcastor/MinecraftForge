@@ -52,12 +52,6 @@ public class BlamingTransformer implements IClassTransformer
         @Override
         public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
         {
-            if( (version == Opcodes.V1_8 && !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_8)) ||
-                (version == Opcodes.V1_7 && !SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_7)) )
-            {
-                if(classMap.containsKey(name)) blame(classMap.get(name), name);
-                else orphanNaughtyClasses.add(name);
-            }
         }
     }
 

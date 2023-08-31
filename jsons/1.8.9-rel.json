@@ -31,7 +31,33 @@
       "serverreq":true
     },
     {
-      "name": "org.ow2.asm:asm-all:5.0.3",
+      "name": "org.ow2.asm:asm:9.4",
+      "url": "https://maven.minecraftforge.net/",
+      "serverreq":true
+    },
+    {
+      "name": "org.ow2.asm:asm-commons:9.4",
+      "url": "https://maven.minecraftforge.net/",
+      "serverreq":true
+    },
+    {
+      "name": "org.ow2.asm:asm-tree:9.4",
+      "url": "https://maven.minecraftforge.net/",
+      "serverreq":true
+    },
+    {
+      "name": "org.ow2.asm:asm-analysis:9.4",
+      "url": "https://maven.minecraftforge.net/",
+      "serverreq":true
+    },
+    {
+      "name": "org.ow2.asm:asm-util:9.4",
+      "url": "https://maven.minecraftforge.net/",
+      "serverreq":true
+    },
+    {
+      "name": "org.ow2.asm:asm-deprecated:7.1",
+      "url": "https://maven.minecraftforge.net/",
       "serverreq":true
     },
     {

@@ -1,5 +1,8 @@
 package net.minecraftforge.fml.common.registry;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -75,22 +78,12 @@ class ObjectHolderRef {
     private static Object reflectionFactory;
     private static Method newFieldAccessor;
     private static Method fieldAccessorSet;
+    private MethodHandle fieldSetter = null;
     private static void makeWritable(Field f)
     {
-        try
-        {
-            if (modifiersField == null)
-            {
-                Method getReflectionFactory = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("getReflectionFactory");
-                reflectionFactory = getReflectionFactory.invoke(null);
-                newFieldAccessor = Class.forName("sun.reflect.ReflectionFactory").getDeclaredMethod("newFieldAccessor", Field.class, boolean.class);
-                fieldAccessorSet = Class.forName("sun.reflect.FieldAccessor").getDeclaredMethod("set", Object.class, Object.class);
-                modifiersField = Field.class.getDeclaredField("modifiers");
-                modifiersField.setAccessible(true);
-            }
-            modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-        } catch (Exception e)
-        {
+        try {
+            f.setAccessible(true);
+        } catch (Exception e) {
             throw Throwables.propagate(e);
         }
     }
@@ -101,36 +94,37 @@ class ObjectHolderRef {
     }
     public void apply()
     {
-        Object thing;
-        if (isBlock)
-        {
-            thing = GameData.getBlockRegistry().getObject(injectedObject);
-            if (thing == Blocks.air)
-            {
-                thing = null;
+        if (fieldSetter == null) {
+            try {
+                fieldSetter = MethodHandles.lookup().unreflectSetter(this.field);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
-        else if (isItem)
-        {
+        Object thing;
+        if (isBlock) {
+            thing = GameData.getBlockRegistry().getObject(injectedObject);
+            if (thing == Blocks.air) {
+                thing = null;
+            }
+        } else if (isItem) {
             thing = GameData.getItemRegistry().getObject(injectedObject);
-        }
-        else
-        {
+        } else {
             thing = null;
         }
 
-        if (thing == null)
-        {
-            FMLLog.getLogger().log(Level.DEBUG, "Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.", injectedObject, field);
+        if (thing == null) {
+            FMLLog.getLogger().log(
+                    Level.DEBUG,
+                    "Unable to lookup {} for {}. This means the object wasn't registered. It's likely just mod options.",
+                    injectedObject,
+                    field);
             return;
         }
-        try
-        {
-            Object fieldAccessor = newFieldAccessor.invoke(reflectionFactory, field, false);
-            fieldAccessorSet.invoke(fieldAccessor, null, thing);
-        }
-        catch (Exception e)
-        {
+        try {
+            fieldSetter.invoke(thing);
+            FMLLog.finer("Set field " + field.toString() + " to " + thing);
+        } catch (Throwable e) {
             FMLLog.log(Level.WARN, e, "Unable to set %s with value %s (%s)", this.field, thing, this.injectedObject);
         }
     }

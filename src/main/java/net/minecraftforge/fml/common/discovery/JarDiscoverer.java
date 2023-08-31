@@ -56,7 +56,7 @@ public class JarDiscoverer implements ITypeDiscoverer
             }
             for (ZipEntry ze : Collections.list(jar.entries()))
             {
-                if (ze.getName()!=null && ze.getName().startsWith("__MACOSX"))
+                if (ze.getName()!=null && (ze.getName().startsWith("__MACOSX") || ze.getName().startsWith("META-INF/versions/") || ze.getName().contains("module-info.class")))
                 {
                     continue;
                 }

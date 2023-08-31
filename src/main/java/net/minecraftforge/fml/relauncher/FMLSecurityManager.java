@@ -17,8 +17,8 @@ public class FMLSecurityManager extends SecurityManager {
         if (permName.startsWith("exitVM"))
         {
             Class<?>[] classContexts = getClassContext();
-            String callingClass = classContexts.length > 3 ? classContexts[4].getName() : "none";
-            String callingParent = classContexts.length > 4 ? classContexts[5].getName() : "none";
+            String callingClass = classContexts.length > 4 ? classContexts[4].getName() : "none"; // PATCHED
+            String callingParent = classContexts.length > 5 ? classContexts[5].getName() : "none"; // PATCHED
             // FML is allowed to call system exit and the Minecraft applet (from the quit button)
             if (!(callingClass.startsWith("net.minecraftforge.fml.")
                     || "net.minecraft.server.dedicated.ServerHangWatchdog$1".equals(callingClass)

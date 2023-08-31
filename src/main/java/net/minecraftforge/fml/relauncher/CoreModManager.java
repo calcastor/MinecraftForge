@@ -17,6 +17,7 @@ import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -461,20 +462,46 @@ public class CoreModManager {
         return result;
     }
 
+
     private static Method ADDURL;
 
-    private static void handleCascadingTweak(File coreMod, JarFile jar, String cascadedTweaker, LaunchClassLoader classLoader, Integer sortingOrder)
-    {
-        try
-        {
-            // Have to manually stuff the tweaker into the parent classloader
-            if (ADDURL == null)
-            {
-                ADDURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
-                ADDURL.setAccessible(true);
+    private static void addUrlToClassloader(ClassLoader loader, URL coreModUrl) {
+        try {
+            if (loader instanceof URLClassLoader) {
+                if (ADDURL == null) {
+                    ADDURL = URLClassLoader.class.getDeclaredMethod("addURL", URL.class);
+                    ADDURL.setAccessible(true);
+                }
+                ADDURL.invoke(loader, coreModUrl);
+            } else {
+                Field ucpField;
+                try {
+                    // Java 8-11
+                    ucpField = loader.getClass().getDeclaredField("ucp");
+                } catch (NoSuchFieldException e) {
+                    // Java 17
+                    ucpField = loader.getClass().getSuperclass().getDeclaredField("ucp");
+                }
+                ucpField.setAccessible(true);
+                final Object ucp = ucpField.get(loader);
+                final Method urlAdder = ucp.getClass().getDeclaredMethod("addURL", URL.class);
+                urlAdder.invoke(ucp, coreModUrl);
             }
-            ADDURL.invoke(classLoader.getClass().getClassLoader(), coreMod.toURI().toURL());
-            classLoader.addURL(coreMod.toURI().toURL());
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Couldn't add url to classpath in loader " + loader.getClass(), e);
+        }
+    }
+
+    private static void handleCascadingTweak(
+            File coreMod, JarFile jar, String cascadedTweaker, LaunchClassLoader classLoader, Integer sortingOrder) {
+        try {
+            // Have to manually stuff the tweaker into the parent classloader
+            // PATCHED BEGIN
+            URL coreModUrl = coreMod.toURI().toURL();
+            ClassLoader myLoader = classLoader.getClass().getClassLoader();
+            addUrlToClassloader(myLoader, coreModUrl);
+            classLoader.addURL(coreModUrl);
+            // PATCHED END
             CoreModManager.tweaker.injectCascadingTweak(cascadedTweaker);
             tweakSorting.put(cascadedTweaker,sortingOrder);
         }
