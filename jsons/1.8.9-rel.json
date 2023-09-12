@@ -27,7 +27,8 @@
       "url": "https://maven.minecraftforge.net/"
     },
     {
-      "name": "net.minecraft:launchwrapper:1.12",
+      "name": "net.minecraft:launchwrapper:1.17.2",
+      "url": "http://jenkins.usrv.eu:8081/nexus/content/groups/public/",
       "serverreq":true
     },
     {
