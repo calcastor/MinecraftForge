@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
-import java.util.jar.Pack200;
 import java.util.regex.Pattern;
 
+import org.apache.commons.compress.java.util.jar.Pack200;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -127,7 +127,11 @@ public class ClassPatchManager {
                 FMLRelaunchLog.log(Level.ERROR, "The binary patch set is missing. Either you are in a development environment, or things are not going to work!");
                 return;
             }
-            LzmaInputStream binpatchesDecompressed = new LzmaInputStream(binpatchesCompressed);
+            LzmaInputStream binpatchesDecompressedLzma = new LzmaInputStream(binpatchesCompressed);
+            // The Apache pack200 stream chokes on a lzmainputstream for some reason
+            byte[] decompressed = ByteStreams.toByteArray(binpatchesDecompressedLzma);
+            binpatchesDecompressedLzma.close();
+            ByteArrayInputStream binpatchesDecompressed = new ByteArrayInputStream(decompressed);
             ByteArrayOutputStream jarBytes = new ByteArrayOutputStream();
             JarOutputStream jos = new JarOutputStream(jarBytes);
             Pack200.newUnpacker().unpack(binpatchesDecompressed, jos);
